@@ -1,0 +1,50 @@
+# FISHERIES - Git Ignore
+
+# Environment files
+.env
+.env.backup
+.env.production
+
+# Storage
+/storage/*.key
+/storage/cache/*
+/storage/logs/*
+/storage/framework/*
+!/storage/framework/.gitkeep
+!/storage/logs/.gitkeep
+!/storage/cache/.gitkeep
+
+# Vendor (if using composer)
+/vendor/*
+!/vendor/autoload.php
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+.phpunit.result.cache
+coverage/
+
+# Build
+/public/hot
+/public/storage
+/public/build
+
+# Temporary
+*.tmp
+*.temp
+*.cache

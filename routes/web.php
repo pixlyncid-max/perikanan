@@ -1,0 +1,135 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\SettingController;
+
+use Illuminate\Support\Facades\Route;
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// Home Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/partnership', [HomeController::class, 'partnership'])->name('partnership');
+// Route::get('/partnership', function () {
+//     return view('errors.coming-soon');
+// })->name('partnership');
+//Organization Routes
+Route::prefix('organization')->name('organization.')->group(function () {
+    Route::get('/structure', [OrganizationController::class, 'structure'])->name('structure');
+    Route::get('/dpc/{code}', [OrganizationController::class, 'showDpc'])
+        ->name('dpc')
+        ->where('code', '[a-z0-9-]+');
+});
+// Route::prefix('organization')->name('organization.')->group(function () {
+//     Route::get('/structure', function () {
+//         return view('errors.coming-soon');
+//     })->name('structure');
+//     Route::get('/dpc/{code}', function ($code) {
+//         return view('errors.coming-soon');
+//     })->name('dpc')->where('code', '[a-z0-9-]+');
+// });
+
+// Produk Routes
+Route::prefix('produk')->name('produk.')->group(function () {
+    Route::get('/', [ProdukController::class, 'index'])->name('index');
+    Route::get('/pelet-pakan', [ProdukController::class, 'peletPakan'])->name('pelet-pakan');
+    Route::get('/pakan-hidup', [ProdukController::class, 'pakanHidup'])->name('pakan-hidup');
+    Route::get('/umpan-laut', [ProdukController::class, 'umpanLaut'])->name('umpan-laut');
+    Route::get('/penyewaan-kapal', [ProdukController::class, 'penyewaanKapal'])->name('penyewaan-kapal');
+    Route::get('/vitamin-air', [ProdukController::class, 'vitaminAir'])->name('vitamin-air');
+    Route::get('/bibit-ikan', [ProdukController::class, 'bibitIkan'])->name('bibit-ikan');
+});
+
+
+// Article Routes
+Route::prefix('article')->name('article.')->group(function () {
+    Route::get('/', [ArticleController::class, 'index'])->name('index');
+    Route::get('/category/{category}', [ArticleController::class, 'byCategory'])->name('category');
+    Route::get('/{slug}', [ArticleController::class, 'show'])->name('show');
+});
+// Route::prefix('article')->name('article.')->group(function () {
+//     Route::get('/', function () {
+//         return view('errors.coming-soon');
+//     })->name('index');
+//     Route::get('/category/{category}', function ($category) {
+//         return view('errors.coming-soon');
+//     })->name('category');
+//     Route::get('/{slug}', function ($slug) {
+//         return view('errors.coming-soon');
+//     })->name('show');
+// });
+
+// Auth Routes
+Route::middleware(['web', 'guest'])->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+Route::middleware(['web'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/member-card', [AuthController::class, 'memberCard'])->name('member.card');
+});
+
+// Admin Routes
+Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(function () {
+    
+    // Redirect /admin to /admin/dashboard
+    Route::redirect('/', '/admin/dashboard');
+    
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    
+    // User Management
+    Route::resource('users', UserController::class);
+    
+    // Member Management
+    Route::resource('members', MemberController::class);
+    
+    // Product Management
+    Route::resource('products', ProductController::class);
+    
+    // Category Management
+    Route::resource('categories', CategoryController::class);
+    
+    // Order Management
+    Route::resource('orders', OrderController::class);
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    
+    // Article Management
+    Route::resource('articles', AdminArticleController::class);
+    
+    // News Management
+    Route::resource('news', NewsController::class);
+    
+    // Media Management
+    Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+    Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+    Route::delete('/media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
+    
+    // Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+});
