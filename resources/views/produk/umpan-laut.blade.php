@@ -47,140 +47,71 @@
 
         <div class="lg:col-span-3">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition">
-                    <div class="relative h-48 bg-gray-200">
-                        <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                            <i class="fas fa-fish text-6xl"></i>
-                        </div>
-                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                            Populer
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2">Umpan Tuna Premium</h3>
-                        <p class="text-gray-600 text-sm mb-4">Formula khusus untuk menarik tuna dengan aroma amis kuat</p>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-indigo-600">Rp 125.000</span>
-                                <span class="text-sm text-gray-500 block">per kg</span>
-                            </div>
-                            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                @forelse($products as $product)
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition flex flex-col">
+                        <div class="relative h-48 bg-gray-100 flex-shrink-0">
+                            @php
+                                $imgs = $product->images;
+                                if(is_string($imgs)) $imgs = json_decode($imgs, true);
+                                $firstImg = (!empty($imgs) && is_array($imgs)) ? $imgs[0] : null;
+                            @endphp
+                            @if($firstImg)
+                                <img src="{{ asset('storage/'.$firstImg) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="absolute inset-0 flex items-center justify-center text-gray-400">
+                                    <i class="fas fa-fish text-6xl"></i>
+                                </div>
+                            @endif
 
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition">
-                    <div class="relative h-48 bg-gray-200">
-                        <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                            <i class="fas fa-fish text-6xl"></i>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2">Umpan Cakalang Jitu</h3>
-                        <p class="text-gray-600 text-sm mb-4">Campuran ikan segar dengan perasa khusus untuk cakalang</p>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-indigo-600">Rp 95.000</span>
-                                <span class="text-sm text-gray-500 block">per kg</span>
-                            </div>
-                            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                            @if($product->featured)
+                                <div class="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                    <i class="fas fa-star mr-1"></i> Unggulan
+                                </div>
+                            @endif
 
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition">
-                    <div class="relative h-48 bg-gray-200">
-                        <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                            <i class="fas fa-fish text-6xl"></i>
+                            @if($product->sale_price > 0 && $product->price > 0)
+                                <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                    -{{ round((1 - $product->sale_price / $product->price) * 100) }}%
+                                </div>
+                            @endif
                         </div>
-                        <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                            Best Seller
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2">Umpan Tenggiri Super</h3>
-                        <p class="text-gray-600 text-sm mb-4">Umpan dengan tekstur lembut untuk tenggiri</p>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-indigo-600">Rp 110.000</span>
-                                <span class="text-sm text-gray-500 block">per kg</span>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2 truncate" title="{{ $product->name }}">{{ $product->name }}</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">{{ $product->short_description ?: Str::limit($product->description, 80) }}</p>
+                            
+                            <div class="flex flex-col mt-auto gap-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        @if($product->sale_price > 0)
+                                            <span class="text-xs text-gray-400 line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                            <span class="text-xl font-bold text-indigo-600">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                                        @else
+                                            <span class="text-xl font-bold text-indigo-600">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                        @endif
+                                    </div>
+                                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="text-xs {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600 font-bold' }}">
+                                    Stok: {{ $product->stock > 0 ? $product->stock : 'Habis' }}
+                                </div>
                             </div>
-                            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
                         </div>
                     </div>
-                </div>
+                @empty
+                    <div class="col-span-full py-12 text-center text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-3 text-gray-300"></i>
+                        <p>Belum ada produk di kategori ini.</p>
+                    </div>
+                @endforelse
+            </div>
 
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition">
-                    <div class="relative h-48 bg-gray-200">
-                        <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                            <i class="fas fa-fish text-6xl"></i>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2">Umpan Kakap Merah</h3>
-                        <p class="text-gray-600 text-sm mb-4">Formula khusus untuk kakap merah dan kakap putih</p>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-indigo-600">Rp 135.000</span>
-                                <span class="text-sm text-gray-500 block">per kg</span>
-                            </div>
-                            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition">
-                    <div class="relative h-48 bg-gray-200">
-                        <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                            <i class="fas fa-fish text-6xl"></i>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2">Umpan Layang Biru</h3>
-                        <p class="text-gray-600 text-sm mb-4">Umpan ekonomis untuk tangkapan layang</p>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-indigo-600">Rp 75.000</span>
-                                <span class="text-sm text-gray-500 block">per kg</span>
-                            </div>
-                            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition">
-                    <div class="relative h-48 bg-gray-200">
-                        <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                            <i class="fas fa-fish text-6xl"></i>
-                        </div>
-                        <div class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                            New
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2">Umpan Universal</h3>
-                        <p class="text-gray-600 text-sm mb-4">Cocok untuk berbagai jenis ikan laut</p>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-2xl font-bold text-indigo-600">Rp 85.000</span>
-                                <span class="text-sm text-gray-500 block">per kg</span>
-                            </div>
-                            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            @if($products->hasPages())
+            <div class="mt-8 flex justify-center">
+                {{ $products->links('pagination::tailwind') }}
+            </div>
+            @endif
             </div>
 
             <div class="mt-12 bg-indigo-50 rounded-xl p-8">

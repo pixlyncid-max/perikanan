@@ -32,7 +32,7 @@ class MemberController extends Controller
             $query->where('status', $request->get('status'));
         }
 
-        $members = $query->latest()->paginate(10);
+        $members = $query->orderBy('id', 'asc')->paginate(10);
         
         return view('admin.members.index', compact('members'));
     }

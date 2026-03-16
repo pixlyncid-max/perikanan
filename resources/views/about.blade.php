@@ -87,7 +87,7 @@
     </div>
 
     <!-- History -->
-    <div class="bg-white rounded-xl shadow-lg p-8 mb-16">
+    {{-- <div class="bg-white rounded-xl shadow-lg p-8 mb-16">
         <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Sejarah FISHERIES</h2>
         <div class="space-y-6">
             <div class="flex items-start space-x-4">
@@ -136,7 +136,7 @@
             </div>
 
         </div>
-    </div>
+    </div> --}}
 
     <!-- Team -->
     <div class="mb-16">

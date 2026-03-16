@@ -109,7 +109,13 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     Route::resource('members', MemberController::class);
     
     // Product Management
+    Route::get('/products/generate-sku', [ProductController::class, 'generateSku'])->name('products.generate-sku');
+    Route::post('/products/mass-action', [ProductController::class, 'massAction'])->name('products.mass-action');
+    Route::get('/products/import-template', [ProductController::class, 'downloadTemplate'])->name('products.import-template');
+    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
     Route::resource('products', ProductController::class);
+    Route::patch('/products/{product}/toggle-active', [ProductController::class, 'toggleActive'])->name('products.toggle-active');
+    Route::patch('/products/{product}/toggle-featured', [ProductController::class, 'toggleFeatured'])->name('products.toggle-featured');
     
     // Category Management
     Route::resource('categories', CategoryController::class);
@@ -128,6 +134,9 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     Route::get('/media', [MediaController::class, 'index'])->name('media.index');
     Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
     Route::delete('/media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
+    
+    // Organization Management
+    Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class);
     
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

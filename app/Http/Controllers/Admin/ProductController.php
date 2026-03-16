@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductsImport;
 
 class ProductController extends Controller
 {
@@ -20,32 +22,37 @@ class ProductController extends Controller
         $query = Product::with('category');
 
         // Search functionality
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('short_description', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhereHas('category', function($categoryQuery) use ($search) {
+                      $categoryQuery->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
         // Filter by category
-        if ($request->has('category') && $request->get('category') !== '') {
+        if ($request->filled('category')) {
             $query->where('category_id', $request->get('category'));
         }
 
-        // Filter by product type
-        if ($request->has('product_type') && $request->get('product_type') !== '') {
-            $query->where('product_type', $request->get('product_type'));
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->get('status') === 'active' ? 1 : 0);
         }
 
-        // Filter by access
-        if ($request->has('access') && $request->get('access') !== '') {
-            $query->where('access', $request->get('access'));
+        // Filter by featured
+        if ($request->filled('featured')) {
+            $query->where('featured', $request->get('featured') === '1' ? 1 : 0);
         }
 
-        $products = $query->latest()->paginate(10);
+        $products = $query->orderBy('id', 'asc')->paginate(15);
         $categories = Category::all();
-        
+
         return view('admin.products.index', compact('products', 'categories'));
     }
 
@@ -64,15 +71,20 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'member_price' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'product_type' => 'required|in:pakan_hidup,pelet_pakan,umpan_laut,penyewaan_kapal,vitamin_air,bibit_ikan,other',
-            'access' => 'required|in:public,member_only',
+            'name'              => 'required|string|max:255',
+            'category_id'       => 'nullable|exists:categories,id',
+            'price'             => 'required|numeric|min:0',
+            'member_price'      => 'nullable|numeric|min:0',
+            'sale_price'        => 'nullable|numeric|min:0',
+            'stock'             => 'required|integer|min:0',
+            'sku'               => 'nullable|string|max:100|unique:products,sku',
+            'short_description' => 'nullable|string|max:500',
+            'description'       => 'nullable|string',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'featured'          => 'nullable|boolean',
+            'is_active'         => 'nullable|boolean',
+            'meta_title'        => 'nullable|string|max:255',
+            'meta_description'  => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
@@ -81,24 +93,37 @@ class ProductController extends Controller
                 ->withInput();
         }
 
+        $slug = Str::slug($request->name);
+        // Ensure unique slug
+        $originalSlug = $slug;
+        $count = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
         $data = [
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'category_id' => $request->category_id,
-            'price' => $request->price,
-            'member_price' => $request->member_price,
-            'stock' => $request->stock,
-            'description' => $request->description,
-            'product_type' => $request->product_type,
-            'access' => $request->access,
+            'name'              => $request->name,
+            'slug'              => $slug,
+            'category_id'       => $request->category_id,
+            'price'             => $request->price,
+            'member_price'      => $request->member_price ?? 0,
+            'sale_price'        => $request->sale_price ?? 0,
+            'stock'             => $request->stock,
+            'sku'               => $request->sku,
+            'short_description' => $request->short_description,
+            'description'       => $request->description,
+            'featured'          => $request->has('featured') ? 1 : 0,
+            'is_active'         => $request->has('is_active') ? 1 : 0,
+            'meta_title'        => $request->meta_title,
+            'meta_description'  => $request->meta_description,
         ];
 
         // Handle image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
+            $imageName = time() . '_' . Str::slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $image->getClientOriginalExtension();
             $image->storeAs('public/products', $imageName);
-            $data['image'] = 'products/' . $imageName;
+            $data['images'] = json_encode(['products/' . $imageName]);
         }
 
         Product::create($data);
@@ -112,6 +137,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product->load('category');
         return view('admin.products.show', compact('product'));
     }
 
@@ -130,15 +156,20 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'member_price' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'product_type' => 'required|in:pakan_hidup,pelet_pakan,umpan_laut,penyewaan_kapal,vitamin_air,bibit_ikan,other',
-            'access' => 'required|in:public,member_only',
+            'name'              => 'required|string|max:255',
+            'category_id'       => 'nullable|exists:categories,id',
+            'price'             => 'required|numeric|min:0',
+            'member_price'      => 'nullable|numeric|min:0',
+            'sale_price'        => 'nullable|numeric|min:0',
+            'stock'             => 'required|integer|min:0',
+            'sku'               => 'nullable|string|max:100|unique:products,sku,' . $product->id,
+            'short_description' => 'nullable|string|max:500',
+            'description'       => 'nullable|string',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'featured'          => 'nullable|boolean',
+            'is_active'         => 'nullable|boolean',
+            'meta_title'        => 'nullable|string|max:255',
+            'meta_description'  => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
@@ -147,29 +178,48 @@ class ProductController extends Controller
                 ->withInput();
         }
 
+        $slug = Str::slug($request->name);
+        // Ensure unique slug (exclude current product)
+        $originalSlug = $slug;
+        $count = 1;
+        while (Product::where('slug', $slug)->where('id', '!=', $product->id)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
         $data = [
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'category_id' => $request->category_id,
-            'price' => $request->price,
-            'member_price' => $request->member_price,
-            'stock' => $request->stock,
-            'description' => $request->description,
-            'product_type' => $request->product_type,
-            'access' => $request->access,
+            'name'              => $request->name,
+            'slug'              => $slug,
+            'category_id'       => $request->category_id,
+            'price'             => $request->price,
+            'member_price'      => $request->member_price ?? 0,
+            'sale_price'        => $request->sale_price ?? 0,
+            'stock'             => $request->stock,
+            'sku'               => $request->sku,
+            'short_description' => $request->short_description,
+            'description'       => $request->description,
+            'featured'          => $request->has('featured') ? 1 : 0,
+            'is_active'         => $request->has('is_active') ? 1 : 0,
+            'meta_title'        => $request->meta_title,
+            'meta_description'  => $request->meta_description,
         ];
 
-        // Handle image upload
+        // Handle new image upload
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($product->image && Storage::exists('public/' . $product->image)) {
-                Storage::delete('public/' . $product->image);
+            // Delete old images if exists
+            $oldImages = $product->images ?? [];
+            if (is_string($oldImages)) {
+                $oldImages = json_decode($oldImages, true) ?? [];
             }
-            
+            foreach ($oldImages as $oldImg) {
+                if (Storage::exists('public/' . $oldImg)) {
+                    Storage::delete('public/' . $oldImg);
+                }
+            }
+
             $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
+            $imageName = time() . '_' . Str::slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $image->getClientOriginalExtension();
             $image->storeAs('public/products', $imageName);
-            $data['image'] = 'products/' . $imageName;
+            $data['images'] = json_encode(['products/' . $imageName]);
         }
 
         $product->update($data);
@@ -183,9 +233,15 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Delete image if exists
-        if ($product->image && Storage::exists('public/' . $product->image)) {
-            Storage::delete('public/' . $product->image);
+        // Delete images if exists
+        $images = $product->images ?? [];
+        if (is_string($images)) {
+            $images = json_decode($images, true) ?? [];
+        }
+        foreach ($images as $img) {
+            if (Storage::exists('public/' . $img)) {
+                Storage::delete('public/' . $img);
+            }
         }
 
         $product->delete();
@@ -193,5 +249,137 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil dihapus.');
     }
+
+    /**
+     * Toggle product active status
+     */
+    public function toggleActive(Product $product)
+    {
+        $product->update(['is_active' => !$product->is_active]);
+        $status = $product->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->back()->with('success', "Produk berhasil {$status}.");
+    }
+
+    /**
+     * Toggle product featured status
+     */
+    public function toggleFeatured(Product $product)
+    {
+        $product->update(['featured' => !$product->featured]);
+        $status = $product->featured ? 'ditandai unggulan' : 'dihapus dari unggulan';
+        return redirect()->back()->with('success', "Produk berhasil {$status}.");
+    }
+    /**
+     * Generate SKU based on category.
+     */
+    public function generateSku(Request $request)
+    {
+        $categoryId = $request->get('category_id');
+        $prefix = 'PRD';
+
+        if ($categoryId) {
+            $category = Category::find($categoryId);
+            if ($category) {
+                // Determine prefix from category name: e.g., "Bibit Ikan" -> "BIB"
+                $cleanName = preg_replace('/[^A-Za-z0-9]/', '', $category->name);
+                $prefix = strtoupper(substr($cleanName, 0, 3));
+                if (strlen($prefix) < 3) {
+                    $prefix = str_pad($prefix, 3, 'X');
+                }
+            }
+        }
+
+        // Find the latest product with this prefix
+        $latestProduct = Product::where('sku', 'like', $prefix . '-%')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $nextNumber = 1;
+        if ($latestProduct && $latestProduct->sku) {
+            // Extract the number part
+            $parts = explode('-', $latestProduct->sku);
+            if (count($parts) > 1 && is_numeric(end($parts))) {
+                $nextNumber = intval(end($parts)) + 1;
+            }
+        }
+
+        $sku = $prefix . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+        // Ensure it's absolutely unique
+        while (Product::where('sku', $sku)->exists()) {
+            $nextNumber++;
+            $sku = $prefix . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+        }
+
+        return response()->json(['sku' => $sku]);
+    }
+
+    /**
+     * Handle mass actions for products (Delete, Activate, Deactivate).
+     */
+    public function massAction(Request $request)
+    {
+        $action = $request->input('action');
+        $productIds = $request->input('product_ids');
+
+        if (!$productIds || !is_array($productIds) || empty($productIds)) {
+            return redirect()->back()->with('error', 'Pilih minimal satu produk untuk menerapkan aksi.');
+        }
+
+        switch ($action) {
+            case 'delete':
+                // Get all images associated with the products to delete
+                $products = Product::whereIn('id', $productIds)->get();
+                foreach ($products as $product) {
+                    $images = $product->images;
+                    if (is_string($images)) $images = json_decode($images, true) ?? [];
+                    if (is_array($images)) {
+                        foreach ($images as $img) {
+                            if (Storage::exists('public/' . $img)) {
+                                Storage::delete('public/' . $img);
+                            }
+                        }
+                    }
+                }
+                
+                Product::whereIn('id', $productIds)->delete();
+                return redirect()->back()->with('success', count($productIds) . ' produk berhasil dihapus secara massal.');
+
+            case 'activate':
+                Product::whereIn('id', $productIds)->update(['is_active' => 1]);
+                return redirect()->back()->with('success', count($productIds) . ' produk berhasil diaktifkan massal.');
+
+            case 'deactivate':
+                Product::whereIn('id', $productIds)->update(['is_active' => 0]);
+                return redirect()->back()->with('success', count($productIds) . ' produk berhasil dinonaktifkan massal.');
+
+            default:
+                return redirect()->back()->with('error', 'Aksi massal tidak valid.');
+        }
+    }
+
+    /**
+     * Download the Excel template for bulk importing products.
+     */
+    public function downloadTemplate()
+    {
+        return Excel::download(new \App\Exports\ProductsTemplateExport, 'template_import_produk.xlsx');
+    }
+
+    /**
+     * Import products from an Excel/CSV file.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ]);
+
+        try {
+            Excel::import(new ProductsImport, $request->file('file'));
+            return redirect()->back()->with('success', 'Produk berhasil diimpor dari file Excel!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengimpor produk: ' . $e->getMessage());
+        }
+    }
 }
-?>

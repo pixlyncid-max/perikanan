@@ -32,7 +32,7 @@ class ArticleController extends Controller
             $query->where('is_published', $request->get('status') === 'published');
         }
 
-        $articles = $query->latest()->paginate(10);
+        $articles = $query->orderBy('id', 'asc')->paginate(10);
         
         return view('admin.articles.index', compact('articles'));
     }

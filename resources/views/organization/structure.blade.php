@@ -347,59 +347,6 @@
         </div>
     </section>
 
-    <!-- SECTION 3: ANGGOTA -->
-    <section class="mb-16 text-center">
-        <h2 class="text-3xl font-bold text-gray-800">ANGGOTA</h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8 max-w-6xl mx-auto">
-            @foreach($anggotaList as $anggota)
-            <div class="card-container bg-white rounded-2xl shadow-lg overflow-hidden" onclick="toggleFlip(this)">
-                <div class="card-inner">
-                    <!-- Front Card -->
-                    <div class="card-front p-5 bg-white">
-                        <div class="card-content">
-                            <!-- Foto Profil - Centered on Top -->
-                            <div class="profile-wrapper">
-                                <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center mx-auto">
-                                    @if($anggota['photo'])
-                                        <img src="{{ $anggota['photo'] }}" alt="{{ $anggota['name'] }}" class="profile-image w-full h-full object-cover rounded-full border-2 border-white">
-                                    @else
-                                        <i class="fas fa-user text-blue-600 text-2xl"></i>
-                                    @endif
-                                </div>
-                            </div>
-                            <!-- Info - Below Photo -->
-                            <h3 class="card-title text-base font-bold text-gray-800">{{ $anggota['name'] }}</h3>
-                            <p class="card-subtitle text-blue-600 text-sm font-medium">{{ $anggota['position'] }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Back Card - No scroll, fixed content -->
-                    <div class="card-back p-4 bg-gradient-to-br from-blue-700 to-blue-800 text-white">
-                        <div class="card-back-content">
-                            <h3 class="text-sm font-bold mb-3 text-center">{{ $anggota['full_name'] }}</h3>
-                            <div class="w-full">
-                                <div class="info-box">
-                                    <p class="text-blue-200 text-xs uppercase tracking-wider mb-0.5 font-medium">Jabatan</p>
-                                    <p class="font-semibold text-white text-xs">{{ $anggota['position'] }}</p>
-                                </div>
-                                <div class="info-box">
-                                    <p class="text-blue-200 text-xs uppercase tracking-wider mb-0.5 font-medium">Bidang</p>
-                                    <p class="font-semibold text-white text-xs">{{ $anggota['field'] }}</p>
-                                </div>
-                                <div class="info-box">
-                                    <p class="text-blue-200 text-xs uppercase tracking-wider mb-0.5 font-medium">Lokasi</p>
-                                    <p class="font-semibold text-white text-xs">{{ $anggota['location'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </section>
-
     <!-- DPC Navigation Section -->
     <section>
         <div class="bg-white rounded-2xl shadow-lg p-8">

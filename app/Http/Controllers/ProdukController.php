@@ -28,8 +28,13 @@ class ProdukController extends Controller
 
     public function pakanHidup()
     {
-        // Return static view without database query
-        return view('produk.pakan-hidup');
+        $category = Category::where('slug', 'pakan-hidup')->firstOrFail();
+        $products = Product::where('category_id', $category->id)
+            ->active()
+            ->latest()
+            ->paginate(12);
+        
+        return view('produk.pakan-hidup', compact('category', 'products'));
     }
 
 
@@ -46,8 +51,13 @@ class ProdukController extends Controller
 
     public function penyewaanKapal()
     {
-        // Return static view without database query
-        return view('produk.penyewaan-kapal');
+        $category = Category::where('slug', 'penyewaan-kapal')->firstOrFail();
+        $products = Product::where('category_id', $category->id)
+            ->active()
+            ->latest()
+            ->paginate(12);
+        
+        return view('produk.penyewaan-kapal', compact('category', 'products'));
     }
 
 

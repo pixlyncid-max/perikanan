@@ -28,6 +28,7 @@ class Organization extends Model
         'description',
         'logo',
         'is_active',
+        'display_order',
     ];
 
     protected $casts = [

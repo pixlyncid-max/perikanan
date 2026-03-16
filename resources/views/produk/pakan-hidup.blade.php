@@ -34,162 +34,73 @@
             </div>
         </div>
 
-        <div class="lg:col-span-3 space-y-12">
-            <section id="artemia" class="bg-white rounded-xl shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                        <i class="fas fa-egg text-green-600 text-xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Artemia</h2>
-                </div>
-                <p class="text-gray-600 mb-6">Artemia adalah pakan hidup yang kaya protein untuk larva ikan dan udang. Tersedia dalam bentuk telur dan nauplii segar.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-egg text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Telur Artemia Premium</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 50gr, hatch rate >90%</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-green-600">Rp 150.000</span>
-                            <button class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-egg text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Nauplii Artemia Segar</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 100ml, siap pakai</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-green-600">Rp 75.000</span>
-                            <button class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-egg text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Artemia Decapsulated</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 100gr, tanpa cangkang</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-green-600">Rp 200.000</span>
-                            <button class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div class="lg:col-span-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @forelse($products as $product)
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition flex flex-col">
+                        <div class="relative h-48 bg-gray-100 flex-shrink-0">
+                            @php
+                                $imgs = $product->images;
+                                if(is_string($imgs)) $imgs = json_decode($imgs, true);
+                                $firstImg = (!empty($imgs) && is_array($imgs)) ? $imgs[0] : null;
+                            @endphp
+                            @if($firstImg)
+                                <img src="{{ asset('storage/'.$firstImg) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="absolute inset-0 flex items-center justify-center text-gray-400">
+                                    <i class="fas fa-bug text-6xl"></i>
+                                </div>
+                            @endif
 
-            <section id="cacing-sutra" class="bg-white rounded-xl shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                        <i class="fas fa-worm text-blue-600 text-xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Cacing Sutra (Tubifex)</h2>
-                </div>
-                <p class="text-gray-600 mb-6">Cacing sutra adalah pakan favorit untuk ikan hias dan larva. Kaya protein dan mudah dicerna.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-worm text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Cacing Sutra Segar</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 100gr, segar dari peternak</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-blue-600">Rp 35.000</span>
-                            <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-worm text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Cacing Sutra Beku</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 50gr, praktis dan tahan lama</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-blue-600">Rp 45.000</span>
-                            <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-worm text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Cacing Sutra Kering</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 25gr, untuk cadangan</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-blue-600">Rp 55.000</span>
-                            <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                            @if($product->featured)
+                                <div class="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                    <i class="fas fa-star mr-1"></i> Unggulan
+                                </div>
+                            @endif
 
-            <section id="cacing-tanah" class="bg-white rounded-xl shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mr-4">
-                        <i class="fas fa-leaf text-amber-600 text-xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Cacing Tanah (Lumbricus)</h2>
-                </div>
-                <p class="text-gray-600 mb-6">Cacing tanah adalah pakan alami yang kaya nutrisi untuk ikan predator dan burayak.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-leaf text-4xl text-gray-400"></i>
+                            @if($product->sale_price > 0 && $product->price > 0)
+                                <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                    -{{ round((1 - $product->sale_price / $product->price) * 100) }}%
+                                </div>
+                            @endif
                         </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Cacing Tanah Segar</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 200gr, langsung dari kebun</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-amber-600">Rp 25.000</span>
-                            <button class="bg-amber-600 text-white px-3 py-1 rounded hover:bg-amber-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-leaf text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Cacing Tanah Jumbo</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 500gr, ukuran besar</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-amber-600">Rp 55.000</span>
-                            <button class="bg-amber-600 text-white px-3 py-1 rounded hover:bg-amber-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2 truncate" title="{{ $product->name }}">{{ $product->name }}</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">{{ $product->short_description ?: Str::limit($product->description, 80) }}</p>
+                            
+                            <div class="flex flex-col mt-auto gap-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        @if($product->sale_price > 0)
+                                            <span class="text-xs text-gray-400 line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                            <span class="text-xl font-bold text-green-600">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                                        @else
+                                            <span class="text-xl font-bold text-green-600">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                        @endif
+                                    </div>
+                                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="text-xs {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600 font-bold' }}">
+                                    Stok: {{ $product->stock > 0 ? $product->stock : 'Habis' }}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
-                        <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                            <i class="fas fa-leaf text-4xl text-gray-400"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mb-2">Cacing Tanah Kering</h3>
-                        <p class="text-sm text-gray-600 mb-3">Kemasan 100gr, tahan simpan</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-amber-600">Rp 40.000</span>
-                            <button class="bg-amber-600 text-white px-3 py-1 rounded hover:bg-amber-700">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
+                @empty
+                    <div class="col-span-full py-12 text-center text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-3 text-gray-300"></i>
+                        <p>Belum ada produk di kategori ini.</p>
                     </div>
-                </div>
-            </section>
+                @endforelse
+            </div>
+
+            @if($products->hasPages())
+            <div class="mt-8 flex justify-center">
+                {{ $products->links('pagination::tailwind') }}
+            </div>
+            @endif
         </div>
     </div>
 </div>

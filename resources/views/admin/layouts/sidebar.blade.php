@@ -79,6 +79,14 @@
         <!-- Divider -->
         <div class="border-t border-slate-700 my-4"></div>
         
+        <!-- Manajemen Organisasi -->
+        <a href="{{ route('admin.organizations.index') }}" 
+           class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.organizations.*') ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <i class="fas fa-sitemap mr-3 text-lg {{ request()->routeIs('admin.organizations.*') ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-400' }}"></i>
+            Manajemen Organisasi
+        </a>
+        <div class="border-t border-slate-700 my-4"></div>
+        
         <!-- Manajemen Artikel -->
         <a href="{{ route('admin.articles.index') }}" 
            class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.articles.*') ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">

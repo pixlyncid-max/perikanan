@@ -42,163 +42,78 @@
         </div>
     </div>
 
-    <div id="location-samarinda" class="location-content">
+    <div id="all-locations" class="location-content">
         <div class="flex items-center mb-6">
             <i class="fas fa-anchor text-cyan-600 text-2xl mr-3"></i>
-            <h2 class="text-2xl font-bold text-gray-800">Kapal di Samarinda</h2>
+            <h2 class="text-2xl font-bold text-gray-800">Semua Kapal</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gray-200 flex items-center justify-center">
-                    <i class="fas fa-ship text-6xl text-gray-400"></i>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">KM. Fajar Bahari</h3>
-                    <div class="space-y-2 text-sm text-gray-600 mb-4">
-                        <p><i class="fas fa-ruler-combined mr-2"></i>15 GT, 12 meter</p>
-                        <p><i class="fas fa-users mr-2"></i>Kapasitas 8 awak</p>
-                        <p><i class="fas fa-fish mr-2"></i>Alat tangkap: Purse Seine</p>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-sm text-gray-500">Harga/hari</span>
-                            <p class="text-xl font-bold text-cyan-600">Rp 2.500.000</p>
-                        </div>
-                        <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700">
-                            Sewa
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gray-200 flex items-center justify-center">
-                    <i class="fas fa-ship text-6xl text-gray-400"></i>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">KM. Samudra Jaya</h3>
-                    <div class="space-y-2 text-sm text-gray-600 mb-4">
-                        <p><i class="fas fa-ruler-combined mr-2"></i>20 GT, 15 meter</p>
-                        <p><i class="fas fa-users mr-2"></i>Kapasitas 10 awak</p>
-                        <p><i class="fas fa-fish mr-2"></i>Alat tangkap: Gill Net</p>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-sm text-gray-500">Harga/hari</span>
-                            <p class="text-xl font-bold text-cyan-600">Rp 3.200.000</p>
-                        </div>
-                        <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700">
-                            Sewa
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gray-200 flex items-center justify-center">
-                    <i class="fas fa-ship text-6xl text-gray-400"></i>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">KM. Lautan Emas</h3>
-                    <div class="space-y-2 text-sm text-gray-600 mb-4">
-                        <p><i class="fas fa-ruler-combined mr-2"></i>10 GT, 9 meter</p>
-                        <p><i class="fas fa-users mr-2"></i>Kapasitas 5 awak</p>
-                        <p><i class="fas fa-fish mr-2"></i>Alat tangkap: Long Line</p>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-sm text-gray-500">Harga/hari</span>
-                            <p class="text-xl font-bold text-cyan-600">Rp 1.800.000</p>
-                        </div>
-                        <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700">
-                            Sewa
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            @forelse($products as $product)
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition flex flex-col">
+                    <div class="relative h-48 bg-gray-100 flex-shrink-0">
+                        @php
+                            $imgs = $product->images;
+                            if(is_string($imgs)) $imgs = json_decode($imgs, true);
+                            $firstImg = (!empty($imgs) && is_array($imgs)) ? $imgs[0] : null;
+                        @endphp
+                        @if($firstImg)
+                            <img src="{{ asset('storage/'.$firstImg) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="absolute inset-0 flex items-center justify-center text-gray-400">
+                                <i class="fas fa-ship text-6xl"></i>
+                            </div>
+                        @endif
 
-    <div id="location-bontang" class="location-content hidden">
-        <div class="flex items-center mb-6">
-            <i class="fas fa-anchor text-cyan-600 text-2xl mr-3"></i>
-            <h2 class="text-2xl font-bold text-gray-800">Kapal di Bontang</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gray-200 flex items-center justify-center">
-                    <i class="fas fa-ship text-6xl text-gray-400"></i>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">KM. Bontang Makmur</h3>
-                    <div class="space-y-2 text-sm text-gray-600 mb-4">
-                        <p><i class="fas fa-ruler-combined mr-2"></i>25 GT, 18 meter</p>
-                        <p><i class="fas fa-users mr-2"></i>Kapasitas 12 awak</p>
-                        <p><i class="fas fa-fish mr-2"></i>Alat tangkap: Trawl</p>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-sm text-gray-500">Harga/hari</span>
-                            <p class="text-xl font-bold text-cyan-600">Rp 4.000.000</p>
-                        </div>
-                        <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700">
-                            Sewa
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gray-200 flex items-center justify-center">
-                    <i class="fas fa-ship text-6xl text-gray-400"></i>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">KM. Laut Bontang</h3>
-                    <div class="space-y-2 text-sm text-gray-600 mb-4">
-                        <p><i class="fas fa-ruler-combined mr-2"></i>18 GT, 14 meter</p>
-                        <p><i class="fas fa-users mr-2"></i>Kapasitas 8 awak</p>
-                        <p><i class="fas fa-fish mr-2"></i>Alat tangkap: Purse Seine</p>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-sm text-gray-500">Harga/hari</span>
-                            <p class="text-xl font-bold text-cyan-600">Rp 2.800.000</p>
-                        </div>
-                        <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700">
-                            Sewa
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                        @if($product->featured)
+                            <div class="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                <i class="fas fa-star mr-1"></i> Unggulan
+                            </div>
+                        @endif
 
-    <div id="location-balikpapan" class="location-content hidden">
-        <div class="flex items-center mb-6">
-            <i class="fas fa-anchor text-cyan-600 text-2xl mr-3"></i>
-            <h2 class="text-2xl font-bold text-gray-800">Kapal di Balikpapan</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="h-48 bg-gray-200 flex items-center justify-center">
-                    <i class="fas fa-ship text-6xl text-gray-400"></i>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">KM. Balikpapan Jaya</h3>
-                    <div class="space-y-2 text-sm text-gray-600 mb-4">
-                        <p><i class="fas fa-ruler-combined mr-2"></i>30 GT, 20 meter</p>
-                        <p><i class="fas fa-users mr-2"></i>Kapasitas 15 awak</p>
-                        <p><i class="fas fa-fish mr-2"></i>Alat tangkap: Trawl</p>
+                        @if($product->sale_price > 0 && $product->price > 0)
+                            <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                -{{ round((1 - $product->sale_price / $product->price) * 100) }}%
+                            </div>
+                        @endif
                     </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-sm text-gray-500">Harga/hari</span>
-                            <p class="text-xl font-bold text-cyan-600">Rp 5.500.000</p>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2 truncate" title="{{ $product->name }}">{{ $product->name }}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">{{ $product->short_description ?: Str::limit($product->description, 80) }}</p>
+                        
+                        <div class="flex flex-col mt-auto gap-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <span class="text-sm text-gray-500">Harga/hari</span>
+                                    @if($product->sale_price > 0)
+                                        <span class="text-xs text-gray-400 line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                        <span class="text-xl font-bold text-cyan-600">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-xl font-bold text-cyan-600">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
+                                <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                                    <i class="fas fa-cart-plus"></i> Sewa
+                                </button>
+                            </div>
+                            <div class="text-xs {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600 font-bold' }}">
+                                Tersedia: {{ $product->stock > 0 ? $product->stock . ' Kapal' : 'Penuh' }}
+                            </div>
                         </div>
-                        <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700">
-                            Sewa
-                        </button>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="col-span-full py-12 text-center text-gray-500">
+                    <i class="fas fa-anchor text-4xl mb-3 text-gray-300"></i>
+                    <p>Belum ada kapal di kategori ini.</p>
+                </div>
+            @endforelse
         </div>
+
+        @if($products->hasPages())
+        <div class="mt-8 flex justify-center">
+            {{ $products->links('pagination::tailwind') }}
+        </div>
+        @endif
     </div>
 
     <div class="mt-12 bg-cyan-50 rounded-xl p-8">
