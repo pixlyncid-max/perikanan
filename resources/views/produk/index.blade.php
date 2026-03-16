@@ -9,11 +9,45 @@
     <div class="container mx-auto px-4 relative z-10">
         <div class="text-center text-white">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Produk FISHERIES</h1>
-
-            <p class="text-xl opacity-90">Solusi lengkap untuk kebutuhan perikanan Anda</p>
+            <p class="text-xl opacity-90 mb-8">Solusi lengkap untuk kebutuhan perikanan Anda</p>
+            
+            <div class="max-w-2xl mx-auto">
+                <form action="{{ route('produk.index') }}" method="GET" class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari produk perikanan..." class="w-full px-6 py-4 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-xl">
+                    <button type="submit" class="absolute right-2 top-2 bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
+                        Cari
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+@if(request('search'))
+<div class="container mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Hasil Pencarian: "{{ request('search') }}"</h2>
+        <a href="{{ route('produk.index') }}" class="text-blue-600 hover:underline">Lihat Semua Kategori</a>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @forelse($products as $product)
+            @include('produk.partials.product-card', ['product' => $product])
+        @empty
+            <div class="col-span-full py-12 text-center text-gray-500">
+                <i class="fas fa-search text-4xl mb-3 text-gray-300"></i>
+                <p>Tidak ditemukan produk dengan kata kunci "{{ request('search') }}"</p>
+            </div>
+        @endforelse
+    </div>
+    
+    @if($products->hasPages())
+        <div class="mt-8 flex justify-center">
+            {{ $products->links('pagination::tailwind') }}
+        </div>
+    @endif
+</div>
+@endif
 
 <!-- Programs Grid -->
 <div class="container mx-auto px-4 py-12">

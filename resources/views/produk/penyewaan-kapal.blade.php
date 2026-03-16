@@ -15,30 +15,27 @@
 <div class="container mx-auto px-4 py-12">
     <div class="mb-8">
         <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Pilih Lokasi Penyewaan</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-                <button onclick="showLocation('samarinda')" class="location-btn bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition text-sm font-medium" data-location="samarinda">
-                    Samarinda
-                </button>
-                <button onclick="showLocation('bontang')" class="location-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-medium" data-location="bontang">
-                    Bontang
-                </button>
-                <button onclick="showLocation('balikpapan')" class="location-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-medium" data-location="balikpapan">
-                    Balikpapan
-                </button>
-                <button onclick="showLocation('sangatta')" class="location-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-medium" data-location="sangatta">
-                    Sangatta
-                </button>
-                <button onclick="showLocation('berau')" class="location-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-medium" data-location="berau">
-                    Berau
-                </button>
-                <button onclick="showLocation('tenggarong')" class="location-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-medium" data-location="tenggarong">
-                    Tenggarong
-                </button>
-                <button onclick="showLocation('tanah-grogot')" class="location-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-medium" data-location="tanah-grogot">
-                    Tanah Grogot
-                </button>
-            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Filter Kapal</h3>
+            <form action="{{ route('produk.penyewaan-kapal') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Cari Nama Kapal atau Lokasi</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Contoh: Balikpapan, Kapal Motor..." class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Harga Maksimum/Hari</label>
+                    <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Rp" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                </div>
+                <div class="flex items-end gap-2">
+                    <button type="submit" class="flex-grow bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-700 transition font-medium">
+                        Cari
+                    </button>
+                    @if(request()->anyFilled(['search', 'max_price']))
+                        <a href="{{ route('produk.penyewaan-kapal') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm font-medium flex items-center">
+                            Reset
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
     </div>
 
@@ -49,58 +46,7 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($products as $product)
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition flex flex-col">
-                    <div class="relative h-48 bg-gray-100 flex-shrink-0">
-                        @php
-                            $imgs = $product->images;
-                            if(is_string($imgs)) $imgs = json_decode($imgs, true);
-                            $firstImg = (!empty($imgs) && is_array($imgs)) ? $imgs[0] : null;
-                        @endphp
-                        @if($firstImg)
-                            <img src="{{ asset('storage/'.$firstImg) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-                                <i class="fas fa-ship text-6xl"></i>
-                            </div>
-                        @endif
-
-                        @if($product->featured)
-                            <div class="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                                <i class="fas fa-star mr-1"></i> Unggulan
-                            </div>
-                        @endif
-
-                        @if($product->sale_price > 0 && $product->price > 0)
-                            <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                                -{{ round((1 - $product->sale_price / $product->price) * 100) }}%
-                            </div>
-                        @endif
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2 truncate" title="{{ $product->name }}">{{ $product->name }}</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">{{ $product->short_description ?: Str::limit($product->description, 80) }}</p>
-                        
-                        <div class="flex flex-col mt-auto gap-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-col">
-                                    <span class="text-sm text-gray-500">Harga/hari</span>
-                                    @if($product->sale_price > 0)
-                                        <span class="text-xs text-gray-400 line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                        <span class="text-xl font-bold text-cyan-600">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</span>
-                                    @else
-                                        <span class="text-xl font-bold text-cyan-600">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                    @endif
-                                </div>
-                                <button class="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition" {{ $product->stock < 1 ? 'disabled' : '' }}>
-                                    <i class="fas fa-cart-plus"></i> Sewa
-                                </button>
-                            </div>
-                            <div class="text-xs {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600 font-bold' }}">
-                                Tersedia: {{ $product->stock > 0 ? $product->stock . ' Kapal' : 'Penuh' }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('produk.partials.product-card', ['product' => $product, 'colorClass' => 'cyan'])
             @empty
                 <div class="col-span-full py-12 text-center text-gray-500">
                     <i class="fas fa-anchor text-4xl mb-3 text-gray-300"></i>

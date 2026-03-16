@@ -58,6 +58,7 @@ Route::prefix('produk')->name('produk.')->group(function () {
     Route::get('/penyewaan-kapal', [ProdukController::class, 'penyewaanKapal'])->name('penyewaan-kapal');
     Route::get('/vitamin-air', [ProdukController::class, 'vitaminAir'])->name('vitamin-air');
     Route::get('/bibit-ikan', [ProdukController::class, 'bibitIkan'])->name('bibit-ikan');
+    Route::get('/{slug}', [ProdukController::class, 'show'])->name('show');
 });
 
 
