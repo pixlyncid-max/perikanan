@@ -40,6 +40,64 @@
         .dropdown-toggle i {
             transition: transform 0.2s ease;
         }
+
+        /* Success Modal Styles */
+        #success-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        /* Flying Animation Styles */
+        .fly-item {
+            position: fixed;
+            z-index: 9999;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.42, 0, 0.58, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+
+        /* Checkout Modal Styles */
+        #checkout-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        #checkout-modal-content {
+            background: white;
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 
     
@@ -134,8 +192,23 @@
                     <a href="/contact" class="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition">Kontak</a>
                 </div>
 
-                <!-- Auth Buttons -->
+                <!-- Cart & Auth Buttons -->
                 <div class="hidden md:flex items-center space-x-3">
+                    <!-- Cart Icon -->
+                    <a href="{{ route('cart.index') }}" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        @php $cartCount = count(Session::get('cart', [])); @endphp
+                        @if($cartCount > 0)
+                            <span id="cart-counter" class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
+                                {{ $cartCount }}
+                            </span>
+                        @else
+                            <span id="cart-counter" class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white hidden">
+                                0
+                            </span>
+                        @endif
+                    </a>
+
                     <?php if(!is_logged_in()): ?>
                         <a href="/login" class="px-4 py-2 text-blue-600 font-medium hover:text-blue-700 transition">Login</a>
                         <a href="/register" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">Daftar</a>
@@ -156,6 +229,9 @@
                             </button>
 
                             <div class="dropdown-menu absolute top-full right-0 w-48 bg-white rounded-lg shadow-xl border mt-1 py-2">
+                                <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <i class="fas fa-shopping-bag mr-2"></i>Pesanan Saya
+                                </a>
                                 <a href="/member-card" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
                                     <i class="fas fa-id-card mr-2"></i>Kartu Anggota
                                 </a>
@@ -252,6 +328,40 @@
             </div>
         </div>
     </nav>
+
+    <!-- Success Modal (Centered) -->
+    <div id="success-modal" class="bg-gray-900/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full mx-4 shadow-[0_0_50px_rgba(0,0,0,0.3)]">
+        <div class="mb-4 flex justify-center">
+            <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
+                <i class="fas fa-check text-white text-4xl"></i>
+            </div>
+        </div>
+        <h3 id="modal-message" class="text-white text-2xl font-bold mb-2">Berhasil!</h3>
+        <p class="text-gray-300">Produk telah ditambahkan ke keranjang belanja</p>
+    </div>
+
+    <!-- Checkout Modal (Iframe) -->
+    <div id="checkout-modal">
+        <div id="checkout-modal-content">
+            <div class="p-4 border-b flex justify-between items-center bg-white">
+                <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-blue-600"></i> Pembayaran Aman Xendit
+                </h3>
+                <button onclick="closeCheckoutModal()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="flex-grow bg-gray-50 relative">
+                <div id="checkout-loader" class="absolute inset-0 flex items-center justify-center bg-white/80">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-2"></i>
+                        <p class="text-gray-500 font-medium">Memuat Halaman Pembayaran...</p>
+                    </div>
+                </div>
+                <iframe id="checkout-iframe" src="" class="w-full h-full border-none" onload="document.getElementById('checkout-loader').style.display='none'"></iframe>
+            </div>
+        </div>
+    </div>
 
     <!-- Flash Messages -->
     @if(session('success'))
@@ -440,9 +550,112 @@
                 });
             }
         });
+
+        // Add to Cart global function
+        function addToCart(productId) {
+            const btn = document.getElementById(`cart-btn-${productId}`);
+            const img = document.getElementById(`product-img-${productId}`);
+            const cartIcon = document.querySelector('.fa-shopping-cart').parentElement;
+
+            fetch('{{ route("cart.add") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Start Animation
+                    if (img && cartIcon) {
+                        const imgRect = img.getBoundingClientRect();
+                        const cartRect = cartIcon.getBoundingClientRect();
+
+                        const flyer = document.createElement('img');
+                        flyer.src = img.src;
+                        flyer.className = 'fly-item';
+                        flyer.style.top = imgRect.top + 'px';
+                        flyer.style.left = imgRect.left + 'px';
+                        document.body.appendChild(flyer);
+
+                        setTimeout(() => {
+                            flyer.style.top = cartRect.top + 'px';
+                            flyer.style.left = cartRect.left + 'px';
+                            flyer.style.width = '10px';
+                            flyer.style.height = '10px';
+                            flyer.style.opacity = '0';
+                        }, 50);
+
+                        flyer.addEventListener('transitionend', () => {
+                            flyer.remove();
+                            // Update counter and shake cart
+                            const counter = document.getElementById('cart-counter');
+                            if (counter) {
+                                counter.textContent = data.cart_count;
+                                counter.classList.remove('hidden');
+                                // Shake cart icon
+                                cartIcon.classList.add('animate-bounce');
+                                setTimeout(() => cartIcon.classList.remove('animate-bounce'), 1000);
+                            }
+                        });
+                    }
+
+                    // Show centered modal
+                    const modal = document.getElementById('success-modal');
+                    const messageEl = document.getElementById('modal-message');
+                    if (modal) {
+                        modal.style.display = 'block';
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                        }, 2500);
+                    }
+                } else {
+                    alert(data.message || 'Gagal menambahkan ke keranjang');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan.');
+            });
+        }
+
+        // Checkout Modal Functions
+        function openCheckoutModal(url) {
+            const modal = document.getElementById('checkout-modal');
+            const iframe = document.getElementById('checkout-iframe');
+            const loader = document.getElementById('checkout-loader');
+            
+            if (modal && iframe) {
+                loader.style.display = 'flex';
+                iframe.src = url;
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scroll
+            }
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            const iframe = document.getElementById('checkout-iframe');
+            
+            if (modal && iframe) {
+                modal.style.display = 'none';
+                iframe.src = '';
+                document.body.style.overflow = 'auto'; // Restore scroll
+                // Optional: refresh page or cart to see status updates
+                window.location.reload();
+            }
+        }
     </script>
 
 
     @stack('scripts')
 </body>
+</html>
 </html>

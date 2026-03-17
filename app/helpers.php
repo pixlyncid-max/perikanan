@@ -434,7 +434,7 @@ if (!function_exists('get_current_user_role')) {
      * Get current user role from session
      */
     function get_current_user_role(): string {
-        $user = \Illuminate\Support\Facades\Session::get('user');
+        $user = \Illuminate\Support\Facades\Session::get('user', []);
         return $user['type'] ?? 'guest';
     }
 }
@@ -444,7 +444,7 @@ if (!function_exists('is_admin')) {
      * Check if current user is admin
      */
     function is_admin(): bool {
-        $user = \Illuminate\Support\Facades\Session::get('user');
+        $user = \Illuminate\Support\Facades\Session::get('user', []);
         return ($user['type'] ?? '') === 'admin';
     }
 }
@@ -454,7 +454,7 @@ if (!function_exists('is_member')) {
      * Check if current user is member (including admin)
      */
     function is_member(): bool {
-        $user = \Illuminate\Support\Facades\Session::get('user');
+        $user = \Illuminate\Support\Facades\Session::get('user', []);
         $type = $user['type'] ?? '';
         return $type === 'member' || $type === 'admin';
     }
@@ -465,7 +465,7 @@ if (!function_exists('is_user')) {
      * Check if current user is regular user only
      */
     function is_user(): bool {
-        $user = \Illuminate\Support\Facades\Session::get('user');
+        $user = \Illuminate\Support\Facades\Session::get('user', []);
         return ($user['type'] ?? '') === 'user';
     }
 }

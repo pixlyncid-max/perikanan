@@ -77,7 +77,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <button class="flex-grow bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-3 {{ $product->stock < 1 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                        <button onclick="addToCart({{ $product->id }})" class="flex-grow bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-3 {{ $product->stock < 1 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $product->stock < 1 ? 'disabled' : '' }}>
                             <i class="fas fa-shopping-cart"></i>
                             Tambah ke Keranjang
                         </button>

@@ -91,6 +91,20 @@ Route::middleware(['web', 'guest'])->group(function () {
 Route::middleware(['web'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/member-card', [AuthController::class, 'memberCard'])->name('member.card');
+
+    // Order History Routes
+    Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order_number}', [\App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order_number}/repay', [\App\Http\Controllers\OrderController::class, 'repay'])->name('orders.repay');
+
+    // Cart Routes
+    Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+
+    // Checkout Process (Web context for session access)
+    Route::post('/checkout-process', [\App\Http\Controllers\Api\CheckoutController::class, 'store'])->name('checkout.process');
 });
 
 // Admin Routes
@@ -124,6 +138,7 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     // Order Management
     Route::resource('orders', OrderController::class);
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::post('/orders/{order}/sync-payment', [OrderController::class, 'syncPaymentStatus'])->name('orders.sync-payment');
     
     // Article Management
     Route::resource('articles', AdminArticleController::class);

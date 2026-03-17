@@ -101,10 +101,6 @@
                     <span class="text-gray-500">Subtotal:</span>
                     <span class="font-medium text-gray-900">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-500">Diskon:</span>
-                    <span class="font-medium text-gray-900">Rp {{ number_format($order->discount, 0, ',', '.') }}</span>
-                </div>
                 <div class="flex justify-between border-t pt-2 mt-2">
                     <span class="text-gray-800 font-semibold">Total:</span>
                     <span class="text-blue-600 font-bold text-lg">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
@@ -112,6 +108,36 @@
             </div>
         </div>
     </div>
+
+    <!-- Xendit Details -->
+    @if($order->payment_method === 'xendit' || $order->payment_url)
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                    <i class="fas fa-credit-card text-blue-600 mr-2"></i> Detail Pembayaran Xendit
+                </h3>
+                <p class="text-sm text-gray-500 border-b pb-2 mb-2">Informasi transaksi langsung dari gateway pembayaran.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                    <div class="flex gap-2">
+                        <span class="text-gray-500 w-24">Link Invoice:</span>
+                        <a href="{{ $order->payment_url }}" target="_blank" class="text-blue-600 hover:underline font-medium break-all">
+                            {{ $order->payment_url }} <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <form action="{{ route('admin.orders.sync-payment', $order) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition font-medium text-sm">
+                        <i class="fas fa-sync-alt mr-2"></i> Sinkronisasi Status
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
     
     <!-- Order Items -->
     <div class="bg-white rounded-lg shadow overflow-hidden">

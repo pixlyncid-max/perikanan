@@ -8,7 +8,7 @@
 <div class="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition flex flex-col h-full">
     <a href="{{ route('produk.show', $product->slug) }}" class="relative h-48 bg-gray-100 flex-shrink-0 block overflow-hidden">
         @if($firstImg)
-            <img src="{{ asset('storage/'.$firstImg) }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
+            <img src="{{ asset('storage/'.$firstImg) }}" id="product-img-{{ $product->id }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
         @else
             <div class="absolute inset-0 flex items-center justify-center text-gray-400">
                 <i class="fas fa-box text-6xl"></i>
@@ -45,7 +45,7 @@
                         <span class="text-xl font-bold text-{{ $colorClass }}-600">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                     @endif
                 </div>
-                <button class="bg-{{ $colorClass }}-600 text-white px-4 py-2 rounded-lg hover:bg-{{ $colorClass }}-700 transition" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                <button onclick="addToCart({{ $product->id }})" id="cart-btn-{{ $product->id }}" class="bg-{{ $colorClass }}-600 text-white px-4 py-2 rounded-lg hover:bg-{{ $colorClass }}-700 transition" {{ $product->stock < 1 ? 'disabled' : '' }}>
                     <i class="fas fa-cart-plus"></i>
                 </button>
             </div>

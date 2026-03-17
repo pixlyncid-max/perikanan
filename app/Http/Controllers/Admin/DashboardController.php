@@ -29,6 +29,7 @@ class DashboardController extends Controller
         $totalOrders = Order::count();
         $totalArticles = Article::count();
         $totalCategories = Category::count();
+        $totalRevenue = Order::where('payment_status', 'paid')->sum('total_amount');
 
         // Get recent data
         $recentUsers = User::latest()->take(5)->get();
@@ -54,7 +55,8 @@ class DashboardController extends Controller
             'recentUsers',
             'recentOrders',
             'recentArticles',
-            'orderStats'
+            'orderStats',
+            'totalRevenue'
         ));
 
     }

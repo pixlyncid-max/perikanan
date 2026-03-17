@@ -57,6 +57,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembayaran</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metode</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -111,10 +112,19 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ strtoupper($order->payment_method ?? '-') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $order->created_at->format('d M Y H:i') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex space-x-2">
+                                @if($order->payment_url)
+                                    <a href="{{ $order->payment_url }}" target="_blank" 
+                                       class="text-blue-600 hover:text-blue-900 bg-blue-100 p-2 rounded" title="Link Invoice Xendit">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                @endif
                                 <a href="{{ route('admin.orders.show', $order) }}" 
                                    class="text-blue-600 hover:text-blue-900 bg-blue-100 p-2 rounded">
                                     <i class="fas fa-eye"></i>

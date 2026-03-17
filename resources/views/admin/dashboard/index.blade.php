@@ -84,17 +84,16 @@
             </div>
         </div>
         
-        <!-- Total Categories -->
+        <!-- Total Revenue -->
         <div class="bg-white rounded-lg shadow p-6 border-l-4 border-pink-500">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-pink-100 text-pink-500">
-                    <i class="fas fa-tags text-2xl"></i>
+                    <i class="fas fa-money-bill-wave text-2xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Kategori</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $totalCategories ?? 0 }}</p>
+                    <p class="text-sm font-medium text-gray-500">Total Pendapatan</p>
+                    <p class="text-xl font-bold text-gray-900">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
                 </div>
-
             </div>
         </div>
     </div>

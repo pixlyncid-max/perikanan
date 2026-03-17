@@ -75,6 +75,56 @@ class OrderController extends Controller
     }
 
     /**
+     * Sync payment status with Xendit manually.
+     */
+    public function syncPaymentStatus(Order $order, \App\Services\XenditService $xenditService)
+    {
+        if (!$order->payment_url) {
+            return back()->with('error', 'Pesanan ini tidak memiliki data pembayaran Xendit.');
+        }
+
+        // Extract invoice ID from URL (simple way for Xendit)
+        // URL format: https://checkout.xendit.co/web/65f...
+        // Or if we store invoice ID, but let's try searching by external ID (order_number)
+        
+        try {
+            // Xendit API search by external ID is preferred but requires different endpoint
+            // For now, let's assume we need the invoice ID from URL or similar
+            // Actually, XenditService@getInvoice needs ID. 
+            // If we don't store it, we might need a workaround.
+            
+            // Let's check if we can get it from the URL
+            $parts = explode('/', rtrim($order->payment_url, '/'));
+            $invoiceId = end($parts);
+
+            $xenditData = $xenditService->getInvoice($invoiceId);
+            $newStatus = strtolower($xenditData['status']);
+
+            $updateData = [];
+            if ($newStatus === 'settled' || $newStatus === 'paid') {
+                $updateData['payment_status'] = 'paid';
+                $updateData['paid_at'] = now();
+                if ($order->status === 'pending') {
+                    $updateData['status'] = 'processing';
+                }
+            } elseif ($newStatus === 'expired') {
+                $updateData['payment_status'] = 'failed';
+                $updateData['status'] = 'cancelled';
+            }
+
+            if (!empty($updateData)) {
+                $order->update($updateData);
+                return back()->with('success', 'Status pembayaran berhasil diperbarui: ' . $order->payment_status);
+            }
+
+            return back()->with('info', 'Status pembayaran di Xendit masih: ' . $newStatus);
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal sinkronisasi: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Order $order)
