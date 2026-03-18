@@ -98,6 +98,28 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
+
+        /* Alert Modal Styles */
+        #alert-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        #alert-modal-content {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
     </style>
 
     
@@ -363,6 +385,25 @@
         </div>
     </div>
 
+    <!-- Professional Alert Modal -->
+    <div id="alert-modal">
+        <div id="alert-modal-content" class="p-8 text-center">
+            <div id="alert-icon-container" class="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center text-4xl">
+                <i id="alert-icon" class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 id="alert-title" class="text-2xl font-bold text-gray-900 mb-2">Perhatian</h3>
+            <p id="alert-message" class="text-gray-600 mb-8 leading-relaxed">Pesan notifikasi di sini.</p>
+            <div class="flex flex-col gap-3">
+                <button id="alert-primary-btn" class="w-full py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                    Lanjutkan
+                </button>
+                <button id="alert-secondary-btn" onclick="closeAlert()" class="w-full py-3 text-gray-500 font-semibold hover:text-gray-700 transition">
+                    Nanti Saja
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Flash Messages -->
     @if(session('success'))
         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mx-4 mt-4 rounded shadow">
@@ -401,29 +442,29 @@
                         {{ get_setting('footer_description', 'Indonesian Fisheries Community - Komunitas perikanan terbesar di Kalimantan Timur.') }}
                     </p>
                     <div class="flex space-x-3">
-                        @if(get_setting('facebook_url'))
-                            <a href="{{ get_setting('facebook_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-blue-600 transition">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                        @endif
-                        @if(get_setting('twitter_url'))
-                            <a href="{{ get_setting('twitter_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-sky-500 transition">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                        @endif
                         @if(get_setting('instagram_url'))
                             <a href="{{ get_setting('instagram_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-pink-600 transition">
                                 <i class="fab fa-instagram"></i>
                             </a>
                         @endif
-                        @if(get_setting('whatsapp_number'))
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', get_setting('whatsapp_number')) }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-green-500 transition">
-                                <i class="fab fa-whatsapp"></i>
+                        @if(get_setting('facebook_url'))
+                            <a href="{{ get_setting('facebook_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-blue-600 transition">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        @endif
+                        @if(get_setting('tiktok_url'))
+                            <a href="{{ get_setting('tiktok_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-black transition">
+                                <i class="fab fa-tiktok"></i>
                             </a>
                         @endif
                         @if(get_setting('youtube_url'))
                             <a href="{{ get_setting('youtube_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-red-600 transition">
                                 <i class="fab fa-youtube"></i>
+                            </a>
+                        @endif
+                        @if(get_setting('whatsapp_number'))
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', get_setting('whatsapp_number')) }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-green-500 transition">
+                                <i class="fab fa-whatsapp"></i>
                             </a>
                         @endif
                     </div>
@@ -651,6 +692,58 @@
                 // Optional: refresh page or cart to see status updates
                 window.location.reload();
             }
+        }
+
+        // Global Alert Functions
+        function showAlert(options) {
+            const modal = document.getElementById('alert-modal');
+            const iconContainer = document.getElementById('alert-icon-container');
+            const icon = document.getElementById('alert-icon');
+            const title = document.getElementById('alert-title');
+            const message = document.getElementById('alert-message');
+            const primaryBtn = document.getElementById('alert-primary-btn');
+            const secondaryBtn = document.getElementById('alert-secondary-btn');
+
+            // Set type defaults
+            const types = {
+                'warning': { icon: 'fa-exclamation-triangle', bg: 'bg-amber-100', text: 'text-amber-600' },
+                'error': { icon: 'fa-times-circle', bg: 'bg-red-100', text: 'text-red-600' },
+                'success': { icon: 'fa-check-circle', bg: 'bg-green-100', text: 'text-green-600' },
+                'info': { icon: 'fa-info-circle', bg: 'bg-blue-100', text: 'text-blue-600' }
+            };
+
+            const type = types[options.type || 'info'];
+            
+            // Set content
+            icon.className = `fas ${type.icon}`;
+            iconContainer.className = `w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center text-4xl ${type.bg} ${type.text}`;
+            title.textContent = options.title || 'Perhatian';
+            message.textContent = options.message || '';
+            primaryBtn.textContent = options.primaryText || 'OK';
+            
+            if (options.secondaryText) {
+                secondaryBtn.textContent = options.secondaryText;
+                secondaryBtn.style.display = 'block';
+            } else {
+                secondaryBtn.style.display = 'none';
+            }
+
+            // Set Action
+            primaryBtn.onclick = function() {
+                if (options.onConfirm) {
+                    options.onConfirm();
+                }
+                closeAlert();
+            };
+
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAlert() {
+            const modal = document.getElementById('alert-modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
     </script>
 

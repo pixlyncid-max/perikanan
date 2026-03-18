@@ -111,6 +111,20 @@
 @push('scripts')
 <script>
     document.getElementById('btn-checkout')?.addEventListener('click', function() {
+        @if(!is_logged_in())
+            showAlert({
+                type: 'warning',
+                title: 'Login Diperlukan',
+                message: 'Silakan login terlebih dahulu untuk melanjutkan pemesanan dan menikmati layanan kami.',
+                primaryText: 'Login Sekarang',
+                secondaryText: 'Nanti Saja',
+                onConfirm: function() {
+                    window.location.href = "{{ route('login') }}";
+                }
+            });
+            return;
+        @endif
+
         const btn = this;
         const originalContent = btn.innerHTML;
         

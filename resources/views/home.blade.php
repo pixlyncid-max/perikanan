@@ -74,50 +74,34 @@
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition">
-            <div class="h-48 bg-gray-200">
-                <img src="https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=400" alt="News" class="w-full h-full object-cover">
-            </div>
-            <div class="p-6">
-                <div class="flex items-center space-x-2 mb-3">
-                    <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Budidaya</span>
-                    <span class="text-gray-500 text-sm">15 Jan 2026</span>
+        @forelse($latestArticles as $article)
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition">
+                <div class="h-48 bg-gray-200">
+                    @if($article->featured_image)
+                        <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-full object-cover">
+                    @else
+                        <img src="https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=400" alt="{{ $article->title }}" class="w-full h-full object-cover">
+                    @endif
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Teknik Budidaya Ikan Nila dengan Biofloc Modern</h3>
-                <p class="text-gray-600 text-sm mb-4">Pelajari cara meningkatkan produktivitas budidaya ikan nila hingga 300%...</p>
-                <a href="#" class="text-blue-600 font-medium text-sm hover:text-blue-700">Baca Selengkapnya</a>
-            </div>
-        </div>
-        
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition">
-            <div class="h-48 bg-gray-200">
-                <img src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=400" alt="News" class="w-full h-full object-cover">
-            </div>
-            <div class="p-6">
-                <div class="flex items-center space-x-2 mb-3">
-                    <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">Perikanan</span>
-                    <span class="text-gray-500 text-sm">12 Jan 2026</span>
+                <div class="p-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">{{ $article->category ?? 'Berita' }}</span>
+                        <span class="text-gray-500 text-sm">{{ $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y') }}</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">
+                        <a href="{{ route('article.show', $article->slug) }}" class="hover:text-blue-600 transition">
+                            {{ $article->title }}
+                        </a>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">{{ $article->excerpt ?? Str::limit(strip_tags($article->content), 100) }}</p>
+                    <a href="{{ route('article.show', $article->slug) }}" class="text-blue-600 font-medium text-sm hover:text-blue-700">Baca Selengkapnya</a>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Musim Tangkap Ikan Tuna di Selat Makassar</h3>
-                <p class="text-gray-600 text-sm mb-4">Panduan lengkap memanfaatkan musim tangkap ikan tuna dengan teknik yang tepat...</p>
-                <a href="#" class="text-blue-600 font-medium text-sm hover:text-blue-700">Baca Selengkapnya</a>
             </div>
-        </div>
-        
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition">
-            <div class="h-48 bg-gray-200">
-                <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400" alt="News" class="w-full h-full object-cover">
+        @empty
+            <div class="col-span-full py-12 text-center bg-gray-50 rounded-xl">
+                <p class="text-gray-500">Belum ada berita terbaru saat ini.</p>
             </div>
-            <div class="p-6">
-                <div class="flex items-center space-x-2 mb-3">
-                    <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm">Pasar</span>
-                    <span class="text-gray-500 text-sm">10 Jan 2026</span>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Update Harga Ikan di Pasar Samarinda</h3>
-                <p class="text-gray-600 text-sm mb-4">Analisis tren harga ikan minggu ini dan prediksi untuk bulan depan...</p>
-                <a href="#" class="text-blue-600 font-medium text-sm hover:text-blue-700">Baca Selengkapnya</a>
-            </div>
-        </div>
+        @endforelse
     </div>
 </div>
 

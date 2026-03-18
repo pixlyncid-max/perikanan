@@ -68,7 +68,7 @@ class SettingController extends Controller
             
             // Social Media
             'facebook_url' => '',
-            'twitter_url' => '',
+            'tiktok_url' => '',
             'instagram_url' => '',
             'youtube_url' => '',
             'whatsapp_number' => '',

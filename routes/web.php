@@ -58,6 +58,11 @@ Route::prefix('produk')->name('produk.')->group(function () {
     Route::get('/penyewaan-kapal', [ProdukController::class, 'penyewaanKapal'])->name('penyewaan-kapal');
     Route::get('/vitamin-air', [ProdukController::class, 'vitaminAir'])->name('vitamin-air');
     Route::get('/bibit-ikan', [ProdukController::class, 'bibitIkan'])->name('bibit-ikan');
+    Route::get('/sewa-pancing', [ProdukController::class, 'sewaPancing'])->name('sewa-pancing');
+    Route::get('/kolam-pemancingan', [ProdukController::class, 'kolamPemancingan'])->name('kolam-pemancingan');
+    Route::get('/komunitas-air-tawar', [ProdukController::class, 'komunitasAirTawar'])->name('komunitas-air-tawar');
+    Route::get('/sewa-pancing-laut', [ProdukController::class, 'sewaPancingLaut'])->name('sewa-pancing-laut');
+    Route::get('/komunitas-air-laut', [ProdukController::class, 'komunitasAirLaut'])->name('komunitas-air-laut');
     Route::get('/{slug}', [ProdukController::class, 'show'])->name('show');
 });
 

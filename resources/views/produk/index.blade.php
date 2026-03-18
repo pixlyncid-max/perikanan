@@ -141,6 +141,76 @@
                 </div>
             </div>
         </a>
+
+        <!-- Sewa Pancing -->
+        <a href="/produk/sewa-pancing" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
+            <div class="h-48 bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
+                <i class="fas fa-mitten text-white text-6xl group-hover:scale-110 transition"></i>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Sewa Pancing</h3>
+                <p class="text-gray-600 mb-4">Layanan penyewaan alat pancing air tawar berkualitas.</p>
+                <div class="flex items-center text-indigo-600 font-medium">
+                    Lihat Layanan <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition"></i>
+                </div>
+            </div>
+        </a>
+
+        <!-- Kolam Pemancingan -->
+        <a href="/produk/kolam-pemancingan" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
+            <div class="h-48 bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center">
+                <i class="fas fa-water text-white text-6xl group-hover:scale-110 transition"></i>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Kolam Pemancingan</h3>
+                <p class="text-gray-600 mb-4">Akses ke berbagai kolam pemancingan favorit di Kaltim.</p>
+                <div class="flex items-center text-sky-600 font-medium">
+                    Lihat Lokasi <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition"></i>
+                </div>
+            </div>
+        </a>
+
+        <!-- Komunitas Air Tawar -->
+        <a href="/produk/komunitas-air-tawar" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
+            <div class="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                <i class="fas fa-users text-white text-6xl group-hover:scale-110 transition"></i>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Komunitas Air Tawar</h3>
+                <p class="text-gray-600 mb-4">Bergabung dengan komunitas pembudidaya dan pemancing air tawar.</p>
+                <div class="flex items-center text-blue-600 font-medium">
+                    Gabung Komunitas <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition"></i>
+                </div>
+            </div>
+        </a>
+
+        <!-- Sewa Pancing Laut -->
+        <a href="/produk/sewa-pancing-laut" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
+            <div class="h-48 bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center">
+                <i class="fas fa-anchor text-white text-6xl group-hover:scale-110 transition"></i>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Sewa Pancing Laut</h3>
+                <p class="text-gray-600 mb-4">Peralatan pancing khusus laut untuk hasil tangkapan maksimal.</p>
+                <div class="flex items-center text-cyan-600 font-medium">
+                    Lihat Layanan <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition"></i>
+                </div>
+            </div>
+        </a>
+
+        <!-- Komunitas Air Laut -->
+        <a href="/produk/komunitas-air-laut" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
+            <div class="h-48 bg-gradient-to-br from-blue-700 to-blue-900 flex items-center justify-center">
+                <i class="fas fa-users-rectangle text-white text-6xl group-hover:scale-110 transition"></i>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Komunitas Air Laut</h3>
+                <p class="text-gray-600 mb-4">Jaringan nelayan dan komunitas pemancing laut profesional.</p>
+                <div class="flex items-center text-blue-800 font-medium">
+                    Gabung Komunitas <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition"></i>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 

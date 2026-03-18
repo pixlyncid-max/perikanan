@@ -86,29 +86,29 @@
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Media Sosial</h3>
                 <div class="flex space-x-3">
-                    @if(get_setting('facebook_url'))
-                        <a href="{{ get_setting('facebook_url') }}" target="_blank" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                    @endif
-                    @if(get_setting('twitter_url'))
-                        <a href="{{ get_setting('twitter_url') }}" target="_blank" class="w-10 h-10 bg-sky-500 text-white rounded-lg flex items-center justify-center hover:bg-sky-600 transition">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    @endif
                     @if(get_setting('instagram_url'))
                         <a href="{{ get_setting('instagram_url') }}" target="_blank" class="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center hover:bg-pink-700 transition">
                             <i class="fab fa-instagram"></i>
                         </a>
                     @endif
-                    @if(get_setting('whatsapp_number'))
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', get_setting('whatsapp_number')) }}" target="_blank" class="w-10 h-10 bg-green-500 text-white rounded-lg flex items-center justify-center hover:bg-green-600 transition">
-                            <i class="fab fa-whatsapp"></i>
+                    @if(get_setting('facebook_url'))
+                        <a href="{{ get_setting('facebook_url') }}" target="_blank" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    @endif
+                    @if(get_setting('tiktok_url'))
+                        <a href="{{ get_setting('tiktok_url') }}" target="_blank" class="w-10 h-10 bg-black text-white rounded-lg flex items-center justify-center hover:bg-gray-900 transition">
+                            <i class="fab fa-tiktok"></i>
                         </a>
                     @endif
                     @if(get_setting('youtube_url'))
                         <a href="{{ get_setting('youtube_url') }}" target="_blank" class="w-10 h-10 bg-red-600 text-white rounded-lg flex items-center justify-center hover:bg-red-700 transition">
                             <i class="fab fa-youtube"></i>
+                        </a>
+                    @endif
+                    @if(get_setting('whatsapp_number'))
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', get_setting('whatsapp_number')) }}" target="_blank" class="w-10 h-10 bg-green-500 text-white rounded-lg flex items-center justify-center hover:bg-green-600 transition">
+                            <i class="fab fa-whatsapp"></i>
                         </a>
                     @endif
                 </div>

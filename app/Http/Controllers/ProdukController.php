@@ -107,6 +107,61 @@ class ProdukController extends Controller
         return view('produk.bibit-ikan', compact('category', 'products'));
     }
 
+    public function sewaPancing(Request $request)
+    {
+        $category = Category::where('slug', 'sewa-pancing')->with('subcategories')->first();
+        if (!$category) {
+            return view('produk.sewa-pancing', ['category' => (object)['name' => 'Sewa Pancing', 'description' => 'Layanan penyewaan alat pancing air tawar'], 'products' => collect([])]);
+        }
+        $query = Product::where('category_id', $category->id)->active();
+        $products = $this->applyFilters($query, $request)->latest()->paginate(12);
+        return view('produk.sewa-pancing', compact('category', 'products'));
+    }
+
+    public function kolamPemancingan(Request $request)
+    {
+        $category = Category::where('slug', 'kolam-pemancingan')->with('subcategories')->first();
+        if (!$category) {
+            return view('produk.kolam-pemancingan', ['category' => (object)['name' => 'Kolam Pemancingan', 'description' => 'Layanan akses kolam pemancingan'], 'products' => collect([])]);
+        }
+        $query = Product::where('category_id', $category->id)->active();
+        $products = $this->applyFilters($query, $request)->latest()->paginate(12);
+        return view('produk.kolam-pemancingan', compact('category', 'products'));
+    }
+
+    public function komunitasAirTawar(Request $request)
+    {
+        $category = Category::where('slug', 'komunitas-air-tawar')->with('subcategories')->first();
+        if (!$category) {
+            return view('produk.komunitas-air-tawar', ['category' => (object)['name' => 'Komunitas Air Tawar', 'description' => 'Layanan pendaftaran komunitas air tawar'], 'products' => collect([])]);
+        }
+        $query = Product::where('category_id', $category->id)->active();
+        $products = $this->applyFilters($query, $request)->latest()->paginate(12);
+        return view('produk.komunitas-air-tawar', compact('category', 'products'));
+    }
+
+    public function sewaPancingLaut(Request $request)
+    {
+        $category = Category::where('slug', 'sewa-pancing-laut')->with('subcategories')->first();
+        if (!$category) {
+            return view('produk.sewa-pancing-laut', ['category' => (object)['name' => 'Sewa Pancing Laut', 'description' => 'Layanan penyewaan alat pancing air laut'], 'products' => collect([])]);
+        }
+        $query = Product::where('category_id', $category->id)->active();
+        $products = $this->applyFilters($query, $request)->latest()->paginate(12);
+        return view('produk.sewa-pancing-laut', compact('category', 'products'));
+    }
+
+    public function komunitasAirLaut(Request $request)
+    {
+        $category = Category::where('slug', 'komunitas-air-laut')->with('subcategories')->first();
+        if (!$category) {
+            return view('produk.komunitas-air-laut', ['category' => (object)['name' => 'Komunitas Air Laut', 'description' => 'Layanan pendaftaran komunitas air laut'], 'products' => collect([])]);
+        }
+        $query = Product::where('category_id', $category->id)->active();
+        $products = $this->applyFilters($query, $request)->latest()->paginate(12);
+        return view('produk.komunitas-air-laut', compact('category', 'products'));
+    }
+
     public function show($slug)
     {
         $product = Product::where('slug', $slug)->active()->firstOrFail();

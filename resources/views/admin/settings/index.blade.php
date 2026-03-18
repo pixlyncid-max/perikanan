@@ -368,11 +368,11 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                                            <i class="fab fa-twitter text-blue-400 mr-2"></i>Twitter
+                                            <i class="fab fa-tiktok text-black mr-2"></i>TikTok
                                         </label>
-                                        <input type="url" name="twitter_url" value="{{ $settings['twitter_url'] ?? '' }}"
+                                        <input type="url" name="tiktok_url" value="{{ $settings['tiktok_url'] ?? '' }}"
                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                               placeholder="https://twitter.com/username">
+                                               placeholder="https://tiktok.com/@username">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">

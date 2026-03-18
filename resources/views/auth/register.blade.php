@@ -6,9 +6,8 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-2xl mx-auto">
         <div class="text-center w-full flex flex-col items-center mb-8">
-            <div class="flex items-center justify-center space-x-2 mb-4">
-                <img src="{{ asset('images/Logo_Symbol.png') }}" alt="Logo Symbol" class="h-14 w-14 object-contain">
-                <img src="{{ asset('images/Logo_Font.png') }}" alt="Logo Font" class="h-10 object-contain">
+            <div class="flex items-center justify-center mb-4">
+                <img src="{{ asset('images/Logo_Fisheries1.png') }}" alt="Fisheries Logo" class="h-20 object-contain">
             </div>
             <h2 class="text-3xl font-bold text-gray-900">Daftar Akun</h2>
             <p class="mt-2 text-gray-600">Bergabunglah dengan komunitas perikanan terbesar di Kaltim</p>

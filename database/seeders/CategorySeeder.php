@@ -55,6 +55,41 @@ class CategorySeeder extends Seeder
                 'icon' => 'water',
                 'is_active' => true,
             ],
+            [
+                'name' => 'Sewa Pancing',
+                'slug' => 'sewa-pancing',
+                'description' => 'Layanan penyewaan alat pancing air tawar',
+                'icon' => 'hook',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Kolam Pemancingan',
+                'slug' => 'kolam-pemancingan',
+                'description' => 'Layanan akses kolam pemancingan',
+                'icon' => 'water',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Komunitas Air Tawar',
+                'slug' => 'komunitas-air-tawar',
+                'description' => 'Layanan pendaftaran komunitas air tawar',
+                'icon' => 'users',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Sewa Pancing Laut',
+                'slug' => 'sewa-pancing-laut',
+                'description' => 'Layanan penyewaan alat pancing air laut',
+                'icon' => 'hook',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Komunitas Air Laut',
+                'slug' => 'komunitas-air-laut',
+                'description' => 'Layanan pendaftaran komunitas air laut',
+                'icon' => 'users',
+                'is_active' => true,
+            ],
         ];
 
         foreach ($categories as $category) {

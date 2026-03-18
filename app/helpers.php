@@ -189,7 +189,7 @@ if (!function_exists('get_settings')) {
                     'site_phone' => '(0541) 123456',
                     'site_address' => 'Jl. Delima Dalam Blok E, Sidodadi, Kec. Samarinda Ulu, Kota Samarinda, Kalimantan Timur 75243',
                     'facebook_url' => '',
-                    'twitter_url' => '',
+                    'tiktok_url' => '',
                     'instagram_url' => '',
                     'youtube_url' => '',
                     'whatsapp_number' => '',
