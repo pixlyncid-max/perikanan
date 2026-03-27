@@ -157,7 +157,7 @@ Kami terbuka untuk kontribusi dari komunitas perikanan. Silakan hubungi kami unt
 
 ## Kontak
 
-- **Email**: info@fisheries.id
+- **Email**: fisheriesborneo@gmail.com
 - **Telepon**: (0541) 123456
 - **Alamat**: Jl. Perikanan No. 123, Samarinda, Kalimantan Timur
 
