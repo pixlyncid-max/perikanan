@@ -3,6 +3,9 @@
 @section('content')
 <div class="container mx-auto px-4 py-12">
     <div class="max-w-4xl mx-auto">
+        <a href="{{ route('orders.index') }}" class="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 transition mb-6 font-medium">
+            <i class="fas fa-arrow-left"></i> Kembali ke Pesanan Saya
+        </a>
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold">Detail Pesanan</h1>
             <span class="px-4 py-2 rounded-full font-bold text-sm uppercase 
@@ -69,25 +72,39 @@
             </table>
         </div>
 
-        @if($order->payment_status === 'pending')
+        @if($order->status === 'cancelled')
+            <div class="bg-gray-50 border border-gray-200 p-8 rounded-2xl flex flex-col items-center justify-center gap-3 text-center">
+                <div class="w-16 h-16 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-3xl mb-1">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <h3 class="text-gray-800 font-bold text-xl">Pesanan Dibatalkan</h3>
+                <p class="text-gray-600">Pesanan ini telah dibatalkan secara permanen atas permintaan Anda.</p>
+            </div>
+        @elseif($order->payment_status === 'pending')
             <div class="bg-blue-50 border border-blue-100 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                     <h3 class="text-blue-900 font-bold text-lg">Menunggu Pembayaran</h3>
                     <p class="text-blue-700">Silakan selesaikan pembayaran Anda sebelum invoice kadaluarsa.</p>
                 </div>
-                <div class="flex gap-4">
-                    <a href="{{ $order->payment_url }}" target="_blank" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">
-                        Bayar Sekarang
-                    </a>
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <form action="{{ route('orders.cancel', $order->order_number) }}" method="POST" id="cancel-order-form" class="w-full sm:w-auto">
+                        @csrf
+                        <button type="button" onclick="confirmCancelOrder()" class="w-full bg-white border-2 border-red-500 text-red-500 px-6 py-3 rounded-xl font-bold hover:bg-red-50 hover:text-red-700 transition shadow-sm whitespace-nowrap">
+                            Batalkan Pesanan
+                        </button>
+                    </form>
+                    <button onclick="openCheckoutModal('{{ $order->payment_url }}')" class="w-full text-center sm:w-auto bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg whitespace-nowrap flex items-center justify-center gap-2">
+                        <i class="fas fa-credit-card"></i> Bayar Sekarang
+                    </button>
                 </div>
             </div>
         @elseif($order->payment_status === 'expired' || $order->payment_status === 'failed')
             <div class="bg-red-50 border border-red-100 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                    <h3 class="text-red-900 font-bold text-lg text-capitalize">Pembayaran {{ $order->payment_status }}</h3>
+                    <h3 class="text-red-900 font-bold text-lg capitalize">Pembayaran {{ $order->payment_status }}</h3>
                     <p class="text-red-700">Waktu pembayaran telah habis atau gagal diproses.</p>
                 </div>
-                <a href="{{ route('orders.repay', $order->order_number) }}" class="bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-lg">
+                <a href="{{ route('orders.repay', $order->order_number) }}" class="bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-lg whitespace-nowrap">
                     Buat Ulang Pembayaran
                 </a>
             </div>
@@ -95,3 +112,20 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function confirmCancelOrder() {
+    showAlert({
+        type: 'warning',
+        title: 'Batalkan Pesanan?',
+        message: 'Apakah Anda yakin ingin membatalkan pesanan ini? Aksi ini tidak dapat dikembalikan.',
+        primaryText: 'Ya, Batalkan',
+        secondaryText: 'Kembali',
+        onConfirm: function() {
+            document.getElementById('cancel-order-form').submit();
+        }
+    });
+}
+</script>
+@endpush

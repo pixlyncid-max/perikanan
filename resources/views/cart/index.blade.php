@@ -8,8 +8,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-50 border-b border-gray-100">
+                    <table class="w-full text-left border-collapse block md:table">
+                        <thead class="hidden md:table-header-group bg-gray-50 border-b border-gray-100">
                             <tr>
                                 <th class="px-6 py-4 font-semibold text-gray-700">Produk</th>
                                 <th class="px-6 py-4 font-semibold text-gray-700">Harga</th>
@@ -18,12 +18,12 @@
                                 <th class="px-6 py-4"></th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="block md:table-row-group divide-y divide-gray-100">
                             @foreach($cart as $id => $item)
-                                <tr>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                                <tr class="flex flex-col md:table-row py-4 md:py-0 relative">
+                                    <td class="block md:table-cell px-4 md:px-6 py-2 md:py-4 border-b md:border-b-0 border-gray-50">
+                                        <div class="flex items-center gap-4 pr-8 md:pr-0">
+                                            <div class="w-20 h-20 md:w-16 md:h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
                                                 @if($item['image'])
                                                     <img src="{{ asset('storage/' . $item['image']) }}" alt="{{ $item['name'] }}" class="w-full h-full object-cover">
                                                 @else
@@ -33,15 +33,17 @@
                                                 @endif
                                             </div>
                                             <div>
-                                                <h3 class="font-bold text-gray-800">{{ $item['name'] }}</h3>
+                                                <h3 class="font-bold text-gray-800 text-lg md:text-base">{{ $item['name'] }}</h3>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-gray-600">
-                                        Rp {{ number_format($item['price'], 0, ',', '.') }}
+                                    <td class="flex justify-between md:table-cell px-4 md:px-6 py-3 md:py-4 text-gray-600 items-center">
+                                        <span class="md:hidden font-medium text-gray-500 text-sm">Harga:</span>
+                                        <span class="font-medium md:font-normal">Rp {{ number_format($item['price'], 0, ',', '.') }}</span>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <form action="{{ route('cart.update') }}" method="POST" class="flex items-center gap-2">
+                                    <td class="flex justify-between md:table-cell px-4 md:px-6 py-3 md:py-4 items-center">
+                                        <span class="md:hidden font-medium text-gray-500 text-sm">Jumlah:</span>
+                                        <form action="{{ route('cart.update') }}" method="POST" class="flex items-center gap-2 m-0">
                                             @csrf
                                             <input type="hidden" name="product_id" value="{{ $id }}">
                                             <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" 
@@ -49,15 +51,16 @@
                                                 onchange="this.form.submit()">
                                         </form>
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-blue-600">
-                                        Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
+                                    <td class="flex justify-between md:table-cell px-4 md:px-6 py-3 md:py-4 items-center bg-gray-50/50 md:bg-transparent">
+                                        <span class="md:hidden font-medium text-gray-500 text-sm">Subtotal:</span>
+                                        <span class="font-bold text-blue-600 text-lg md:text-base">Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</span>
                                     </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <form action="{{ route('cart.remove') }}" method="POST">
+                                    <td class="absolute top-4 right-4 md:static md:text-right px-4 md:px-6 py-2 md:py-4 block md:table-cell">
+                                        <form action="{{ route('cart.remove') }}" method="POST" class="m-0">
                                             @csrf
                                             <input type="hidden" name="product_id" value="{{ $id }}">
-                                            <button type="submit" class="text-red-500 hover:text-red-700 transition p-2">
-                                                <i class="fas fa-trash-alt"></i>
+                                            <button type="submit" class="w-8 h-8 md:w-auto md:h-auto bg-red-50 md:bg-transparent rounded-full md:rounded-none flex items-center justify-center text-red-500 hover:text-white hover:bg-red-500 md:hover:bg-transparent md:hover:text-red-700 transition md:p-2">
+                                                <i class="fas fa-trash-alt text-sm md:text-base"></i>
                                             </button>
                                         </form>
                                     </td>

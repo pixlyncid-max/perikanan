@@ -84,4 +84,31 @@ class OrderController extends Controller
             return back()->with('error', 'Gagal membuat ulang pembayaran: ' . $e->getMessage());
         }
     }
+    /**
+     * Cancel an existing pending order.
+     */
+    public function cancel($order_number)
+    {
+        $order = Order::where('order_number', $order_number)->firstOrFail();
+        $userSession = Session::get('user');
+        
+        if (!$userSession || $order->user_id != $userSession['id']) {
+            return redirect('/')->with('error', 'Akses ditolak.');
+        }
+
+        if ($order->status !== 'pending' && $order->payment_status !== 'pending') {
+            return back()->with('error', 'Pesanan ini tidak dapat dibatalkan karena statusnya sudah diproses atau dibayar.');
+        }
+
+        try {
+            $order->update([
+                'status' => 'cancelled',
+                'payment_status' => 'failed'
+            ]);
+
+            return back()->with('success', 'Pesanan berhasil dibatalkan.');
+        } catch (Exception $e) {
+            return back()->with('error', 'Gagal membatalkan pesanan: ' . $e->getMessage());
+        }
+    }
 }

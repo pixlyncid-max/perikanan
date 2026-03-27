@@ -27,7 +27,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach($orders as $order)
-                            <tr class="hover:bg-gray-50 transition">
+                            <tr class="hover:bg-blue-50 transition cursor-pointer" onclick="window.location='{{ route('orders.show', $order->order_number) }}'">
                                 <td class="px-6 py-4">
                                     <span class="font-mono text-sm text-gray-600">#{{ substr($order->order_number, 0, 8) }}...</span>
                                 </td>
@@ -54,15 +54,14 @@
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         @if($order->status === 'pending' && $order->payment_url)
-                                            <button onclick="openCheckoutModal('{{ $order->payment_url }}')" 
-                                                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-sm">
+                                            <button onclick="event.stopPropagation(); openCheckoutModal('{{ $order->payment_url }}')" 
+                                                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-sm z-10 relative">
                                                 Bayar Sekarang
                                             </button>
                                         @endif
-                                        <a href="{{ route('orders.show', $order->order_number) }}" 
-                                            class="p-2 text-gray-400 hover:text-blue-600 transition">
+                                        <div class="p-2 text-gray-400">
                                             <i class="fas fa-chevron-right"></i>
-                                        </a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

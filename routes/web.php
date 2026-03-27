@@ -101,7 +101,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order_number}', [\App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
     Route::get('/orders/{order_number}/repay', [\App\Http\Controllers\OrderController::class, 'repay'])->name('orders.repay');
-
+    Route::post('/orders/{order_number}/cancel', [\App\Http\Controllers\OrderController::class, 'cancel'])->name('orders.cancel');
     // Cart Routes
     Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');

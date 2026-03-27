@@ -24,9 +24,9 @@
                         $firstImg = (!empty($images) && is_array($images)) ? $images[0] : null;
                     @endphp
                     @if($firstImg)
-                        <img src="{{ asset('storage/'.$firstImg) }}" alt="{{ $product->name }}" class="max-w-full h-auto rounded-lg shadow-md transition transform hover:scale-105 duration-300">
+                        <img src="{{ asset('storage/'.$firstImg) }}" id="product-img-{{ $product->id }}" alt="{{ $product->name }}" class="max-w-full h-auto rounded-lg shadow-md transition transform hover:scale-105 duration-300">
                     @else
-                        <div class="text-gray-300">
+                        <div class="text-gray-300" id="product-img-{{ $product->id }}">
                             <i class="fas fa-box text-9xl"></i>
                         </div>
                     @endif
@@ -77,7 +77,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <button onclick="addToCart({{ $product->id }})" class="flex-grow bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-3 {{ $product->stock < 1 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                        <button onclick="addToCart({{ $product->id }})" id="cart-btn-{{ $product->id }}" class="flex-grow bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-3 {{ $product->stock < 1 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $product->stock < 1 ? 'disabled' : '' }}>
                             <i class="fas fa-shopping-cart"></i>
                             Tambah ke Keranjang
                         </button>

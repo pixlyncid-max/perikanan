@@ -63,7 +63,7 @@ class CartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Produk berhasil ditambahkan ke keranjang!',
-                'cart_count' => count($cart)
+                'cart_count' => array_sum(array_column($cart, 'quantity'))
             ]);
         }
 

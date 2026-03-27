@@ -76,8 +76,8 @@
             position: fixed;
             inset: 0;
             z-index: 10000;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
             align-items: center;
             justify-content: center;
             padding: 1rem;
@@ -85,18 +85,20 @@
         #checkout-modal-content {
             background: white;
             width: 100%;
-            max-width: 900px;
-            height: 90vh;
+            max-width: 800px;
+            height: 85vh;
+            max-height: 800px;
+            min-height: 500px;
             border-radius: 1.5rem;
-            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             position: relative;
-            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes modalPop {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         /* Alert Modal Styles */
@@ -217,15 +219,15 @@
                 <!-- Cart & Auth Buttons -->
                 <div class="hidden md:flex items-center space-x-3">
                     <!-- Cart Icon -->
-                    <a href="{{ route('cart.index') }}" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
+                    <a href="{{ route('cart.index') }}" id="navbar-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
-                        @php $cartCount = count(Session::get('cart', [])); @endphp
+                        @php $cartCount = array_sum(array_column(Session::get('cart', []), 'quantity')); @endphp
                         @if($cartCount > 0)
-                            <span id="cart-counter" class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
                                 {{ $cartCount }}
                             </span>
                         @else
-                            <span id="cart-counter" class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white hidden">
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white hidden">
                                 0
                             </span>
                         @endif
@@ -279,10 +281,27 @@
                 </div>
 
 
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md">
-                    <i id="menu-icon" class="fas fa-bars text-xl transition-transform duration-200"></i>
-                </button>
+                <!-- Mobile Cart & Menu Button -->
+                <div class="flex items-center gap-3 md:hidden">
+                    <a href="{{ route('cart.index') }}" id="mobile-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        @php $cartCount = array_sum(array_column(Session::get('cart', []), 'quantity')); @endphp
+                        @if($cartCount > 0)
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
+                                {{ $cartCount }}
+                            </span>
+                        @else
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white hidden">
+                                0
+                            </span>
+                        @endif
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md">
+                        <i id="menu-icon" class="fas fa-bars text-xl transition-transform duration-200"></i>
+                    </button>
+                </div>
 
 
             </div>
@@ -335,10 +354,12 @@
                         <a href="/register" class="block px-3 py-2 bg-blue-600 text-white rounded-lg font-medium text-center">Daftar</a>
                     <?php else: ?>
                         <?php $userMobile = \Illuminate\Support\Facades\Session::get('user'); ?>
+                        <a href="{{ route('orders.index') }}" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Pesanan Saya</a>
                         <a href="/member-card" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Kartu Anggota</a>
                         <?php if($userMobile['type'] === 'admin'): ?>
                             <a href="/admin/dashboard" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Panel Admin</a>
                         <?php endif; ?>
+                        <a href="#" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Profil</a>
 
                         <form action="/logout" method="POST" class="block">
                             @csrf
@@ -352,7 +373,7 @@
     </nav>
 
     <!-- Success Modal (Centered) -->
-    <div id="success-modal" class="bg-gray-900/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full mx-4 shadow-[0_0_50px_rgba(0,0,0,0.3)]">
+    <div id="success-modal" class="bg-gray-900/95 backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-2xl text-center max-w-sm w-[calc(100%-2rem)] shadow-[0_0_50px_rgba(0,0,0,0.3)]">
         <div class="mb-4 flex justify-center">
             <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
                 <i class="fas fa-check text-white text-4xl"></i>
@@ -365,22 +386,26 @@
     <!-- Checkout Modal (Iframe) -->
     <div id="checkout-modal">
         <div id="checkout-modal-content">
-            <div class="p-4 border-b flex justify-between items-center bg-white">
-                <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2">
-                    <i class="fas fa-shield-alt text-blue-600"></i> Pembayaran Aman Xendit
-                </h3>
-                <button onclick="closeCheckoutModal()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <div class="flex-grow bg-gray-50 relative">
-                <div id="checkout-loader" class="absolute inset-0 flex items-center justify-center bg-white/80">
-                    <div class="text-center">
-                        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-2"></i>
-                        <p class="text-gray-500 font-medium">Memuat Halaman Pembayaran...</p>
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] relative z-10 rounded-t-3xl">
+                <div class="flex flex-col items-start">
+                    <h3 class="font-extrabold text-xl text-gray-900 tracking-tight flex items-center gap-2">
+                        Pembayaran
+                    </h3>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <i class="fas fa-lock text-green-500 text-[10px]"></i>
+                        <span class="text-[11px] text-gray-500 font-semibold uppercase tracking-wider">Secured by Xendit</span>
                     </div>
                 </div>
-                <iframe id="checkout-iframe" src="" class="w-full h-full border-none" onload="document.getElementById('checkout-loader').style.display='none'"></iframe>
+                <button onclick="closeCheckoutModal()" class="w-10 h-10 rounded-full bg-gray-50 hover:bg-red-50 hover:text-red-500 flex items-center justify-center text-gray-400 transition-all duration-300">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="flex-grow bg-white relative rounded-b-3xl overflow-hidden">
+                <div id="checkout-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-20 transition-opacity duration-300">
+                    <div class="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+                    <p class="text-gray-600 font-medium animate-pulse">Menyiapkan pembayaran aman...</p>
+                </div>
+                <iframe id="checkout-iframe" src="" class="w-full h-full border-none" onload="document.getElementById('checkout-loader').style.opacity='0'; setTimeout(()=>document.getElementById('checkout-loader').style.display='none', 300)"></iframe>
             </div>
         </div>
     </div>
@@ -596,7 +621,11 @@
         function addToCart(productId) {
             const btn = document.getElementById(`cart-btn-${productId}`);
             const img = document.getElementById(`product-img-${productId}`);
-            const cartIcon = document.querySelector('.fa-shopping-cart').parentElement;
+            let cartIconLink = document.getElementById('navbar-cart-icon');
+            if (cartIconLink && cartIconLink.offsetParent === null) {
+                cartIconLink = document.getElementById('mobile-cart-icon');
+            }
+            const cartIcon = cartIconLink || document.querySelector('.fa-shopping-cart').parentElement;
 
             fetch('{{ route("cart.add") }}', {
                 method: 'POST',
@@ -636,12 +665,14 @@
 
                         flyer.addEventListener('transitionend', () => {
                             flyer.remove();
-                            // Update counter and shake cart
-                            const counter = document.getElementById('cart-counter');
-                            if (counter) {
+                            // Update all counters and shake cart
+                            const counters = document.querySelectorAll('.cart-counter-badge');
+                            counters.forEach(counter => {
                                 counter.textContent = data.cart_count;
                                 counter.classList.remove('hidden');
-                                // Shake cart icon
+                            });
+                            // Shake cart icon
+                            if (cartIcon) {
                                 cartIcon.classList.add('animate-bounce');
                                 setTimeout(() => cartIcon.classList.remove('animate-bounce'), 1000);
                             }
@@ -689,8 +720,13 @@
                 modal.style.display = 'none';
                 iframe.src = '';
                 document.body.style.overflow = 'auto'; // Restore scroll
-                // Optional: refresh page or cart to see status updates
-                window.location.reload();
+                
+                // Redirect user to orders page so they see their pending order
+                if (window.location.pathname.includes('/cart')) {
+                    window.location.href = '/orders';
+                } else {
+                    window.location.reload();
+                }
             }
         }
 
