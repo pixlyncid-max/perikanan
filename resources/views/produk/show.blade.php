@@ -3,16 +3,23 @@
 @section('content')
 <div class="bg-gray-50 min-h-screen py-12">
     <div class="container mx-auto px-4">
-        <!-- Breadcrumbs -->
-        <nav class="flex mb-8 text-sm text-gray-500" aria-label="Breadcrumb">
-            <ol class="flex items-center space-x-2">
-                <li><a href="{{ route('home') }}" class="hover:text-blue-600 transition">Beranda</a></li>
-                <li><i class="fas fa-chevron-right text-xs"></i></li>
-                <li><a href="{{ route('produk.index') }}" class="hover:text-blue-600 transition">Produk</a></li>
-                <li><i class="fas fa-chevron-right text-xs"></i></li>
-                <li class="font-medium text-gray-800">{{ $product->name }}</li>
-            </ol>
-        </nav>
+        <div class="flex items-center justify-between mb-8">
+            <!-- Breadcrumbs -->
+            <nav class="text-base text-gray-900" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2">
+                    <li><a href="{{ route('home') }}" class="hover:text-blue-600 transition">Beranda</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:text-blue-600 transition">Produk</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li class="font-bold text-black">{{ $product->name }}</li>
+                </ol>
+            </nav>
+
+            <!-- Back Button -->
+            <a href="javascript:history.back()" class="inline-flex items-center text-base font-bold text-gray-900 hover:text-blue-600 transition-all group">
+                <i class="fas fa-arrow-left mr-2 transition-transform group-hover:-translate-x-1"></i> Kembali
+            </a>
+        </div>
 
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div class="grid grid-cols-1 md:grid-cols-2">
@@ -39,7 +46,7 @@
                         @endif
                         
                         {{-- Zoom Button --}}
-                        <button class="absolute bottom-4 right-4 bg-white/80 backdrop-blur shadow-sm p-3 rounded-full text-gray-600 hover:text-blue-600 transition opacity-0 group-hover:opacity-100">
+                        <button type="button" onclick="openZoom()" class="absolute bottom-4 right-4 bg-white/80 backdrop-blur shadow-sm p-3 rounded-full text-gray-600 hover:text-blue-600 transition opacity-0 group-hover:opacity-100 z-10">
                             <i class="fas fa-expand-arrows-alt"></i>
                         </button>
                     </div>
@@ -60,22 +67,24 @@
                             {{-- Variation Images --}}
                             @foreach($product->variations as $var)
                                 @if($var->image)
-                                    <button type="button" id="thumb-var-{{ $var->id }}" onclick="changeMainImage('{{ asset('storage/'.$var->image) }}', this)" 
-                                            class="thumb-btn flex-shrink-0 w-20 h-20 rounded-xl border-2 border-transparent overflow-hidden snap-start opacity-60 hover:opacity-100 transition-all duration-200">
+                                    <button type="button" id="thumb-var-{{ $var->id }}" 
+                                            onclick="changeMainImage('{{ asset('storage/'.$var->image) }}', this, {{ $var->id }})" 
+                                            class="thumb-btn flex-shrink-0 w-20 h-20 rounded-xl border-2 border-transparent overflow-hidden snap-start opacity-60 hover:opacity-100 transition-all duration-200"
+                                            data-variation-id="{{ $var->id }}">
                                         <img src="{{ asset('storage/'.$var->image) }}" class="w-full h-full object-cover">
                                     </button>
                                 @endif
                             @endforeach
                         </div>
                         
-                        {{-- Slider Progress Dot (Conceptual) --}}
-                        <div class="absolute inset-y-0 left-0 flex items-center -ml-2">
-                             <button onclick="document.getElementById('thumb-slider').scrollBy({left: -100, behavior: 'smooth'})" class="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-gray-400 hover:text-blue-600 transition">
+                        {{-- Slider Navigation Arrows --}}
+                        <div class="absolute inset-y-0 left-0 flex items-center -ml-2 pointer-events-none">
+                             <button type="button" onclick="navigateGallery(-1)" class="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-gray-400 hover:text-blue-600 transition pointer-events-auto active:scale-95">
                                 <i class="fas fa-chevron-left text-xs"></i>
                              </button>
                         </div>
-                        <div class="absolute inset-y-0 right-0 flex items-center -mr-2">
-                             <button onclick="document.getElementById('thumb-slider').scrollBy({left: 100, behavior: 'smooth'})" class="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-gray-400 hover:text-blue-600 transition">
+                        <div class="absolute inset-y-0 right-0 flex items-center -mr-2 pointer-events-none">
+                             <button type="button" onclick="navigateGallery(1)" class="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-gray-400 hover:text-blue-600 transition pointer-events-auto active:scale-95">
                                 <i class="fas fa-chevron-right text-xs"></i>
                              </button>
                         </div>
@@ -109,7 +118,7 @@
                         @endif
                     </div>
 
-                    <div class="prose prose-blue max-w-none text-gray-600 mb-8">
+                    <div class="prose prose-blue max-w-none text-gray-600 mb-8" id="main-description-display" data-base-description="{{ nl2br(e($product->description)) }}">
                         {!! nl2br(e($product->description)) !!}
                     </div>
 
@@ -140,9 +149,11 @@
                                         @foreach($vars as $variation)
                                             <button 
                                                 type="button"
-                                                onclick="selectVariation(this, {{ $variation->id }}, '{{ $variation->name }}', {{ $variation->price_adjustment }}, {{ $variation->stock }}{{ $variation->image ? ", '" . asset('storage/'.$variation->image) . "'" : '' }})"
+                                                id="var-btn-{{ $variation->id }}"
+                                                onclick="selectVariation(this, {{ $variation->id }}, '{{ $variation->name }}', {{ $variation->price_adjustment }}, {{ $variation->stock }}{{ $variation->image ? ", '" . asset('storage/'.$variation->image) . "'" : ', null' }})"
                                                 class="variation-btn px-5 py-2.5 rounded-lg border-2 border-gray-200 text-gray-700 font-medium hover:border-blue-500 hover:text-blue-600 transition-all duration-200 flex items-center gap-2"
                                                 data-variation-id="{{ $variation->id }}"
+                                                data-description="{{ $variation->description }}"
                                             >
                                                 {{ $variation->name }}
                                                 @if($variation->price_adjustment > 0)
@@ -191,7 +202,9 @@
 </div>
 @push('scripts')
 <script>
-    function changeMainImage(url, btn) {
+    let isInternalSelection = false;
+
+    function changeMainImage(url, btn, variationId = null) {
         const mainImg = document.getElementById('product-img-{{ $product->id }}');
         if (!mainImg) return;
         
@@ -211,9 +224,35 @@
             btn.classList.add('active', 'border-blue-500', 'bg-blue-50');
             btn.classList.remove('border-transparent', 'opacity-60');
         }
+
+        // If this image belongs to a variation, select that variation button
+        if (variationId && !isInternalSelection) {
+            const varBtn = document.getElementById('var-btn-' + variationId);
+            if (varBtn) {
+                isInternalSelection = true;
+                varBtn.click();
+                isInternalSelection = false;
+            }
+        }
+    }
+
+    function navigateGallery(direction) {
+        const thumbnails = Array.from(document.querySelectorAll('.thumb-btn'));
+        const activeIndex = thumbnails.findIndex(btn => btn.classList.contains('active'));
+        
+        let nextIndex = activeIndex + direction;
+        
+        if (nextIndex < 0) nextIndex = 0;
+        if (nextIndex >= thumbnails.length) nextIndex = thumbnails.length - 1;
+        
+        if (activeIndex !== -1 && nextIndex !== activeIndex) {
+            thumbnails[nextIndex].click();
+            thumbnails[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
     }
 
     function selectVariation(btn, id, name, priceAdjustment, stock, imageUrl = null) {
+        const description = btn.getAttribute('data-description') || '';
         // Reset and Highlight
         document.querySelectorAll('.variation-btn').forEach(b => {
             b.classList.remove('border-blue-500', 'text-blue-600', 'bg-blue-50');
@@ -224,9 +263,11 @@
         btn.classList.add('border-blue-500', 'text-blue-600', 'bg-blue-50');
         
         // Sync Image if exists
-        if (imageUrl) {
+        if (imageUrl && !isInternalSelection) {
             const thumbBtn = document.getElementById('thumb-var-' + id);
-            changeMainImage(imageUrl, thumbBtn);
+            isInternalSelection = true;
+            changeMainImage(imageUrl, thumbBtn, id);
+            isInternalSelection = false;
             
             // Scroll thumbnail into view if needed
             if (thumbBtn) {
@@ -255,6 +296,19 @@
         } else {
             stockDisplay.classList.remove('text-red-600');
             stockDisplay.classList.add('text-green-600');
+        }
+
+        // Update Main Description with Variation Description (if available)
+        const mainDescDisplay = document.getElementById('main-description-display');
+        const baseDescription = mainDescDisplay.getAttribute('data-base-description');
+        
+        if (description && description.trim() !== '') {
+            mainDescDisplay.innerHTML = description.replace(/\n/g, '<br>');
+            // Add a small highlight animation/effect
+            mainDescDisplay.classList.add('animate-fade-in');
+            setTimeout(() => mainDescDisplay.classList.remove('animate-fade-in'), 500);
+        } else {
+            mainDescDisplay.innerHTML = baseDescription;
         }
 
         // Handle Add to Cart Button state based on variation stock
@@ -286,6 +340,27 @@
         }
     }
 
+    // Zoom Handlers
+    function openZoom() {
+        const mainImg = document.getElementById('product-img-{{ $product->id }}');
+        const zoomModal = document.getElementById('zoom-modal');
+        const zoomImg = document.getElementById('zoom-img');
+        
+        if (!mainImg || !zoomModal) return;
+        
+        zoomImg.src = mainImg.src;
+        zoomModal.classList.remove('hidden');
+        zoomModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeZoom() {
+        const zoomModal = document.getElementById('zoom-modal');
+        zoomModal.classList.add('hidden');
+        zoomModal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
     // Auto-scroll and highlight variations if requested via URL
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -310,5 +385,16 @@
     });
 </script>
 @endpush
+
+{{-- Zoom Modal --}}
+<div id="zoom-modal" class="fixed inset-0 z-[100] hidden bg-black/95 items-center justify-center p-4 md:p-8 animate-fade-in backdrop-blur-sm">
+    <button onclick="closeZoom()" class="absolute top-6 right-6 text-white hover:text-blue-500 transition-all text-3xl z-20">
+        <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="relative w-full h-full flex items-center justify-center" onclick="closeZoom()">
+        <img id="zoom-img" src="" alt="Zoomed Product" class="max-w-full max-h-full object-contain shadow-2xl transition-transform duration-300" onclick="event.stopPropagation()">
+    </div>
+</div>
 @endsection
 

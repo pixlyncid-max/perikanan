@@ -150,7 +150,7 @@
                         </div>
 
                         @foreach($product->variations as $index => $variation)
-                            <div class="variation-row grid grid-cols-1 md:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 relative group">
+                            <div class="variation-row grid grid-cols-1 md:grid-cols-6 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 relative group">
                                 <input type="hidden" name="variations[{{ $index }}][id]" value="{{ $variation->id }}">
                                 <div class="md:col-span-1">
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Foto Variasi</label>
@@ -177,11 +177,14 @@
                                 </div>
                                 <div class="md:col-span-1">
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Penyesuaian Harga (+Rp)</label>
-                                    <input type="number" name="variations[{{ $index }}][price_adjustment]" value="{{ (int)$variation->price_adjustment }}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
-                                </div>
-                                <div class="md:col-span-1 relative pr-8">
+                                    <input type="number" name="variations[{{ $index }}][price_adjustment]" value="{{ (int)$variation->price_adjustment }}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none mb-3">
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Stok Variasi</label>
                                     <input type="number" name="variations[{{ $index }}][stock]" value="{{ $variation->stock }}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                                </div>
+                                <div class="md:col-span-3 pb-6 sm:pb-0">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Deskripsi Singkat Variasi</label>
+                                    <textarea name="variations[{{ $index }}][description]" placeholder="Jelaskan keunggulan variasi ini..." class="w-full h-[104px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none resize-none">{{ $variation->description }}</textarea>
+                                    
                                     <button type="button" onclick="removeVariationRow(this)" class="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 transition">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -290,7 +293,7 @@
 
 {{-- Template for new variation rows (Placed outside form to avoid validation issues) --}}
 <template id="variation-row-template">
-    <div class="variation-row grid grid-cols-1 md:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 relative group">
+    <div class="variation-row grid grid-cols-1 md:grid-cols-6 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 relative group">
         <div class="md:col-span-1">
             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Foto Variasi</label>
             <div class="relative w-full h-24 bg-white border border-gray-200 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer hover:border-green-400 transition" onclick="this.querySelector('input').click()">
@@ -309,11 +312,13 @@
         </div>
         <div class="md:col-span-1">
             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Penyesuaian Harga (+Rp)</label>
-            <input type="number" name="variations[INDEX][price_adjustment]" value="0" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
-        </div>
-        <div class="md:col-span-1 relative pr-8">
+            <input type="number" name="variations[INDEX][price_adjustment]" value="0" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none mb-3">
             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Stok Variasi</label>
             <input type="number" name="variations[INDEX][stock]" value="0" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+        </div>
+        <div class="md:col-span-3 pb-6 sm:pb-0">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Deskripsi Singkat Variasi</label>
+            <textarea name="variations[INDEX][description]" placeholder="Jelaskan keunggulan variasi ini..." class="w-full h-[104px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none resize-none"></textarea>
             
             <button type="button" onclick="removeVariationRow(this)" class="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 transition">
                 <i class="fas fa-trash-alt"></i>

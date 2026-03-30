@@ -18,6 +18,7 @@ class ProductVariation extends Model
         'price_adjustment', // e.g., 5000.00
         'stock',
         'image',
+        'description',
     ];
 
     protected $casts = [

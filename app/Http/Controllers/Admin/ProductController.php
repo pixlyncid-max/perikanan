@@ -86,6 +86,7 @@ class ProductController extends Controller
             'variations.*.price_adjustment' => 'nullable|numeric|min:0',
             'variations.*.stock' => 'nullable|integer|min:0',
             'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'variations.*.description' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -138,6 +139,7 @@ class ProductController extends Controller
                         'name' => $var['name'],
                         'price_adjustment' => $var['price_adjustment'] ?? 0,
                         'stock' => $var['stock'] ?? 0,
+                        'description' => $var['description'] ?? null,
                     ];
 
                     // Handle variation image
@@ -201,6 +203,7 @@ class ProductController extends Controller
             'variations.*.price_adjustment' => 'nullable|numeric|min:0',
             'variations.*.stock' => 'nullable|integer|min:0',
             'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'variations.*.description' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -265,6 +268,7 @@ class ProductController extends Controller
                         'name' => $var['name'],
                         'price_adjustment' => $var['price_adjustment'] ?? 0,
                         'stock' => $var['stock'] ?? 0,
+                        'description' => $var['description'] ?? null,
                     ];
 
                     // Handle variation image
