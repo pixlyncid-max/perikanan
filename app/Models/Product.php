@@ -67,6 +67,14 @@ class Product extends Model
     }
 
     /**
+     * Get the variations for the product.
+     */
+    public function variations(): HasMany
+    {
+        return $this->hasMany(ProductVariation::class);
+    }
+
+    /**
      * Check if product is on sale.
      */
     public function isOnSale(): bool

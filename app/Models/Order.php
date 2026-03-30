@@ -24,6 +24,9 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'payment_url',
+        'payment_code',
+        'payment_channel',
+        'payment_expires_at',
         'notes',
         'paid_at',
         'shipped_at',
@@ -36,6 +39,7 @@ class Order extends Model
         'paid_at' => 'datetime',
         'shipped_at' => 'datetime',
         'delivered_at' => 'datetime',
+        'payment_expires_at' => 'datetime',
     ];
 
     /**

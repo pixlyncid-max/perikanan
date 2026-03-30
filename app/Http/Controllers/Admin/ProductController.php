@@ -80,11 +80,12 @@ class ProductController extends Controller
             'sku'               => 'nullable|string|max:100|unique:products,sku',
             'short_description' => 'nullable|string|max:500',
             'description'       => 'nullable|string',
-            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'featured'          => 'nullable|boolean',
-            'is_active'         => 'nullable|boolean',
-            'meta_title'        => 'nullable|string|max:255',
-            'meta_description'  => 'nullable|string|max:500',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'variations.*.type' => 'required_with:variations|string|max:50',
+            'variations.*.name' => 'required_with:variations|string|max:100',
+            'variations.*.price_adjustment' => 'nullable|numeric|min:0',
+            'variations.*.stock' => 'nullable|integer|min:0',
+            'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         if ($validator->fails()) {
@@ -126,7 +127,31 @@ class ProductController extends Controller
             $data['images'] = json_encode(['products/' . $imageName]);
         }
 
-        Product::create($data);
+        $product = Product::create($data);
+
+        // Handle variations
+        if ($request->has('variations') && is_array($request->variations)) {
+            foreach ($request->variations as $index => $var) {
+                if (!empty($var['type']) && !empty($var['name'])) {
+                    $varData = [
+                        'type' => $var['type'],
+                        'name' => $var['name'],
+                        'price_adjustment' => $var['price_adjustment'] ?? 0,
+                        'stock' => $var['stock'] ?? 0,
+                    ];
+
+                    // Handle variation image
+                    if ($request->hasFile("variations.{$index}.image")) {
+                        $vImage = $request->file("variations.{$index}.image");
+                        $vImageName = time() . '_v_' . Str::random(5) . '.' . $vImage->getClientOriginalExtension();
+                        $vImage->storeAs('public/variations', $vImageName);
+                        $varData['image'] = 'variations/' . $vImageName;
+                    }
+
+                    $product->variations()->create($varData);
+                }
+            }
+        }
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil ditambahkan.');
@@ -165,11 +190,17 @@ class ProductController extends Controller
             'sku'               => 'nullable|string|max:100|unique:products,sku,' . $product->id,
             'short_description' => 'nullable|string|max:500',
             'description'       => 'nullable|string',
-            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'featured'          => 'nullable|boolean',
             'is_active'         => 'nullable|boolean',
             'meta_title'        => 'nullable|string|max:255',
             'meta_description'  => 'nullable|string|max:500',
+            'variations'        => 'nullable|array',
+            'variations.*.type' => 'required_with:variations|string|max:50',
+            'variations.*.name' => 'required_with:variations|string|max:100',
+            'variations.*.price_adjustment' => 'nullable|numeric|min:0',
+            'variations.*.stock' => 'nullable|integer|min:0',
+            'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         if ($validator->fails()) {
@@ -223,6 +254,53 @@ class ProductController extends Controller
         }
 
         $product->update($data);
+
+        // Logic update: Keep existing variations if possible to preserve images
+        $existingVarIds = [];
+        if ($request->has('variations') && is_array($request->variations)) {
+            foreach ($request->variations as $index => $var) {
+                if (!empty($var['type']) && !empty($var['name'])) {
+                    $varData = [
+                        'type' => $var['type'],
+                        'name' => $var['name'],
+                        'price_adjustment' => $var['price_adjustment'] ?? 0,
+                        'stock' => $var['stock'] ?? 0,
+                    ];
+
+                    // Handle variation image
+                    if ($request->hasFile("variations.{$index}.image")) {
+                        $vImage = $request->file("variations.{$index}.image");
+                        $vImageName = time() . '_v_' . Str::random(5) . '.' . $vImage->getClientOriginalExtension();
+                        $vImage->storeAs('public/variations', $vImageName);
+                        $varData['image'] = 'variations/' . $vImageName;
+                    }
+
+                    if (isset($var['id']) && !empty($var['id'])) {
+                        $variation = $product->variations()->find($var['id']);
+                        if ($variation) {
+                            // Delete old image if new one uploaded
+                            if (isset($varData['image']) && $variation->image) {
+                                Storage::delete('public/' . $variation->image);
+                            }
+                            $variation->update($varData);
+                            $existingVarIds[] = $variation->id;
+                        }
+                    } else {
+                        $newVar = $product->variations()->create($varData);
+                        $existingVarIds[] = $newVar->id;
+                    }
+                }
+            }
+        }
+        
+        // Delete variations that were removed
+        $toDelete = $product->variations()->whereNotIn('id', $existingVarIds)->get();
+        foreach ($toDelete as $td) {
+            if ($td->image) {
+                Storage::delete('public/' . $td->image);
+            }
+            $td->delete();
+        }
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil diperbarui.');
@@ -323,7 +401,7 @@ class ProductController extends Controller
         $productIds = $request->input('product_ids');
 
         if (!$productIds || !is_array($productIds) || empty($productIds)) {
-            return redirect()->back()->with('error', 'Pilih minimal satu produk untuk menerapkan aksi.');
+            return redirect()->route('admin.products.index')->with('error', 'Pilih minimal satu produk untuk menerapkan aksi.');
         }
 
         switch ($action) {
@@ -343,18 +421,18 @@ class ProductController extends Controller
                 }
                 
                 Product::whereIn('id', $productIds)->delete();
-                return redirect()->back()->with('success', count($productIds) . ' produk berhasil dihapus secara massal.');
+                return redirect()->route('admin.products.index')->with('success', count($productIds) . ' produk berhasil dihapus secara massal.');
 
             case 'activate':
                 Product::whereIn('id', $productIds)->update(['is_active' => 1]);
-                return redirect()->back()->with('success', count($productIds) . ' produk berhasil diaktifkan massal.');
+                return redirect()->route('admin.products.index')->with('success', count($productIds) . ' produk berhasil diaktifkan massal.');
 
             case 'deactivate':
                 Product::whereIn('id', $productIds)->update(['is_active' => 0]);
-                return redirect()->back()->with('success', count($productIds) . ' produk berhasil dinonaktifkan massal.');
+                return redirect()->route('admin.products.index')->with('success', count($productIds) . ' produk berhasil dinonaktifkan massal.');
 
             default:
-                return redirect()->back()->with('error', 'Aksi massal tidak valid.');
+                return redirect()->route('admin.products.index')->with('error', 'Aksi massal tidak valid.');
         }
     }
 

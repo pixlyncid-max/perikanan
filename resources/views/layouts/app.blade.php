@@ -618,13 +618,16 @@
         });
 
         // Add to Cart global function
-        function addToCart(productId) {
+        function addToCart(productId, variationId = null) {
             const btn = document.getElementById(`cart-btn-${productId}`);
             const img = document.getElementById(`product-img-${productId}`);
             let cartIconLink = document.getElementById('navbar-cart-icon');
-            if (cartIconLink && cartIconLink.offsetParent === null) {
+            
+            // Check if mobile cart is visible
+            if (cartIconLink && (cartIconLink.offsetParent === null || window.getComputedStyle(cartIconLink).display === 'none')) {
                 cartIconLink = document.getElementById('mobile-cart-icon');
             }
+            
             const cartIcon = cartIconLink || document.querySelector('.fa-shopping-cart').parentElement;
 
             fetch('{{ route("cart.add") }}', {
@@ -632,11 +635,12 @@
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
                     product_id: productId,
+                    variation_id: variationId,
                     quantity: 1
                 })
             })
@@ -648,20 +652,36 @@
                         const imgRect = img.getBoundingClientRect();
                         const cartRect = cartIcon.getBoundingClientRect();
 
+                        // Create flyer
                         const flyer = document.createElement('img');
                         flyer.src = img.src;
                         flyer.className = 'fly-item';
-                        flyer.style.top = imgRect.top + 'px';
-                        flyer.style.left = imgRect.left + 'px';
+                        
+                        // Start position (Center of the source image)
+                        const startTop = imgRect.top + (imgRect.height / 2) - 25;
+                        const startLeft = imgRect.left + (imgRect.width / 2) - 25;
+                        
+                        flyer.style.top = startTop + 'px';
+                        flyer.style.left = startLeft + 'px';
+                        flyer.style.width = '50px';
+                        flyer.style.height = '50px';
+                        flyer.style.opacity = '1';
+                        flyer.style.zIndex = '100000';
+                        flyer.style.boxShadow = '0 0 20px rgba(37, 99, 235, 0.5)'; // Blue glow
+                        
                         document.body.appendChild(flyer);
 
-                        setTimeout(() => {
-                            flyer.style.top = cartRect.top + 'px';
-                            flyer.style.left = cartRect.left + 'px';
-                            flyer.style.width = '10px';
-                            flyer.style.height = '10px';
-                            flyer.style.opacity = '0';
-                        }, 50);
+                        // Trigger animation after a small delay to ensure DOM paint
+                        requestAnimationFrame(() => {
+                            setTimeout(() => {
+                                flyer.style.top = (cartRect.top + (cartRect.height / 2) - 5) + 'px';
+                                flyer.style.left = (cartRect.left + (cartRect.width / 2) - 5) + 'px';
+                                flyer.style.width = '10px';
+                                flyer.style.height = '10px';
+                                flyer.style.opacity = '0.5';
+                                flyer.style.transform = 'scale(0.2) rotate(360deg)';
+                            }, 50);
+                        });
 
                         flyer.addEventListener('transitionend', () => {
                             flyer.remove();
@@ -670,6 +690,9 @@
                             counters.forEach(counter => {
                                 counter.textContent = data.cart_count;
                                 counter.classList.remove('hidden');
+                                // Mini bounce for badge
+                                counter.classList.add('animate-ping');
+                                setTimeout(() => counter.classList.remove('animate-ping'), 500);
                             });
                             // Shake cart icon
                             if (cartIcon) {
@@ -679,9 +702,8 @@
                         });
                     }
 
-                    // Show centered modal
+                    // Show centered modal (Optional, but kept for feedback)
                     const modal = document.getElementById('success-modal');
-                    const messageEl = document.getElementById('modal-message');
                     if (modal) {
                         modal.style.display = 'block';
                         setTimeout(() => {

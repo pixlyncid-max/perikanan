@@ -132,6 +132,65 @@
                     </div>
                 </div>
 
+                {{-- Variations Card --}}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <h2 class="text-base font-semibold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-layer-group text-green-500"></i> Variasi Produk
+                        </h2>
+                        <button type="button" onclick="addVariationRow()" class="text-xs font-bold text-green-600 hover:text-green-700 flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg transition">
+                            <i class="fas fa-plus"></i> Tambah Variasi
+                        </button>
+                    </div>
+
+                    <div id="variations-wrapper" class="space-y-4">
+                        <div class="hidden text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200" id="no-variations-msg">
+                            <i class="fas fa-layer-group text-gray-300 text-3xl mb-2"></i>
+                            <p class="text-sm text-gray-400">Belum ada variasi. Klik tombol di atas untuk menambah.</p>
+                        </div>
+
+                        @foreach($product->variations as $index => $variation)
+                            <div class="variation-row grid grid-cols-1 md:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 relative group">
+                                <input type="hidden" name="variations[{{ $index }}][id]" value="{{ $variation->id }}">
+                                <div class="md:col-span-1">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Foto Variasi</label>
+                                    <div class="relative w-full h-24 bg-white border border-gray-200 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer hover:border-green-400 transition" onclick="this.querySelector('input').click()">
+                                        @if($variation->image)
+                                            <img src="{{ asset('storage/' . $variation->image) }}" class="w-full h-full object-cover">
+                                            <div class="text-center placeholder-ui hidden">
+                                                <i class="fas fa-camera text-gray-300"></i>
+                                            </div>
+                                        @else
+                                            <img src="" class="hidden w-full h-full object-cover">
+                                            <div class="text-center placeholder-ui">
+                                                <i class="fas fa-camera text-gray-300"></i>
+                                            </div>
+                                        @endif
+                                        <input type="file" name="variations[{{ $index }}][image]" class="hidden" accept="image/*" onchange="previewVariationImage(this)">
+                                    </div>
+                                </div>
+                                <div class="md:col-span-1">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tipe</label>
+                                    <input type="text" name="variations[{{ $index }}][type]" value="{{ $variation->type }}" placeholder="Ukuran" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-3 mb-1">Nama</label>
+                                    <input type="text" name="variations[{{ $index }}][name]" value="{{ $variation->name }}" placeholder="XL" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                                </div>
+                                <div class="md:col-span-1">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Penyesuaian Harga (+Rp)</label>
+                                    <input type="number" name="variations[{{ $index }}][price_adjustment]" value="{{ (int)$variation->price_adjustment }}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                                </div>
+                                <div class="md:col-span-1 relative pr-8">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Stok Variasi</label>
+                                    <input type="number" name="variations[{{ $index }}][stock]" value="{{ $variation->stock }}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                                    <button type="button" onclick="removeVariationRow(this)" class="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 transition">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                        
+                    </div>
+                </div>
                 {{-- SEO --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
                     <h2 class="text-base font-semibold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-3">
@@ -162,7 +221,7 @@
                         <div id="image-placeholder" class="{{ $firstImg ? 'hidden' : '' }}">
                             <i class="fas fa-cloud-upload-alt text-3xl text-gray-300 mb-2"></i>
                             <p class="text-sm text-gray-500">Klik untuk ubah foto</p>
-                            <p class="text-xs text-gray-400 mt-1">PNG, JPG, GIF, WEBP — Maks. 2MB</p>
+                            <p class="text-xs text-gray-400 mt-1">PNG, JPG, GIF, WEBP — Maks. 5MB</p>
                         </div>
                         <div id="image-preview" class="{{ $firstImg ? '' : 'hidden' }}">
                             <img src="{{ $firstImg ? asset('storage/'.$firstImg) : '' }}" alt="Preview" class="h-40 w-full object-cover rounded-lg" id="preview-img">
@@ -229,6 +288,58 @@
     </form>
 </div>
 
+{{-- Template for new variation rows (Placed outside form to avoid validation issues) --}}
+<template id="variation-row-template">
+    <div class="variation-row grid grid-cols-1 md:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 relative group">
+        <div class="md:col-span-1">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Foto Variasi</label>
+            <div class="relative w-full h-24 bg-white border border-gray-200 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer hover:border-green-400 transition" onclick="this.querySelector('input').click()">
+                <img src="" class="hidden w-full h-full object-cover">
+                <div class="text-center placeholder-ui">
+                    <i class="fas fa-camera text-gray-300"></i>
+                </div>
+                <input type="file" name="variations[INDEX][image]" class="hidden" accept="image/*" onchange="previewVariationImage(this)">
+            </div>
+        </div>
+        <div class="md:col-span-1">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tipe</label>
+            <input type="text" name="variations[INDEX][type]" placeholder="Warna / Ukuran" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-3 mb-1">Nama</label>
+            <input type="text" name="variations[INDEX][name]" placeholder="Merah / XL" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+        </div>
+        <div class="md:col-span-1">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Penyesuaian Harga (+Rp)</label>
+            <input type="number" name="variations[INDEX][price_adjustment]" value="0" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+        </div>
+        <div class="md:col-span-1 relative pr-8">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Stok Variasi</label>
+            <input type="number" name="variations[INDEX][stock]" value="0" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+            
+            <button type="button" onclick="removeVariationRow(this)" class="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 transition">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+    </div>
+</template>
+
+<script>
+function previewVariationImage(input) {
+    const container = input.parentElement;
+    const img = container.querySelector('img');
+    const placeholder = container.querySelector('.placeholder-ui');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            img.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
 @push('scripts')
 <script>
 function previewImage(input) {
@@ -264,6 +375,45 @@ document.addEventListener('DOMContentLoaded', function() {
             skuInput.value = '';
         }
     });
+});
+
+let variationIndex = {{ $product->variations->count() }};
+function addVariationRow() {
+    const wrapper = document.getElementById('variations-wrapper');
+    const template = document.getElementById('variation-row-template').innerHTML;
+    const msg = document.getElementById('no-variations-msg');
+    
+    msg.classList.add('hidden');
+    
+    const newRowHtml = template.replace(/INDEX/g, variationIndex);
+    const newRow = document.createElement('div');
+    newRow.innerHTML = newRowHtml;
+    wrapper.appendChild(newRow.firstElementChild);
+    
+    variationIndex++;
+}
+
+function removeVariationRow(btn) {
+    const row = btn.closest('.variation-row');
+    row.remove();
+    
+    const wrapper = document.getElementById('variations-wrapper');
+    const rows = wrapper.querySelectorAll('.variation-row');
+    const msg = document.getElementById('no-variations-msg');
+    
+    if (rows.length === 0) {
+        msg.classList.remove('hidden');
+    }
+}
+
+// Show empty message initially if no rows
+document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.getElementById('variations-wrapper');
+    const rows = wrapper.querySelectorAll('.variation-row');
+    const msg = document.getElementById('no-variations-msg');
+    if (rows.length === 0) {
+        msg.classList.remove('hidden');
+    }
 });
 </script>
 @endpush

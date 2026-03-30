@@ -28,27 +28,41 @@ class CartController extends Controller
     public function add(Request $request)
     {
         $productId = $request->input('product_id');
+        $variationId = $request->input('variation_id');
         $quantity = $request->input('quantity', 1);
 
         $product = Product::findOrFail($productId);
+        $variation = $variationId ? \App\Models\ProductVariation::find($variationId) : null;
         
         // Get user role from session safely
         $userSession = Session::get('user', []);
         $userRole = $userSession['type'] ?? 'user';
         
-        $price = $product->getPriceForUser($userRole);
+        $basePrice = $product->getPriceForUser($userRole);
+        $price = $basePrice;
+
+        if ($variation) {
+            $price += $variation->price_adjustment;
+        }
 
         $cart = Session::get('cart', []);
+        
+        // Unique key for cart item to support multiple variations of the same product
+        $cartKey = $variationId ? "{$productId}-{$variationId}" : $productId;
 
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] += $quantity;
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['quantity'] += $quantity;
         } else {
             $imgs = $product->images;
             if(is_string($imgs)) $imgs = json_decode($imgs, true);
             $firstImg = (!empty($imgs) && is_array($imgs)) ? $imgs[0] : null;
 
-            $cart[$productId] = [
+            $cart[$cartKey] = [
+                'product_id' => $productId,
+                'variation_id' => $variationId,
                 'name' => $product->name,
+                'variation_name' => $variation ? $variation->name : null,
+                'variation_type' => $variation ? $variation->type : null,
                 'quantity' => $quantity,
                 'price' => $price,
                 'image' => $firstImg,
@@ -75,13 +89,13 @@ class CartController extends Controller
      */
     public function update(Request $request)
     {
-        $productId = $request->input('product_id');
+        $cartId = $request->input('cart_id');
         $quantity = $request->input('quantity');
 
         $cart = Session::get('cart', []);
 
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] = max(1, (int)$quantity);
+        if (isset($cart[$cartId])) {
+            $cart[$cartId]['quantity'] = max(1, (int)$quantity);
             Session::put('cart', $cart);
         }
 
@@ -93,11 +107,11 @@ class CartController extends Controller
      */
     public function remove(Request $request)
     {
-        $productId = $request->input('product_id');
+        $cartId = $request->input('cart_id');
         $cart = Session::get('cart', []);
 
-        if (isset($cart[$productId])) {
-            unset($cart[$productId]);
+        if (isset($cart[$cartId])) {
+            unset($cart[$cartId]);
             Session::put('cart', $cart);
         }
 

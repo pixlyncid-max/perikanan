@@ -176,26 +176,24 @@
 
                         {{-- Status Active --}}
                         <td class="px-4 py-3 text-center">
-                            <form action="{{ route('admin.products.toggle-active', $product) }}" method="POST" class="inline">
-                                @csrf @method('PATCH')
-                                <button type="submit" title="{{ $product->is_active ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan' }}"
-                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition
-                                        {{ $product->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
-                                    <span class="w-1.5 h-1.5 rounded-full mr-1.5 {{ $product->is_active ? 'bg-green-500' : 'bg-gray-400' }}"></span>
-                                    {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
-                                </button>
-                            </form>
+                            <button type="button" 
+                                    onclick="event.preventDefault(); document.getElementById('toggle-active-{{ $product->id }}').submit();"
+                                    title="{{ $product->is_active ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan' }}"
+                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition
+                                    {{ $product->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                                <span class="w-1.5 h-1.5 rounded-full mr-1.5 {{ $product->is_active ? 'bg-green-500' : 'bg-gray-400' }}"></span>
+                                {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
+                            </button>
                         </td>
 
                         {{-- Featured --}}
                         <td class="px-4 py-3 text-center">
-                            <form action="{{ route('admin.products.toggle-featured', $product) }}" method="POST" class="inline">
-                                @csrf @method('PATCH')
-                                <button type="submit" title="{{ $product->featured ? 'Hapus dari unggulan' : 'Jadikan unggulan' }}"
-                                        class="text-lg transition {{ $product->featured ? 'text-yellow-400 hover:text-yellow-500' : 'text-gray-300 hover:text-yellow-400' }}">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </form>
+                            <button type="button" 
+                                    onclick="event.preventDefault(); document.getElementById('toggle-featured-{{ $product->id }}').submit();"
+                                    title="{{ $product->featured ? 'Hapus dari unggulan' : 'Jadikan unggulan' }}"
+                                    class="text-lg transition {{ $product->featured ? 'text-yellow-400 hover:text-yellow-500' : 'text-gray-300 hover:text-yellow-400' }}">
+                                <i class="fas fa-star"></i>
+                            </button>
                         </td>
 
                         {{-- Actions --}}
@@ -209,15 +207,10 @@
                                    class="p-1.5 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-lg transition" title="Edit">
                                     <i class="fas fa-edit text-sm"></i>
                                 </a>
-                                <button onclick="confirmDelete('delete-form-{{ $product->id }}')"
+                                <button type="button" onclick="confirmDelete('delete-form-{{ $product->id }}')"
                                         class="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-lg transition" title="Hapus">
                                     <i class="fas fa-trash text-sm"></i>
                                 </button>
-                                <form id="delete-form-{{ $product->id }}"
-                                      action="{{ route('admin.products.destroy', $product) }}"
-                                      method="POST" class="hidden">
-                                    @csrf @method('DELETE')
-                                </form>
                             </div>
                         </td>
                     </tr>
@@ -247,6 +240,19 @@
         @endif
     </div>
     </form>
+
+    {{-- Hidden Forms for Single Product Actions (Outside main form to avoid nesting) --}}
+    @foreach($products as $product)
+        <form id="toggle-active-{{ $product->id }}" action="{{ route('admin.products.toggle-active', $product) }}" method="POST" class="hidden">
+            @csrf @method('PATCH')
+        </form>
+        <form id="toggle-featured-{{ $product->id }}" action="{{ route('admin.products.toggle-featured', $product) }}" method="POST" class="hidden">
+            @csrf @method('PATCH')
+        </form>
+        <form id="delete-form-{{ $product->id }}" action="{{ route('admin.products.destroy', $product) }}" method="POST" class="hidden">
+            @csrf @method('DELETE')
+        </form>
+    @endforeach
 </div>
 
 {{-- Import Modal --}}

@@ -164,7 +164,7 @@ class ProdukController extends Controller
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)->active()->firstOrFail();
+        $product = Product::where('slug', $slug)->with('variations')->active()->firstOrFail();
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->active()

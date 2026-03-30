@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CheckoutPageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ArticleController;
@@ -107,6 +108,9 @@ Route::middleware(['web'])->group(function () {
     Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
     Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+
+    // Custom Checkout Page
+    Route::get('/checkout', [CheckoutPageController::class, 'index'])->name('checkout.index');
 
     // Checkout Process (Web context for session access)
     Route::post('/checkout-process', [\App\Http\Controllers\Api\CheckoutController::class, 'store'])->name('checkout.process');

@@ -45,8 +45,18 @@
                         <span class="text-xl font-bold text-{{ $colorClass }}-600">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                     @endif
                 </div>
-                <button onclick="addToCart({{ $product->id }})" id="cart-btn-{{ $product->id }}" class="bg-{{ $colorClass }}-600 text-white px-4 py-2 rounded-lg hover:bg-{{ $colorClass }}-700 transition" {{ $product->stock < 1 ? 'disabled' : '' }}>
-                    <i class="fas fa-cart-plus"></i>
+                @php $hasVariations = $product->variations->count() > 0; @endphp
+                <button 
+                    onclick="{{ $hasVariations ? "window.location.href='" . route('produk.show', $product->slug) . "?select_variation=1'" : "addToCart($product->id)" }}" 
+                    id="cart-btn-{{ $product->id }}" 
+                    class="bg-{{ $colorClass }}-600 text-white px-4 py-2 rounded-lg hover:bg-{{ $colorClass }}-700 transition relative group/btn" 
+                    title="{{ $hasVariations ? 'Pilih variasi' : 'Tambah ke keranjang' }}"
+                    {{ $product->stock < 1 ? 'disabled' : '' }}
+                >
+                    <i class="fas {{ $hasVariations ? 'fa-list-ul' : 'fa-cart-plus' }}"></i>
+                    @if($hasVariations)
+                        <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap pointer-events-none">Pilih Variasi</span>
+                    @endif
                 </button>
             </div>
             <div class="text-xs {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600 font-bold' }}">
