@@ -73,9 +73,13 @@ class AuthController extends Controller
             'id' => $user->id,
             'name' => $displayName,
             'email' => $email,
-            'type' => $userType, // 'user', 'member', atau 'admin'
+            'type' => $userType,
             'table' => $userType === 'member' ? 'members' : ($userType === 'admin' ? 'admins' : 'users'),
         ]);
+
+        // --- CART SYNC ON LOGIN ---
+        $this->syncCartAfterAuth($user, $userType);
+        // --- END CART SYNC ---
 
         // Regenerate session ID for security
         Session::regenerate();
@@ -154,6 +158,8 @@ class AuthController extends Controller
                 'table' => 'members',
             ]);
 
+            $this->syncCartAfterAuth($member, 'member');
+
             Session::flash('success', 'Pendaftaran sebagai anggota berhasil! Selamat datang di FISHERIES.');
 
             return redirect('/');
@@ -180,6 +186,8 @@ class AuthController extends Controller
             'table' => 'users',
         ]);
 
+        $this->syncCartAfterAuth($user, 'user');
+
         Session::flash('success', 'Pendaftaran berhasil! Selamat datang di FISHERIES.');
 
         return redirect('/');
@@ -187,6 +195,20 @@ class AuthController extends Controller
 
     public function logout()
     {
+        // --- CART SYNC ON LOGOUT ---
+        if (Session::has('user') && Session::has('cart')) {
+            $user = Session::get('user');
+            $cart = Session::get('cart');
+            
+            if (!empty($cart)) {
+                \App\Models\ShoppingCart::updateOrCreate(
+                    ['user_id' => $user['id'], 'user_type' => $user['type']],
+                    ['cart_data' => json_encode($cart)]
+                );
+            }
+        }
+        // --- END CART SYNC ---
+
         // Clear session
         Session::forget('user');
         Session::flush();
@@ -304,5 +326,71 @@ class AuthController extends Controller
     public function getOrderErrorMessage(): string
     {
         return 'Produk ini hanya tersedia untuk anggota. Silakan daftar menjadi anggota untuk melakukan pemesanan.';
+    }
+
+    /**
+     * Update user address via AJAX
+     */
+    public function updateAddress(\Illuminate\Http\Request $request)
+    {
+        if (!\Illuminate\Support\Facades\Session::has('user')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+
+        $session = \Illuminate\Support\Facades\Session::get('user');
+        $id = $session['id'];
+        $type = $session['type'];
+
+        $user = null;
+        if ($type === 'admin') {
+            $user = Admin::find($id);
+        } elseif ($type === 'member') {
+            $user = Member::find($id);
+        } else {
+            $user = User::find($id);
+        }
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        }
+
+        $user->address = $request->address;
+        $user->phone = $request->phone;
+        $user->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Merge session cart with database cart after login/register
+     */
+    private function syncCartAfterAuth($user, $userType)
+    {
+        $sessionCart = Session::get('cart', []);
+        $savedCartObj = \App\Models\ShoppingCart::where('user_id', $user->id)
+            ->where('user_type', $userType)
+            ->first();
+        
+        $savedCart = [];
+        if ($savedCartObj && $savedCartObj->cart_data) {
+            $savedCart = json_decode($savedCartObj->cart_data, true) ?? [];
+        }
+
+        // Merge logic
+        foreach ($sessionCart as $key => $item) {
+            if (isset($savedCart[$key])) {
+                $savedCart[$key]['quantity'] += $item['quantity'];
+            } else {
+                $savedCart[$key] = $item;
+            }
+        }
+
+        if (!empty($savedCart)) {
+            \App\Models\ShoppingCart::updateOrCreate(
+                ['user_id' => $user->id, 'user_type' => $userType],
+                ['cart_data' => json_encode($savedCart)]
+            );
+            Session::put('cart', $savedCart);
+        }
     }
 }

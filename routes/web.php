@@ -111,9 +111,13 @@ Route::middleware(['web'])->group(function () {
 
     // Custom Checkout Page
     Route::get('/checkout', [CheckoutPageController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/select', [CheckoutPageController::class, 'setItems'])->name('checkout.set-items');
 
     // Checkout Process (Web context for session access)
     Route::post('/checkout-process', [\App\Http\Controllers\Api\CheckoutController::class, 'store'])->name('checkout.process');
+    
+    // Profile Updates
+    Route::post('/profile/update-address', [AuthController::class, 'updateAddress'])->name('profile.update-address');
 });
 
 // Admin Routes

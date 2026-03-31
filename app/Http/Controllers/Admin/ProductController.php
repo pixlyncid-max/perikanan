@@ -80,12 +80,12 @@ class ProductController extends Controller
             'sku'               => 'nullable|string|max:100|unique:products,sku',
             'short_description' => 'nullable|string|max:500',
             'description'       => 'nullable|string',
-            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'variations.*.type' => 'required_with:variations|string|max:50',
             'variations.*.name' => 'required_with:variations|string|max:100',
             'variations.*.price_adjustment' => 'nullable|numeric|min:0',
             'variations.*.stock' => 'nullable|integer|min:0',
-            'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'variations.*.description' => 'nullable|string',
         ]);
 
@@ -192,7 +192,7 @@ class ProductController extends Controller
             'sku'               => 'nullable|string|max:100|unique:products,sku,' . $product->id,
             'short_description' => 'nullable|string|max:500',
             'description'       => 'nullable|string',
-            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'featured'          => 'nullable|boolean',
             'is_active'         => 'nullable|boolean',
             'meta_title'        => 'nullable|string|max:255',
@@ -202,7 +202,7 @@ class ProductController extends Controller
             'variations.*.name' => 'required_with:variations|string|max:100',
             'variations.*.price_adjustment' => 'nullable|numeric|min:0',
             'variations.*.stock' => 'nullable|integer|min:0',
-            'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'variations.*.description' => 'nullable|string',
         ]);
 
@@ -454,7 +454,7 @@ class ProductController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:5120',
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240',
         ]);
 
         try {

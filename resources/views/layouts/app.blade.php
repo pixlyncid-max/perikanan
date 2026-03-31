@@ -106,7 +106,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            z-index: 10001;
+            z-index: 99999;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
             align-items: center;

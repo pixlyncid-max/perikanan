@@ -73,6 +73,9 @@ class CartController extends Controller
         Session::put('cart', $cart);
         Session::save(); // Ensure session is saved before response
 
+        // Sync to database if logged in
+        $this->syncToDatabase($cart);
+
         if ($request->ajax() || $request->expectsJson()) {
             return response()->json([
                 'success' => true,
@@ -97,6 +100,8 @@ class CartController extends Controller
         if (isset($cart[$cartId])) {
             $cart[$cartId]['quantity'] = max(1, (int)$quantity);
             Session::put('cart', $cart);
+            Session::save();
+            $this->syncToDatabase($cart);
         }
 
         return redirect()->back()->with('success', 'Keranjang berhasil diperbarui!');
@@ -113,8 +118,24 @@ class CartController extends Controller
         if (isset($cart[$cartId])) {
             unset($cart[$cartId]);
             Session::put('cart', $cart);
+            Session::save();
+            $this->syncToDatabase($cart);
         }
 
         return redirect()->back()->with('success', 'Produk berhasil dihapus dari keranjang!');
+    }
+
+    /**
+     * Helper to sync session cart to database for authenticated users.
+     */
+    private function syncToDatabase($cart)
+    {
+        if (Session::has('user')) {
+            $user = Session::get('user');
+            \App\Models\ShoppingCart::updateOrCreate(
+                ['user_id' => $user['id'], 'user_type' => $user['type']],
+                ['cart_data' => json_encode($cart)]
+            );
+        }
     }
 }

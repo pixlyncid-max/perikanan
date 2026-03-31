@@ -215,8 +215,42 @@
             return;
         }
 
-        // Redirect to the checkout page with selected item IDs
-        window.location.href = "{{ route('checkout.index') }}?items=" + selectedIds;
+        // Use fetch to POST selected IDs to the server for a clean URL redirect
+        btnCheckout.disabled = true;
+        btnCheckout.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+        fetch("{{ route('checkout.set-items') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ items: selectedIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                showAlert({
+                    type: 'error',
+                    title: 'Gagal',
+                    message: data.message || 'Gagal memproses pilihan produk.'
+                });
+                btnCheckout.disabled = false;
+                btnCheckout.innerHTML = '<i class="fas fa-credit-card"></i> Pesan Sekarang';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert({
+                type: 'error',
+                title: 'Error',
+                message: 'Terjadi kesalahan sistem. Silakan coba lagi.'
+            });
+            btnCheckout.disabled = false;
+            btnCheckout.innerHTML = '<i class="fas fa-credit-card"></i> Pesan Sekarang';
+        });
     });
 </script>
 @endpush

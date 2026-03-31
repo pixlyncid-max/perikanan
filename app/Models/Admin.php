@@ -26,6 +26,22 @@ class Admin extends Authenticatable
         'account_status',
     ];
 
+    /**
+     * Get the name attribute (alias for full_name).
+     */
+    public function getNameAttribute()
+    {
+        return $this->full_name;
+    }
+
+    /**
+     * Set the name attribute (alias for full_name).
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['full_name'] = $value;
+    }
+
 
     protected $casts = [
         'permissions' => 'array',

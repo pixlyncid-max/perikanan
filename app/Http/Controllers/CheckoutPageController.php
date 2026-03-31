@@ -19,7 +19,9 @@ class CheckoutPageController extends Controller
         }
 
         $allCart = Session::get('cart', []);
-        $selectedIds = $request->query('items');
+        
+        // Priority: 1. Query parameter (legacy/direct links), 2. Session (clean links)
+        $selectedIds = $request->query('items') ?? Session::get('checkout_selected_items');
 
         if (!$selectedIds) {
             return redirect(route('cart.index'))->with('error', 'Silakan pilih produk yang ingin di-checkout.');
@@ -51,5 +53,25 @@ class CheckoutPageController extends Controller
         }
 
         return view('checkout.index', compact('cart', 'subtotal', 'user', 'userSession'));
+    }
+
+    /**
+     * Store selected items for checkout in session (Clean URL Support)
+     */
+    public function setItems(Request $request)
+    {
+        $items = $request->input('items');
+        
+        if (empty($items)) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada produk yang dipilih.'], 400);
+        }
+
+        Session::put('checkout_selected_items', $items);
+        Session::save();
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('checkout.index')
+        ]);
     }
 }
