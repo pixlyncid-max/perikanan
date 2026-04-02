@@ -53,7 +53,7 @@
                     title="{{ $hasVariations ? 'Pilih variasi' : 'Tambah ke keranjang' }}"
                     {{ $product->stock < 1 ? 'disabled' : '' }}
                 >
-                    <i class="fas {{ $hasVariations ? 'fa-list-ul' : 'fa-cart-plus' }}"></i>
+                    <i class="fas fa-shopping-cart"></i>
                     @if($hasVariations)
                         <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap pointer-events-none">Pilih Variasi</span>
                     @endif
