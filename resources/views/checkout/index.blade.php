@@ -38,8 +38,8 @@
     .btn-change-address:hover { background: var(--checkout-primary-soft); color: var(--checkout-primary-hover); }
 
     /* ── Product List ── */
-    .product-list-header { background: #f8fafc; border-bottom: 1px solid #f1f5f9; padding: 12px 28px; display: grid; grid-template-cols: 1.5fr 1fr 0.5fr 1fr; gap: 16px; }
-    .product-row { display: grid; grid-template-cols: 1.5fr 1fr 0.5fr 1fr; gap: 16px; padding: 24px 28px; align-items: center; border-bottom: 1px solid #f8fafc; transition: background 0.2s; }
+    .product-list-header { background: #f8fafc; border-bottom: 1px solid #f1f5f9; padding: 12px 28px; display: grid; grid-template-columns: 1.5fr 1fr 0.5fr 1fr; gap: 16px; }
+    .product-row { display: grid; grid-template-columns: 1.5fr 1fr 0.5fr 1fr; gap: 16px; padding: 24px 28px; align-items: center; border-bottom: 1px solid #f8fafc; transition: background 0.2s; }
     .product-row:hover { background: #fafafa; }
     .product-row:last-child { border-bottom: none; }
     .product-info { display: flex; gap: 16px; align-items: center; }
@@ -137,7 +137,7 @@
         .btn-change-address { width: 100%; padding: 10px; }
         
         .product-list-header { display: none; }
-        .product-row { grid-template-cols: 1fr; padding: 16px; gap: 12px; border-radius: 8px; margin: 0 12px; border: 1px solid #f1f5f9; margin-bottom: 12px; }
+        .product-row { grid-template-columns: 1fr; padding: 16px; gap: 12px; border-radius: 8px; margin: 0 12px; border: 1px solid #f1f5f9; margin-bottom: 12px; }
         .product-row .price-tag, .product-row .subtotal-tag { 
             text-align: left !important; display: flex; justify-content: space-between; align-items: center; 
             padding-top: 8px; border-top: 1px solid #f8fafc;
@@ -240,10 +240,47 @@
                         <input type="hidden" id="cust_address" name="cust_address" value="">
                     </div>
 
+                    <!-- 1.5 Drop Point Location Section -->
+                    <div class="checkout-section" id="location-section">
+                        <div class="section-header">
+                            <h2 class="section-title"><i class="fas fa-store-alt"></i> Lokasi Pengambilan (Drop Point)</h2>
+                        </div>
+                        <div class="p-6 md:p-8 space-y-6">
+                            <p class="text-sm font-medium text-slate-500">Pilih lokasi supplier/drop point untuk mengambil dan memproses pesanan ini.</p>
+                            
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <button type="button" onclick="autoDetectLocation()" class="md:w-1/2 flex items-center justify-center gap-3 py-4 px-6 bg-blue-50 border-2 border-blue-600 rounded-xl text-blue-700 font-bold hover:bg-blue-600 hover:text-white transition">
+                                    <i class="fas fa-location-arrow"></i> Cari Lokasi Terdekat
+                                </button>
+                                <button type="button" onclick="toggleManualLocation()" class="md:w-1/2 flex items-center justify-center gap-3 py-4 px-6 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-slate-100 transition">
+                                    <i class="fas fa-list-ul"></i> Pilih Lokasi Manual
+                                </button>
+                            </div>
+
+                            <!-- Manual location select dropdown (hidden by default) -->
+                            <div id="manual-location-area" class="hidden mt-4">
+                                <label class="text-xs font-black text-slate-400 uppercase tracking-widest block mb-2">Pilih dari daftar lokasi tersedia</label>
+                                <select id="manual_loc_select" class="w-full border-2 border-e2e8f0 padding-14px-18px rounded-lg p-3 outline-none focus:border-blue-500" onchange="selectLocation(this.value)">
+                                    <option value="" disabled selected>Memuat lokasi...</option>
+                                </select>
+                            </div>
+
+                            <!-- Selected Location Box -->
+                            <div id="selected-location-box" class="hidden mt-6 bg-emerald-50 border border-emerald-200 rounded-xl p-5 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fas fa-check-circle text-5xl text-emerald-600"></i></div>
+                                <h3 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-1">Lokasi Terpilih</h3>
+                                <div class="text-lg font-bold text-slate-800" id="selected-loc-name">Nama Lokasi</div>
+                                <div class="text-sm text-slate-500 mt-1" id="selected-loc-address">Alamat Detail Lokasi</div>
+                                <div class="text-xs font-bold text-emerald-600 mt-2 bg-white px-3 py-1 inline-block rounded-md shadow-sm border border-emerald-100" id="selected-loc-distance">Jarak: -</div>
+                                <input type="hidden" id="selected_location_id" name="location_id" value="">
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 2. Product Review Section -->
                     <div class="checkout-section">
-                        <div class="product-list-header grid grid-cols-4 gap-4 items-center">
-                            <div class="col-span-1 col-label">Produk Dipesan</div>
+                        <div class="product-list-header items-center">
+                            <div class="col-label">Produk Dipesan</div>
                             <div class="col-label text-center">Harga Satuan</div>
                             <div class="col-label text-center">Jumlah</div>
                             <div class="col-label text-right">Subtotal Produk</div>
@@ -538,9 +575,14 @@
                     </select>
                 </div>
 
-                <div class="md:col-span-2 modal-field-group">
-                    <label class="modal-label-abs">Alamat Jalan & No. Rumah</label>
-                    <textarea id="modal_cust_address" rows="2" class="modal-input resize-none" placeholder="Nama Jalan, Blok, Nomor Rumah, dsb."></textarea>
+                <div class="md:col-span-2">
+                    <div class="flex justify-between items-center mb-2 px-1">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Alamat Jalan & No. Rumah</span>
+                        <button type="button" onclick="autoDetectShippingAddress()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-md shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+                            <i class="fas fa-location-crosshairs animate-pulse"></i> Lacak Otomatis GPS
+                        </button>
+                    </div>
+                    <textarea id="modal_cust_address" rows="3" class="w-full border-2 border-slate-200 rounded-lg p-3 outline-none focus:border-blue-500 transition resize-none text-sm font-semibold text-slate-700 placeholder-slate-300" placeholder="Nama Jalan, Blok, Nomor Rumah, dsb."></textarea>
                 </div>
 
                 <div class="md:col-span-2 modal-field-group">
@@ -598,6 +640,42 @@
     const regionAPI = 'https://www.emsifa.com/api-wilayah-indonesia/api';
     let provinces = [];
     
+    window.autoDetectShippingAddress = function() {
+        if (!navigator.geolocation) {
+            return alert('Browser Anda tidak mendukung fitur lokasi.');
+        }
+        
+        const loader = document.getElementById('loading');
+        if(loader) { loader.classList.remove('hidden'); loader.classList.add('flex'); loader.querySelector('p').textContent = "Melacak Alamat dengan GPS..."; }
+        
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            try {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                // Using OpenStreetMap Nominatim for free reverse geocoding
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+                if (loader) { loader.classList.add('hidden'); loader.classList.remove('flex'); }
+                
+                const data = await res.json();
+                if (data && data.display_name) {
+                    document.getElementById('modal_cust_address').value = data.display_name;
+                    // Also focus on detail if they need to add something like "Pagar hitam"
+                    document.getElementById('modal_cust_detail').focus();
+                } else {
+                    alert('Gagal mendapatkan informasi alamat detail dari GPS.');
+                }
+            } catch(e) {
+                if (loader) { loader.classList.add('hidden'); loader.classList.remove('flex'); }
+                alert('Terjadi kesalahan jaringan rute.');
+            }
+        }, (error) => {
+            if (loader) { loader.classList.add('hidden'); loader.classList.remove('flex'); }
+            let msg = 'Gagal mambaca lokasi.';
+            if(error.code == error.PERMISSION_DENIED) msg = "Anda menolak izin akses lokasi browser.";
+            alert(msg);
+        }, { enableHighAccuracy: true });
+    };
+
     async function loadProvinces() {
         if (provinces.length > 0) return;
         try {
@@ -643,6 +721,119 @@
             distSelect.disabled = false;
         } catch (e) { console.error(e); }
     });
+
+    // === Location Logic (Haversine & APIs) ===
+    let availableLocations = [];
+    const cartItemsData = [@foreach($cart as $id => $item){product_id:'{{$id}}', quantity:{{$item['quantity']}}},@endforeach];
+
+    async function loadValidLocations() {
+        try {
+            const res = await fetch('{{ route("api.locations.valid") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ items: cartItemsData })
+            });
+            const data = await res.json();
+            const select = document.getElementById('manual_loc_select');
+            select.innerHTML = '<option value="" disabled selected>Pilih Lokasi</option>';
+            
+            if (data.success && data.data && data.data.length > 0) {
+                availableLocations = data.data;
+                availableLocations.forEach(loc => {
+                    const opt = document.createElement('option'); 
+                    opt.value = loc.id;
+                    let text = loc.nama;
+                    if(loc.available_stock !== undefined) text += ` (Stok Tersedia: ${loc.available_stock})`;
+                    opt.textContent = text; 
+                    select.appendChild(opt);
+                });
+            } else {
+                availableLocations = [];
+                const msg = data.message || 'Maaf, produk tidak tersedia komplit di lokasi manapun.';
+                select.innerHTML = `<option value="" disabled selected>${msg}</option>`;
+            }
+        } catch(e) { console.error('Failed to load valid locations', e); }
+    }
+
+    loadValidLocations(); // On initialization
+
+    window.toggleManualLocation = function() {
+        document.getElementById('manual-location-area').classList.toggle('hidden');
+    };
+
+    window.selectLocation = function(id) {
+        const loc = availableLocations.find(l => l.id == id);
+        if (loc) {
+            document.getElementById('selected_location_id').value = loc.id;
+            let stockHtml = loc.available_stock !== undefined ? `<span class="ml-2 text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md uppercase tracking-wider relative -top-0.5">Tersedia ${loc.available_stock} Stok</span>` : '';
+            document.getElementById('selected-loc-name').innerHTML = loc.nama + stockHtml;
+            document.getElementById('selected-loc-address').textContent = loc.alamat || '-';
+            
+            const distBox = document.getElementById('selected-loc-distance');
+            if (loc.distance_km) {
+                distBox.textContent = `Jarak: ${loc.distance_km} km`;
+                distBox.classList.remove('hidden');
+            } else {
+                distBox.classList.add('hidden');
+            }
+            
+            document.getElementById('selected-location-box').classList.remove('hidden');
+        }
+    };
+
+    window.autoDetectLocation = function() {
+        if (!navigator.geolocation) {
+            return showAlert({type:'error', title:'Error', message:'Browser Anda tidak mendukung fitur lokasi.'});
+        }
+        
+        const loader = document.getElementById('loading');
+        loader.classList.remove('hidden'); loader.classList.add('flex');
+        loader.querySelector('p').textContent = "Melacak Lokasi Anda...";
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            try {
+                const res = await fetch('{{ route("api.locations.nearest") }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ 
+                        lat: position.coords.latitude, 
+                        lng: position.coords.longitude,
+                        items: cartItemsData 
+                    })
+                });
+                
+                loader.classList.add('hidden'); loader.classList.remove('flex');
+                
+                const data = await res.json();
+                if (data.success && data.data) {
+                    // Update our manual dropdown logic just in case
+                    const loc = data.data;
+                    document.getElementById('selected_location_id').value = loc.id;
+                    let stockHtml = loc.available_stock !== undefined ? `<span class="ml-2 text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md uppercase tracking-wider relative -top-0.5">Tersedia ${loc.available_stock} Stok</span>` : '';
+                    document.getElementById('selected-loc-name').innerHTML = loc.nama + stockHtml;
+                    document.getElementById('selected-loc-address').textContent = loc.alamat || '-';
+                    
+                    const distBox = document.getElementById('selected-loc-distance');
+                    distBox.textContent = `Jarak Terdekat: ${loc.distance_km} km`;
+                    distBox.classList.remove('hidden');
+                    
+                    document.getElementById('selected-location-box').classList.remove('hidden');
+                    showAlert({type:'success', title:'Lokasi Ditemukan', message:`Terpilih ${loc.nama} sejauh ${loc.distance_km}km`});
+                } else {
+                    showAlert({type:'warning', title:'Gagal', message: data.message || 'Gagal menemukan lokasi.'});
+                }
+            } catch(e) {
+                loader.classList.add('hidden'); loader.classList.remove('flex');
+                showAlert({type:'error', title:'Error', message:'Kesalahan jaringan saat mencari lokasi terdekat.'});
+            }
+        }, (error) => {
+            loader.classList.add('hidden'); loader.classList.remove('flex');
+            let msg = 'Gagal mengakses izin lokasi.';
+            if (error.code == error.PERMISSION_DENIED) msg = "Anda menolak permintaan akses lokasi.";
+            showAlert({type:'warning', title:'Izin Ditolak', message: msg});
+        });
+    };
+    // === End Limit Logic ===
 
     window.toggleAddressEdit = function() {
         document.getElementById('address-modal-overlay').classList.add('show');
@@ -755,6 +946,9 @@
         if (!channel) {
             return showAlert({type:'warning', title:'Metode Pembayaran', message:'Pilih metode pembayaran terlebih dahulu.'});
         }
+        if (!document.getElementById('selected_location_id').value) {
+            return showAlert({type:'warning', title:'Lokasi Pengambilan', message:'Pilih lokasi pengambilan (Drop Point) terlebih dahulu.'});
+        }
 
         btn.disabled = true;
         loader.classList.remove('hidden');
@@ -774,7 +968,8 @@
                     address: `Penerima: ${name} (${phone})\n${address}\n${city}`,
                     shipping_cost: shipping,
                     payment_channel: channel,
-                    payer_name: name
+                    payer_name: name,
+                    location_id: document.getElementById('selected_location_id').value
                 })
             });
             

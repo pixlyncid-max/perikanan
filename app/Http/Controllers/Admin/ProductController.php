@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -62,7 +63,8 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.products.create', compact('categories'));
+        $locations = Location::orderBy('nama', 'asc')->get();
+        return view('admin.products.create', compact('categories', 'locations'));
     }
 
     /**
@@ -87,6 +89,8 @@ class ProductController extends Controller
             'variations.*.stock' => 'nullable|integer|min:0',
             'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'variations.*.description' => 'nullable|string',
+            'locations' => 'nullable|array',
+            'locations.*' => 'nullable|integer|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -155,6 +159,17 @@ class ProductController extends Controller
             }
         }
 
+        // Handle locations
+        if ($request->has('locations') && is_array($request->locations)) {
+            $syncData = [];
+            foreach ($request->locations as $locId => $locStock) {
+                if ($locStock !== null && $locStock !== '') {
+                    $syncData[$locId] = ['stok' => (int)$locStock];
+                }
+            }
+            $product->locations()->sync($syncData);
+        }
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil ditambahkan.');
     }
@@ -174,7 +189,10 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
-        return view('admin.products.edit', compact('product', 'categories'));
+        $locations = Location::orderBy('nama', 'asc')->get();
+        // pre-load locations pivot
+        $product->load('locations');
+        return view('admin.products.edit', compact('product', 'categories', 'locations'));
     }
 
     /**
@@ -204,6 +222,8 @@ class ProductController extends Controller
             'variations.*.stock' => 'nullable|integer|min:0',
             'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'variations.*.description' => 'nullable|string',
+            'locations'         => 'nullable|array',
+            'locations.*'       => 'nullable|integer|min:0', // Validating stock per location
         ]);
 
         if ($validator->fails()) {
@@ -304,6 +324,19 @@ class ProductController extends Controller
                 Storage::delete('public/' . $td->image);
             }
             $td->delete();
+        }
+
+        // Sync locations
+        if ($request->has('locations') && is_array($request->locations)) {
+            $syncData = [];
+            foreach ($request->locations as $locId => $locStock) {
+                if ($locStock !== null && $locStock !== '') {
+                    $syncData[$locId] = ['stok' => (int)$locStock];
+                }
+            }
+            $product->locations()->sync($syncData);
+        } else {
+             $product->locations()->sync([]); // remove all if none
         }
 
         return redirect()->route('admin.products.index')

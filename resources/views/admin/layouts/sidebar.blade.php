@@ -68,6 +68,13 @@
             <i class="fas fa-tags mr-3 text-lg {{ request()->routeIs('admin.categories.*') ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-400' }}"></i>
             Manajemen Kategori
         </a>
+
+        <!-- Manajemen Lokasi Drop Point -->
+        <a href="{{ route('admin.locations.index') }}" 
+           class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.locations.*') ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <i class="fas fa-store-alt mr-3 text-lg {{ request()->routeIs('admin.locations.*') ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-400' }}"></i>
+            Lokasi & Drop Point
+        </a>
         
         <!-- Manajemen Pesanan -->
         <a href="{{ route('admin.orders.index') }}" 

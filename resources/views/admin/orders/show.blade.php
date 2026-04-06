@@ -109,6 +109,51 @@
         </div>
     </div>
 
+    <!-- Drop Point Info -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-indigo-500">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+            <i class="fas fa-store-alt text-indigo-600 mr-2"></i> Cabang / Drop Point Cabang
+        </h3>
+        @if($order->location)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+                <div class="space-y-2">
+                    <div>
+                        <span class="text-gray-500 font-bold uppercase text-[10px] tracking-widest block">Nama Cabang</span>
+                        <span class="font-bold text-gray-900 text-lg">{{ $order->location->nama }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 font-bold uppercase text-[10px] tracking-widest block">Alamat</span>
+                        <span class="text-gray-700 leading-relaxed">{{ $order->location->alamat ?: '-' }}</span>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div>
+                        <span class="text-gray-500 font-bold uppercase text-[10px] tracking-widest block">Koordinat Maps</span>
+                        @if($order->location->latitude && $order->location->longitude)
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ $order->location->latitude }},{{ $order->location->longitude }}" 
+                               target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition font-bold mt-1 shadow-sm border border-indigo-100">
+                                <i class="fas fa-map-marker-alt"></i> Lihat di Google Maps
+                            </a>
+                        @else
+                            <span class="text-gray-400 italic">Koordinat tidak tersedia</span>
+                        @endif
+                    </div>
+                    <div class="pt-2">
+                        <p class="text-[10px] text-gray-400 italic font-medium">Pesanan ini diproses dan dikirim dari lokasi di atas.</p>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="flex items-center gap-3 text-gray-500 bg-gray-50 p-4 rounded-xl border border-dashed border-gray-200">
+                <i class="fas fa-warehouse text-2xl"></i>
+                <div>
+                    <p class="font-bold">Gudang Pusat / Default</p>
+                    <p class="text-xs">Pesanan ini tidak dikaitkan dengan drop point spesifik (Mungkin pesanan lama).</p>
+                </div>
+            </div>
+        @endif
+    </div>
+
     <!-- Xendit Details -->
     @if($order->payment_method === 'xendit' || $order->payment_url)
     <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">

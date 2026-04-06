@@ -59,6 +59,16 @@ class Product extends Model
     }
 
     /**
+     * Get the locations where the product is available.
+     */
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class, 'product_locations')
+                    ->withPivot('stok')
+                    ->withTimestamps();
+    }
+
+    /**
      * Get the order items for the product.
      */
     public function orderItems(): HasMany

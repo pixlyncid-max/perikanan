@@ -31,6 +31,7 @@ class Order extends Model
         'paid_at',
         'shipped_at',
         'delivered_at',
+        'location_id',
     ];
 
     protected $casts = [
@@ -48,6 +49,14 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the location for the order.
+     */
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class);
     }
 
     /**

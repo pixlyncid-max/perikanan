@@ -115,6 +115,8 @@ Route::middleware(['web'])->group(function () {
 
     // Checkout Process (Web context for session access)
     Route::post('/checkout-process', [\App\Http\Controllers\Api\CheckoutController::class, 'store'])->name('checkout.process');
+    Route::post('/api/locations/valid', [\App\Http\Controllers\Api\LocationController::class, 'getValidLocations'])->name('api.locations.valid');
+    Route::post('/api/locations/nearest', [\App\Http\Controllers\Api\LocationController::class, 'getNearestLocation'])->name('api.locations.nearest');
     
     // Profile Updates
     Route::post('/profile/update-address', [AuthController::class, 'updateAddress'])->name('profile.update-address');
@@ -166,6 +168,9 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     
     // Organization Management
     Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class);
+    
+    // Location Management
+    Route::resource('locations', \App\Http\Controllers\Admin\LocationController::class);
     
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

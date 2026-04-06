@@ -45,6 +45,7 @@ class CheckoutController extends Controller
             'payment_channel' => 'required|string',
             'payer_name'      => 'required|string|max:255',
             'payer_phone'     => 'nullable|string', // Some e-wallets might need this
+            'location_id'     => 'required|exists:locations,id',
         ]);
 
         $userSession = session('user');
@@ -98,10 +99,17 @@ class CheckoutController extends Controller
                     'payment_method'   => 'xendit',
                     'payment_channel'  => $channelUpper,
                     'payment_status'   => 'pending',
+                    'location_id'      => $request->location_id,
                 ]);
 
                 foreach ($orderItemsData as $itemData) {
                     $order->items()->create($itemData);
+
+                    // Decrease stock from the chosen location
+                    DB::table('product_locations')
+                        ->where('product_id', $itemData['product_id'])
+                        ->where('location_id', $request->location_id)
+                        ->decrement('stok', $itemData['quantity']);
                 }
 
                 // ── Route to Xendit API ──

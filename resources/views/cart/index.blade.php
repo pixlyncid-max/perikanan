@@ -38,7 +38,7 @@
                                     </td>
                                     <td class="block md:table-cell px-4 md:px-6 py-2 md:py-4 border-b md:border-b-0 border-gray-50">
                                         <div class="flex items-center gap-4 pr-8 md:pr-0">
-                                            <div class="w-20 h-20 md:w-16 md:h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                                            <a href="{{ route('produk.show', $item['slug'] ?? '#') }}" class="w-20 h-20 md:w-16 md:h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 block hover:opacity-90 transition-opacity">
                                                 @if($item['image'])
                                                     <img src="{{ asset('storage/' . $item['image']) }}" alt="{{ $item['name'] }}" class="w-full h-full object-cover">
                                                 @else
@@ -46,9 +46,11 @@
                                                         <i class="fas fa-image text-xl"></i>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </a>
                                             <div>
-                                                <h3 class="font-bold text-gray-800 text-lg md:text-base">{{ $item['name'] }}</h3>
+                                                <h3 class="font-bold text-gray-800 text-lg md:text-base">
+                                                    <a href="{{ route('produk.show', $item['slug'] ?? '#') }}" class="hover:text-blue-600 transition-colors">{{ $item['name'] }}</a>
+                                                </h3>
                                                 @if(isset($item['variation_name']))
                                                     <p class="text-sm text-gray-500 mt-1">
                                                         <span class="font-medium">{{ $item['variation_type'] }}:</span> {{ $item['variation_name'] }}

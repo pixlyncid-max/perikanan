@@ -129,12 +129,35 @@
                         </div>
                         <div>
                             <label for="stock" class="block text-sm font-medium text-gray-700 mb-1.5">
-                                Stok <span class="text-red-500">*</span>
+                                Stok <span class="text-red-500">*</span> <span class="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-bold uppercase ml-2">Otomatis dari Lokasi</span>
                             </label>
-                            <input type="number" name="stock" id="stock" value="{{ old('stock', 0) }}" required min="0"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm @error('stock') border-red-400 @enderror">
+                            <input type="number" name="stock" id="stock" value="{{ old('stock', 0) }}" required min="0" readonly
+                                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-300 text-sm font-bold text-gray-600 cursor-not-allowed">
                             @error('stock')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
+                    </div>
+                </div>
+
+                {{-- Location Stock Card --}}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
+                    <h2 class="text-base font-semibold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-3">
+                        <i class="fas fa-store-alt text-green-500"></i> Inventaris Cabang (Lokasi)
+                    </h2>
+                    <p class="text-xs text-gray-500 mb-2">Biarkan kosong jika produk tidak tersedia di cabang tersebut.</p>
+                    
+                    <div class="space-y-3">
+                        @foreach($locations as $loc)
+                        <div class="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-gray-700">{{ $loc->nama }}</span>
+                                <span class="text-[10px] text-gray-400 max-w-[200px] truncate">{{ $loc->alamat }}</span>
+                            </div>
+                            <div class="w-32">
+                                <input type="number" name="locations[{{ $loc->id }}]" min="0" placeholder="0"
+                                       class="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent loc-stock-input">
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -395,6 +418,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const msg = document.getElementById('no-variations-msg');
     if (rows.length === 0) {
         msg.classList.remove('hidden');
+    }
+});
+
+// Auto-calculate total stock from locations
+function updateTotalStock() {
+    const locInputs = document.querySelectorAll('.loc-stock-input');
+    const totalStockDisplay = document.getElementById('stock');
+    let total = 0;
+    
+    locInputs.forEach(input => {
+        const val = parseInt(input.value) || 0;
+        total += val;
+    });
+    
+    totalStockDisplay.value = total;
+}
+
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('loc-stock-input')) {
+        updateTotalStock();
     }
 });
 </script>
