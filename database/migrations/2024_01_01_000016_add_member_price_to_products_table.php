@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->decimal('member_price', 12, 2)->default(0)->after('sale_price');
-        });
+        if (!Schema::hasColumn('products', 'member_price')) {
+            Schema::table('products', function (Blueprint $table) {
+                $table->decimal('member_price', 12, 2)->default(0)->after('sale_price');
+            });
+        }
     }
 
     public function down(): void

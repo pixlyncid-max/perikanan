@@ -87,6 +87,7 @@ class ProductController extends Controller
             'variations.*.name' => 'required_with:variations|string|max:100',
             'variations.*.price_adjustment' => 'nullable|numeric|min:0',
             'variations.*.stock' => 'nullable|integer|min:0',
+            'variations.*.is_stock_synced' => 'nullable|boolean',
             'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'variations.*.description' => 'nullable|string',
             'locations' => 'nullable|array',
@@ -143,6 +144,7 @@ class ProductController extends Controller
                         'name' => $var['name'],
                         'price_adjustment' => $var['price_adjustment'] ?? 0,
                         'stock' => $var['stock'] ?? 0,
+                        'is_stock_synced' => (isset($var['is_stock_synced']) && $var['is_stock_synced'] == 1) ? true : false,
                         'description' => $var['description'] ?? null,
                     ];
 
@@ -168,6 +170,7 @@ class ProductController extends Controller
                 }
             }
             $product->locations()->sync($syncData);
+            $product->syncStock();
         }
 
         return redirect()->route('admin.products.index')
@@ -220,6 +223,7 @@ class ProductController extends Controller
             'variations.*.name' => 'required_with:variations|string|max:100',
             'variations.*.price_adjustment' => 'nullable|numeric|min:0',
             'variations.*.stock' => 'nullable|integer|min:0',
+            'variations.*.is_stock_synced' => 'nullable|boolean',
             'variations.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'variations.*.description' => 'nullable|string',
             'locations'         => 'nullable|array',
@@ -288,6 +292,7 @@ class ProductController extends Controller
                         'name' => $var['name'],
                         'price_adjustment' => $var['price_adjustment'] ?? 0,
                         'stock' => $var['stock'] ?? 0,
+                        'is_stock_synced' => (isset($var['is_stock_synced']) && $var['is_stock_synced'] == 1) ? true : false,
                         'description' => $var['description'] ?? null,
                     ];
 
@@ -338,6 +343,9 @@ class ProductController extends Controller
         } else {
              $product->locations()->sync([]); // remove all if none
         }
+
+        // Final sync of main stock field
+        $product->syncStock();
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil diperbarui.');

@@ -329,6 +329,107 @@ class AuthController extends Controller
     }
 
     /**
+     * Show user profile page
+     */
+    public function profile()
+    {
+        if (!Session::has('user')) {
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $session = Session::get('user');
+        $user = null;
+        
+        if ($session['type'] === 'admin') {
+            $user = Admin::find($session['id']);
+        } elseif ($session['type'] === 'member') {
+            $user = Member::find($session['id']);
+        } else {
+            $user = User::find($session['id']);
+        }
+
+        if (!$user) {
+            Session::forget('user');
+            return redirect('/login')->with('error', 'Sesi Anda telah berakhir.');
+        }
+
+        // Format address if it's JSON
+        $displayAddress = $user->address;
+        if (!empty($displayAddress) && str_starts_with($displayAddress, '{')) {
+            try {
+                $decoded = json_decode($displayAddress, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $parts = [];
+                    if (!empty($decoded['address'])) $parts[] = $decoded['address'];
+                    if (!empty($decoded['detail'])) $parts[] = '(' . $decoded['detail'] . ')';
+                    if (!empty($decoded['dist_name'])) $parts[] = $decoded['dist_name'];
+                    if (!empty($decoded['city_name'])) $parts[] = $decoded['city_name'];
+                    if (!empty($decoded['prov_name'])) $parts[] = $decoded['prov_name'];
+                    $displayAddress = implode(', ', $parts);
+                }
+            } catch (\Exception $e) {
+                // Keep original if parsing fails
+            }
+        }
+
+        return view('auth.profile', [
+            'user' => $user,
+            'type' => $session['type'],
+            'session' => $session,
+            'displayAddress' => $displayAddress
+        ]);
+    }
+
+    /**
+     * Update user profile information
+     */
+    public function updateProfile(\Illuminate\Http\Request $request)
+    {
+        if (!Session::has('user')) {
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $session = Session::get('user');
+        $user = null;
+
+        if ($session['type'] === 'admin') {
+            $user = Admin::find($session['id']);
+        } elseif ($session['type'] === 'member') {
+            $user = Member::find($session['id']);
+        } else {
+            $user = User::find($session['id']);
+        }
+
+        if (!$user) {
+            return back()->with('error', 'User tidak ditemukan.');
+        }
+
+        // Basic validation
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+        ]);
+
+        // Update fields
+        if ($session['type'] === 'member' || $session['type'] === 'admin') {
+            $user->full_name = $request->name;
+        } else {
+            $user->name = $request->name;
+        }
+
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->save();
+
+        // Sync session
+        $session['name'] = $request->name;
+        Session::put('user', $session);
+
+        return back()->with('success', 'Profil Anda berhasil diperbarui.');
+    }
+
+    /**
      * Update user address via AJAX
      */
     public function updateAddress(\Illuminate\Http\Request $request)

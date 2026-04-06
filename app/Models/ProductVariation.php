@@ -17,6 +17,7 @@ class ProductVariation extends Model
         'name', // e.g., 'XL', 'Merah'
         'price_adjustment', // e.g., 5000.00
         'stock',
+        'is_stock_synced',
         'image',
         'description',
     ];
@@ -24,6 +25,7 @@ class ProductVariation extends Model
     protected $casts = [
         'price_adjustment' => 'decimal:2',
         'stock' => 'integer',
+        'is_stock_synced' => 'boolean',
     ];
 
     /**

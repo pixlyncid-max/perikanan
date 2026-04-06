@@ -265,7 +265,7 @@
                                     </a>
                                 <?php endif; ?>
 
-                                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
                                     <i class="fas fa-user-cog mr-2"></i>Profil
                                 </a>
                                 <div class="border-t my-1"></div>
@@ -359,7 +359,7 @@
                         <?php if($userMobile['type'] === 'admin'): ?>
                             <a href="/admin/dashboard" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Panel Admin</a>
                         <?php endif; ?>
-                        <a href="#" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Profil</a>
+                        <a href="{{ route('profile') }}" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Profil</a>
 
                         <form action="/logout" method="POST" class="block">
                             @csrf

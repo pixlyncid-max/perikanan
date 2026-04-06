@@ -206,8 +206,18 @@
                                 <div class="md:col-span-1">
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Penyesuaian Harga (+Rp)</label>
                                     <input type="number" name="variations[{{ $index }}][price_adjustment]" value="{{ (int)$variation->price_adjustment }}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none mb-3">
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Stok Variasi</label>
-                                    <input type="number" name="variations[{{ $index }}][stock]" value="{{ $variation->stock }}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Stok Variasi</label>
+                                        <label class="flex items-center gap-1 cursor-pointer">
+                                            <input type="hidden" name="variations[{{ $index }}][is_stock_synced]" value="0">
+                                            <input type="checkbox" name="variations[{{ $index }}][is_stock_synced]" value="1" 
+                                                class="variation-sync-checkbox w-3 h-3 text-green-600 rounded focus:ring-green-500" 
+                                                {{ $variation->is_stock_synced ? 'checked' : '' }} 
+                                                onchange="toggleVariationSync(this)">
+                                            <span class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Ikuti Stok Total</span>
+                                        </label>
+                                    </div>
+                                    <input type="number" name="variations[{{ $index }}][stock]" value="{{ $variation->stock }}" min="0" class="variation-stock-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none transition-colors">
                                 </div>
                                 <div class="md:col-span-3 pb-6 sm:pb-0">
                                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Deskripsi Singkat Variasi</label>
@@ -341,8 +351,17 @@
         <div class="md:col-span-1">
             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Penyesuaian Harga (+Rp)</label>
             <input type="number" name="variations[INDEX][price_adjustment]" value="0" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none mb-3">
-            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Stok Variasi</label>
-            <input type="number" name="variations[INDEX][stock]" value="0" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+            <div class="flex items-center justify-between mb-1">
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Stok Variasi</label>
+                <label class="flex items-center gap-1 cursor-pointer">
+                    <input type="hidden" name="variations[INDEX][is_stock_synced]" value="0">
+                    <input type="checkbox" name="variations[INDEX][is_stock_synced]" value="1" 
+                        class="variation-sync-checkbox w-3 h-3 text-green-600 rounded focus:ring-green-500" 
+                        checked onchange="toggleVariationSync(this)">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Ikuti Stok Total</span>
+                </label>
+            </div>
+            <input type="number" name="variations[INDEX][stock]" value="0" min="0" class="variation-stock-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none transition-colors">
         </div>
         <div class="md:col-span-3 pb-6 sm:pb-0">
             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Deskripsi Singkat Variasi</label>
@@ -449,6 +468,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function toggleVariationSync(cb) {
+    const row = cb.closest('.variation-row');
+    const stockInput = row.querySelector('.variation-stock-input');
+    if (cb.checked) {
+        stockInput.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+        stockInput.readOnly = true;
+        updateTotalStock();
+    } else {
+        stockInput.classList.remove('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+        stockInput.readOnly = false;
+    }
+}
+
 // Auto-calculate total stock from locations
 function updateTotalStock() {
     const locInputs = document.querySelectorAll('.loc-stock-input');
@@ -461,6 +493,17 @@ function updateTotalStock() {
     });
     
     totalStockDisplay.value = total;
+
+    // Update synced variations
+    document.querySelectorAll('.variation-sync-checkbox').forEach(cb => {
+        if (cb.checked) {
+            const row = cb.closest('.variation-row');
+            const stockInput = row.querySelector('.variation-stock-input');
+            if (stockInput) {
+                stockInput.value = total;
+            }
+        }
+    });
 }
 
 document.addEventListener('input', function(e) {
@@ -472,6 +515,10 @@ document.addEventListener('input', function(e) {
 // Initial calculate on load
 document.addEventListener('DOMContentLoaded', function() {
     updateTotalStock();
+    // Initialize sync state for existing variations
+    document.querySelectorAll('.variation-sync-checkbox').forEach(cb => {
+        toggleVariationSync(cb);
+    });
 });
 </script>
 @endpush

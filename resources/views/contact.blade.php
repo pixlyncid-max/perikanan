@@ -124,45 +124,60 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
                             <label class="block text-gray-700 font-medium mb-2">Nama Lengkap</label>
-                            <input type="text" name="name" required 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            <input type="text" name="name" value="{{ old('name') }}" required 
+                                class="w-full px-4 py-3 border @error('name') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Masukkan nama Anda">
+                            @error('name')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-gray-700 font-medium mb-2">Email</label>
-                            <input type="email" name="email" required 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            <input type="email" name="email" value="{{ old('email') }}" required 
+                                class="w-full px-4 py-3 border @error('email') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="email@example.com">
+                            @error('email')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
                             <label class="block text-gray-700 font-medium mb-2">Telepon</label>
-                            <input type="tel" name="phone" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            <input type="tel" name="phone" value="{{ old('phone') }}" 
+                                class="w-full px-4 py-3 border @error('phone') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="08123456789">
+                            @error('phone')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-gray-700 font-medium mb-2">Subjek</label>
                             <select name="subject" required 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-4 py-3 border @error('subject') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">Pilih subjek</option>
-                                <option value="general">Pertanyaan Umum</option>
-                                <option value="membership">Keanggotaan</option>
-                                <option value="partnership">Kemitraan</option>
-                                <option value="product">Produk</option>
-                                <option value="complaint">Keluhan</option>
-                                <option value="other">Lainnya</option>
+                                <option value="general" {{ old('subject') == 'general' ? 'selected' : '' }}>Pertanyaan Umum</option>
+                                <option value="membership" {{ old('subject') == 'membership' ? 'selected' : '' }}>Keanggotaan</option>
+                                <option value="partnership" {{ old('subject') == 'partnership' ? 'selected' : '' }}>Kemitraan</option>
+                                <option value="product" {{ old('subject') == 'product' ? 'selected' : '' }}>Produk</option>
+                                <option value="complaint" {{ old('subject') == 'complaint' ? 'selected' : '' }}>Keluhan</option>
+                                <option value="other" {{ old('subject') == 'other' ? 'selected' : '' }}>Lainnya</option>
                             </select>
+                            @error('subject')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="mb-6">
                         <label class="block text-gray-700 font-medium mb-2">Pesan</label>
                         <textarea name="message" required rows="5" 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Tulis pesan Anda di sini..."></textarea>
+                            class="w-full px-4 py-3 border @error('message') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Tulis pesan Anda di sini...">{{ old('message') }}</textarea>
+                        @error('message')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <button type="submit" 

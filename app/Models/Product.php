@@ -162,4 +162,18 @@ class Product extends Model
             $q->where('is_pakan_hidup', true);
         });
     }
+
+    /**
+     * Synchronize total stock from location-based stock.
+     */
+    public function syncStock(): int
+    {
+        $totalStock = (int) $this->locations()->sum('product_locations.stok');
+        $this->update(['stock' => $totalStock]);
+
+        // Sync variations that are set to follow total stock
+        $this->variations()->where('is_stock_synced', true)->update(['stock' => $totalStock]);
+
+        return $totalStock;
+    }
 }

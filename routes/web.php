@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::post('/contact', [HomeController::class, 'handleContact'])->name('contact.send');
 Route::get('/partnership', [HomeController::class, 'partnership'])->name('partnership');
 // Route::get('/partnership', function () {
 //     return view('errors.coming-soon');
@@ -119,6 +120,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('/api/locations/nearest', [\App\Http\Controllers\Api\LocationController::class, 'getNearestLocation'])->name('api.locations.nearest');
     
     // Profile Updates
+    Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/update-address', [AuthController::class, 'updateAddress'])->name('profile.update-address');
 });
 

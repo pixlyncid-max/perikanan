@@ -16,6 +16,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'user_type',
         'order_number',
         'status',
         'total_amount',
@@ -44,11 +45,11 @@ class Order extends Model
     ];
 
     /**
-     * Get the user that owns the order.
+     * Get the user that owns the order (Polymorphic).
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
 
     /**

@@ -161,9 +161,19 @@ class XenditService
      * @return array
      * @throws Exception
      */
-    public function createEWalletCharge(Order $order, string $channelCode): array
+    public function createEWalletCharge(Order $order, string $channelCode, ?string $payerPhone = null): array
     {
         $this->assertConfigured();
+
+        $properties = [
+            'success_redirect_url' => route('orders.show', $order->order_number),
+            'failure_redirect_url' => route('checkout.index'),
+        ];
+        
+        // Specific properties for OVO (needs mobile number)
+        if (strtoupper($channelCode) === 'ID_OVO' && $payerPhone) {
+            $properties['mobile_number'] = $this->formatPhoneNumber($payerPhone);
+        }
 
         $payload = [
             'reference_id'    => $order->order_number,
@@ -171,9 +181,7 @@ class XenditService
             'amount'          => (int) $order->total_amount,
             'checkout_method' => 'ONE_TIME_PAYMENT',
             'channel_code'    => strtoupper($channelCode),
-            'channel_properties' => [
-                'success_redirect_url' => route('orders.show', $order->order_number),
-            ],
+            'channel_properties' => $properties,
             'metadata' => [
                 'branch_code' => 'MAIN_BRANCH'
             ]
@@ -184,6 +192,9 @@ class XenditService
         // but OVO usually requires the number. Let's use REDIRECT style if possible.
         
         $response = Http::withBasicAuth($this->secretKey, '')
+            ->withHeaders([
+                'X-CALLBACK-URL' => url('/api/xendit/callback') // Fallback callback URL for e-wallet
+            ])
             ->post($this->baseUrl . '/ewallets/charges', $payload);
 
         if ($response->failed()) {
@@ -238,8 +249,132 @@ class XenditService
     }
 
     // ─────────────────────────────────────────
+    // DIRECT DEBIT (BRI, BNI, BCA KlikBCA)
+    // ─────────────────────────────────────────
+
+    public function createDirectDebitCharge(Order $order, string $channelCode): array
+    {
+        $this->assertConfigured();
+
+        $payload = [
+            'reference_id'    => $order->order_number,
+            'currency'        => 'IDR',
+            'amount'          => (int) $order->total_amount,
+            'channel_code'    => strtoupper($channelCode),
+            'channel_properties' => [
+                'success_redirect_url' => route('orders.show', $order->order_number),
+            ],
+        ];
+
+        $response = Http::withBasicAuth($this->secretKey, '')
+            ->post($this->baseUrl . '/direct_debits/charges', $payload);
+
+        if ($response->failed()) {
+            Log::error('Xendit Direct Debit Charge Failed', [
+                'order_number' => $order->order_number,
+                'channel'      => $channelCode,
+                'response'     => $response->json(),
+            ]);
+            throw new Exception('Gagal memproses Direct Debit: ' . ($response->json()['message'] ?? 'Unknown Error'));
+        }
+
+        return $response->json();
+    }
+
+    // ─────────────────────────────────────────
+    // PAYLATER (Kredivo, Akulaku)
+    // ─────────────────────────────────────────
+
+    public function createPaylaterCharge(Order $order, string $channelCode): array
+    {
+        $this->assertConfigured();
+
+        $payload = [
+            'reference_id'    => $order->order_number,
+            'currency'        => 'IDR',
+            'amount'          => (int) $order->total_amount,
+            'channel_code'    => strtoupper($channelCode),
+            'channel_properties' => [
+                'success_redirect_url' => route('orders.show', $order->order_number),
+                'failure_redirect_url' => route('orders.show', $order->order_number),
+            ],
+            'customer_details' => [
+                'given_names' => $order->user->name ?? 'Customer',
+                'surname'     => '',
+                'email'       => $order->user->email ?? 'customer@example.com',
+                'mobile_number' => $order->user->phone ?? '',
+            ],
+            'items' => $order->items->map(function ($item) {
+                return [
+                    'reference_id' => (string) $item->product_id,
+                    'name'         => $item->product_name,
+                    'category'     => 'E-commerce',
+                    'price'        => (int) $item->unit_price,
+                    'quantity'     => $item->quantity,
+                    'type'         => 'PRODUCT',
+                ];
+            })->toArray(),
+        ];
+
+        $response = Http::withBasicAuth($this->secretKey, '')
+            ->post($this->baseUrl . '/paylater/charges', $payload);
+
+        if ($response->failed()) {
+            Log::error('Xendit Paylater Charge Failed', [
+                'order_number' => $order->order_number,
+                'channel'      => $channelCode,
+                'response'     => $response->json(),
+            ]);
+            throw new Exception('Gagal memproses PayLater: ' . ($response->json()['message'] ?? 'Unknown Error'));
+        }
+
+        return $response->json();
+    }
+
+    // ─────────────────────────────────────────
+    // CREDIT CARD
+    // ─────────────────────────────────────────
+
+    public function createCreditCardCharge(Order $order, string $tokenId, string $authId = null): array
+    {
+        $this->assertConfigured();
+
+        $payload = [
+            'external_id'       => $order->order_number,
+            'token_id'          => $tokenId,
+            'amount'            => (int) $order->total_amount,
+            'authentication_id' => $authId,
+        ];
+
+        $response = Http::withBasicAuth($this->secretKey, '')
+            ->post($this->baseUrl . '/v1/credit_card_charges', $payload);
+
+        if ($response->failed()) {
+            Log::error('Xendit Credit Card Charge Failed', [
+                'order_number' => $order->order_number,
+                'response'     => $response->json(),
+            ]);
+            throw new Exception('Gagal memproses Kartu Kredit: ' . ($response->json()['message'] ?? 'Unknown Error'));
+        }
+
+        return $response->json();
+    }
+
+    // ─────────────────────────────────────────
     // Helpers
     // ─────────────────────────────────────────
+
+    protected function formatPhoneNumber(string $phone): string
+    {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        }
+        if (!str_starts_with($phone, '+') && !str_starts_with($phone, '62')) {
+            $phone = '62' . $phone;
+        }
+        return str_starts_with($phone, '+') ? $phone : '+' . $phone;
+    }
 
     protected function assertConfigured(): void
     {

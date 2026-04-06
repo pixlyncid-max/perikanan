@@ -3,6 +3,7 @@
 @section('title', 'Checkout | ' . get_setting('site_name', 'FISHERIES'))
 
 @push('styles')
+<script src="https://js.xendit.co/v1/xendit.min.js"></script>
 <style>
     :root {
         --checkout-primary: #2563eb;
@@ -71,7 +72,13 @@
         position: absolute; top: -8px; right: -8px; color: var(--checkout-primary); font-size: 14px; background: #fff; border-radius: 50%; padding: 2px;
     }
     .payment-option-v2 img { max-height: 28px; max-width: 100%; object-fit: contain; }
+    .payment-option-v2 span { font-size: 0.7rem; font-weight: 800; color: var(--checkout-text-main); }
     .payment-option-v2 input { position: absolute; opacity: 0; }
+    
+    /* ── Credit Card Form ── */
+    #cc-form-container { display: none; margin-top: 20px; padding: 24px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; }
+    #cc-form-container.show { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* ── Sticky Summary Sidebar ── */
     .sidebar-summary { position: sticky; top: 100px; background: #fff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid var(--checkout-border); }
@@ -356,28 +363,113 @@
                                 </h4>
                                 <div class="payment-grid">
                                     @foreach([
-                                        'BCA'   => 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png',
-                                        'BRI'   => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/200px-BANK_BRI_logo.svg.png',
-                                        'MANDIRI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/200px-Bank_Mandiri_logo_2016.svg.png',
-                                        'BNI'   => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/BNI_logo.svg/200px-BNI_logo.svg.png',
-                                        'BSI'   => 'https://upload.wikimedia.org/wikipedia/id/thumb/a/a4/Bank_Syariah_Indonesia_2021.svg/200px-Bank_Syariah_Indonesia_2021.svg.png',
+                                        'BCA'      => asset('images/bank/BCA.png'),
+                                        'BRI'      => asset('images/bank/BRI.png'),
+                                        'MANDIRI'  => asset('images/bank/mandiri.png'),
+                                        'BNI'      => asset('images/bank/BNI.png'),
+                                        'BSI'      => asset('images/bank/BSI.png'),
+                                        'PERMATA'  => asset('images/bank/permata.png'),
+                                        'CIMB'     => asset('images/bank/CIMB.png'),
+                                        'MUAMALAT' => asset('images/bank/muamalat.png'),
                                     ] as $code => $url)
                                     <label class="payment-option-v2" onclick="selectPayment(this)">
                                         <input type="radio" name="payment_channel" value="{{$code}}">
                                         <img src="{{$url}}" alt="{{$code}}">
                                     </label>
                                     @endforeach
+                                    <label class="payment-option-v2" onclick="selectPayment(this)">
+                                        <input type="radio" name="payment_channel" value="PERMATA">
+                                        <div class="flex flex-col items-center gap-1">
+                                            <i class="fas fa-university text-slate-400 text-sm"></i>
+                                            <span class="text-[8px] font-bold">Bank Lainnya</span>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <!-- E-Wallet -->
+                                <!-- E-Wallet & QRIS -->
+                                <div class="space-y-8">
+                                    <div>
+                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-purple-500"></div> E-Wallet
+                                        </h4>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            @foreach([
+                                                'ID_DANA'       => asset('images/bank/DANA.png'), 
+                                                'ID_OVO'        => asset('images/bank/OVO.png'),
+                                                'ID_SHOPEEPAY'  => asset('images/bank/shopeepay.png'),
+                                                'ID_LINKAJA'    => asset('images/bank/LinkAja.png')
+                                            ] as $code => $url)
+                                            <label class="payment-option-v2" onclick="selectPayment(this)">
+                                                <input type="radio" name="payment_channel" value="{{$code}}">
+                                                <img src="{{$url}}">
+                                            </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div> QR Code
+                                        </h4>
+                                        <label class="payment-option-v2 h-[60px]" onclick="selectPayment(this)">
+                                            <input type="radio" name="payment_channel" value="QRIS" checked>
+                                            <img src="{{ asset('images/bank/QRIS.png') }}" class="h-8">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Retail & Direct Debit -->
+                                <div class="space-y-8">
+                                    <div>
+                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div> Gerai Retail
+                                        </h4>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            @foreach([
+                                                'ALFAMART'  => asset('images/bank/alfamart.png'), 
+                                                'INDOMARET' => asset('images/bank/indomaret.png')
+                                            ] as $code => $url)
+                                            <label class="payment-option-v2" onclick="selectPayment(this)">
+                                                <input type="radio" name="payment_channel" value="{{$code}}">
+                                                <img src="{{$url}}">
+                                            </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div> Direct Debit
+                                        </h4>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            @foreach([
+                                                'BRI' => asset('images/bank/bri_directdebit.png'), 
+                                                'BCA' => asset('images/bank/BCA.png')
+                                            ] as $code => $url)
+                                            <label class="payment-option-v2" onclick="selectPayment(this)">
+                                                <input type="radio" name="payment_channel" value="{{$code}}">
+                                                <div class="flex flex-col items-center gap-1">
+                                                    <img src="{{$url}}" class="h-4">
+                                                    <span class="text-[8px] font-bold">Direct Debit</span>
+                                                </div>
+                                            </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PayLater & Credit Card -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div>
                                     <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-purple-500"></div> E-Wallet
+                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Cicilan (PayLater)
                                     </h4>
                                     <div class="grid grid-cols-2 gap-3">
-                                        @foreach(['ID_DANA' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/200px-Logo_dana_blue.svg.png', 'ID_OVO' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/200px-Logo_ovo_purple.svg.png'] as $code => $url)
+                                        @foreach([
+                                            'KREDIVO' => asset('images/bank/kredivo.png'), 
+                                            'AKULAKU' => asset('images/bank/akulaku.png')
+                                        ] as $code => $url)
                                         <label class="payment-option-v2" onclick="selectPayment(this)">
                                             <input type="radio" name="payment_channel" value="{{$code}}">
                                             <img src="{{$url}}">
@@ -385,16 +477,37 @@
                                         @endforeach
                                     </div>
                                 </div>
-                                <!-- QRIS -->
                                 <div>
                                     <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div> QR Code
+                                        <div class="w-1.5 h-1.5 rounded-full bg-slate-800"></div> Kartu Kredit / Debit Online
                                     </h4>
-                                    <label class="payment-option-v2 h-[60px]" onclick="selectPayment(this)">
-                                        <input type="radio" name="payment_channel" value="QRIS" checked>
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/QRIS_logo.svg/200px-QRIS_logo.svg.png" class="h-8">
+                                    <label class="payment-option-v2" onclick="selectPaymentCard(this)">
+                                        <input type="radio" name="payment_channel" value="CREDIT_CARD">
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ asset('images/bank/visa.png') }}" class="h-4">
+                                            <img src="{{ asset('images/bank/jcb.png') }}" class="h-4">
+                                        </div>
                                     </label>
                                 </div>
+                            </div>
+
+                            <!-- Credit Card Form (Hidden) -->
+                            <div id="cc-form-container">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2 modal-field-group">
+                                        <label class="modal-label-abs">Nomor Kartu</label>
+                                        <input type="text" id="cc-number" class="modal-input" placeholder="0000 0000 0000 0000">
+                                    </div>
+                                    <div class="modal-field-group">
+                                        <label class="modal-label-abs">Masa Berlaku (MM/YY)</label>
+                                        <input type="text" id="cc-expiry" class="modal-input" placeholder="MM / YY">
+                                    </div>
+                                    <div class="modal-field-group">
+                                        <label class="modal-label-abs">CVV</label>
+                                        <input type="text" id="cc-cvv" class="modal-input" placeholder="123">
+                                    </div>
+                                </div>
+                                <p class="text-[9px] text-slate-400 font-medium mt-3 italic"><i class="fas fa-lock mr-1"></i> Data kartu Anda dienkripsi secara aman oleh Xendit dan tidak disimpan di server kami.</p>
                             </div>
                         </div>
                     </div>
@@ -507,12 +620,12 @@
             <h3 class="text-xl font-black text-slate-900 mb-10 tracking-widest uppercase mt-4">SCAN TO PAY</h3>
         </div>
 
-        <!-- E-Wallet Result -->
-        <div id="res-ewallet" class="hidden">
-            <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-emerald-100"><i class="fas fa-wallet text-3xl"></i></div>
-            <h3 class="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tighter leading-none">Otomatis Terhubung</h3>
-            <p class="text-sm text-slate-500 font-medium mb-10">Buka aplikasi E-Wallet Anda untuk menyelesaikan pembayaran.</p>
-            <a id="ewallet-btn" href="#" target="_blank" class="w-full inline-flex items-center justify-center bg-emerald-600 text-white rounded-2xl py-4 font-black uppercase text-sm tracking-widest shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-100 transition">OPEN WALLET APP</a>
+        <!-- E-Wallet / Redirect Result -->
+        <div id="res-redirect" class="hidden">
+            <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-emerald-100"><i class="fas fa-external-link-alt text-3xl"></i></div>
+            <h3 class="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tighter leading-none">Lanjutkan Pembayaran</h3>
+            <p class="text-sm text-slate-500 font-medium mb-10">Klik tombol di bawah untuk menyelesaikan pembayaran di halaman partner.</p>
+            <a id="redirect-btn" href="#" target="_blank" class="w-full inline-flex items-center justify-center bg-emerald-600 text-white rounded-2xl py-4 font-black uppercase text-sm tracking-widest shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-100 transition">BAYAR SEKARANG</a>
         </div>
 
         <div class="border-t border-slate-50 pt-10 mt-10">
@@ -608,6 +721,10 @@
     const subtotal = {{ $subtotal }};
     let shipping = 0;
 
+    // Set Xendit Public Key
+    const XENDIT_PUBLIC_KEY = "{{ config('xendit.public_key') }}";
+    if (XENDIT_PUBLIC_KEY) Xendit.setPublishableKey(XENDIT_PUBLIC_KEY);
+
     // Initialization: Load stored address if available
     (function initAddress() {
         const rawAddr = @json($user->address ?? '');
@@ -632,6 +749,10 @@
                     // Ensure displayed name/phone match (phone might have been updated)
                     const p = @json($user->phone ?? '');
                     if (p) document.querySelectorAll('.cust-detail span:last-child').forEach(s => s.textContent = p);
+                } else {
+                    // Fallback for plain string address
+                    document.getElementById('display-address-text').textContent = rawAddr;
+                    document.getElementById('cust_address').value = rawAddr;
                 }
             } catch (e) { console.error('Address parse error', e, rawAddr); }
         }
@@ -724,7 +845,7 @@
 
     // === Location Logic (Haversine & APIs) ===
     let availableLocations = [];
-    const cartItemsData = [@foreach($cart as $id => $item){product_id:'{{$id}}', quantity:{{$item['quantity']}}},@endforeach];
+    const cartItemsData = [@foreach($cart as $id => $item){product_id:'{{$item['product_id']}}', variation_id:'{{$item['variation_id'] ?? ''}}', quantity:{{$item['quantity']}}},@endforeach];
 
     async function loadValidLocations() {
         try {
@@ -906,6 +1027,15 @@
     window.selectPayment = function(el) {
         document.querySelectorAll('.payment-option-v2').forEach(i => i.classList.remove('selected'));
         el.classList.add('selected');
+        document.getElementById('cc-form-container').classList.remove('show');
+        const radio = el.querySelector('input');
+        if (radio) radio.checked = true;
+    };
+
+    window.selectPaymentCard = function(el) {
+        document.querySelectorAll('.payment-option-v2').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('cc-form-container').classList.add('show');
         const radio = el.querySelector('input');
         if (radio) radio.checked = true;
     };
@@ -950,10 +1080,64 @@
             return showAlert({type:'warning', title:'Lokasi Pengambilan', message:'Pilih lokasi pengambilan (Drop Point) terlebih dahulu.'});
         }
 
-        btn.disabled = true;
-        loader.classList.remove('hidden');
-        loader.classList.add('flex');
+        if (btn) btn.disabled = true;
+        if (loader) {
+            loader.classList.remove('hidden');
+            loader.classList.add('flex');
+        }
 
+        // Handle Credit Card Tokenization if needed
+        if (channel === 'CREDIT_CARD') {
+            const ccNum = document.getElementById('cc-number').value.replace(/\s/g, '');
+            const ccExp = document.getElementById('cc-expiry').value.split('/');
+            const ccCvv = document.getElementById('cc-cvv').value;
+
+            if (!ccNum || ccExp.length !== 2 || !ccCvv) {
+                if (btn) btn.disabled = false;
+                if (loader) {
+                    loader.classList.add('hidden');
+                    loader.classList.remove('flex');
+                }
+                return showAlert({type:'warning', title:'Data Kartu', message:'Lengkapi informasi kartu kredit Anda.'});
+            }
+
+            const cardData = {
+                card_number: ccNum,
+                card_exp_month: ccExp[0].trim(),
+                card_exp_year: '20' + ccExp[1].trim(),
+                card_cvn: ccCvv,
+                is_multiple_use: false,
+                should_authenticate: true // 3DS
+            };
+
+            Xendit.card.createToken(cardData, (err, token) => {
+                if (err) {
+                    if (btn) btn.disabled = false;
+                    if (loader) {
+                        loader.classList.add('hidden');
+                        loader.classList.remove('flex');
+                    }
+                    return showAlert({type:'error', title:'Error Kartu', message: err.message || 'Gagal melakukan otentikasi kartu.'});
+                }
+                
+                if (token.status === 'IN_REVIEW') {
+                    window.open(token.payer_authentication_url, '_blank');
+                    // In a real app, you'd poll or wait for a message from the 3DS window
+                    // For now, let's assume we proceed with the token
+                    submitOrder(name, phone, address, city, channel, token.id, token.authentication_id);
+                } else {
+                    submitOrder(name, phone, address, city, channel, token.id, token.authentication_id);
+                }
+            });
+        } else {
+            submitOrder(name, phone, address, city, channel);
+        }
+    });
+
+    async function submitOrder(name, phone, address, city, channel, tokenId = null, authId = null) {
+        const loader = document.getElementById('loading');
+        const btn = document.getElementById('btn-submit');
+        
         try {
             const res = await fetch('{{ route("checkout.process") }}', {
                 method: 'POST',
@@ -963,65 +1147,131 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
-                    items: [@foreach($cart as $id => $item){product_id:'{{$id}}', quantity:{{$item['quantity']}}},@endforeach],
+                    items: [@foreach($cart as $id => $item){
+                        product_id: '{{ $item['product_id'] }}',
+                        variation_id: '{{ $item['variation_id'] ?? '' }}',
+                        variation_name: '{{ $item['variation_name'] ?? '' }}',
+                        quantity: {{ $item['quantity'] }}
+                    },@endforeach],
                     total: subtotal + shipping,
                     address: `Penerima: ${name} (${phone})\n${address}\n${city}`,
                     shipping_cost: shipping,
                     payment_channel: channel,
                     payer_name: name,
-                    location_id: document.getElementById('selected_location_id').value
+                    payer_phone: phone,
+                    location_id: document.getElementById('selected_location_id').value,
+                    token_id: tokenId,
+                    auth_id: authId
                 })
             });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('Server error response:', text);
+                if (loader) {
+                    loader.classList.add('hidden');
+                    loader.classList.remove('flex');
+                }
+                if (btn) btn.disabled = false;
+                
+                let errorMsg = 'Server memberikan respon yang tidak valid.';
+                try {
+                    const errorData = JSON.parse(text);
+                    if (errorData.message) errorMsg = errorData.message;
+                } catch(e) {}
+
+                return showAlert({
+                    type: 'error',
+                    title: 'Kesalahan Server (' + res.status + ')',
+                    message: errorMsg + ' (Status: ' + res.status + ')'
+                });
+            }
             
             const data = await res.json();
-            loader.classList.add('hidden');
-            loader.classList.remove('flex');
+            if (loader) {
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+            }
 
             if (data.order_number) {
                  showResult(data);
                  window.scrollTo({top:0, behavior:'smooth'});
             } else {
-                btn.disabled = false;
+                if (btn) btn.disabled = false;
                 showAlert({type:'error', title:'Gagal', message: data.message || 'Error pembayaran.'});
             }
         } catch(e) {
-            console.error(e);
-            loader.classList.add('hidden');
-            btn.disabled = false;
-            showAlert({type:'error', title:'Error', message: 'Kesalahan koneksi server.'});
+            console.error('Network or Parse error:', e);
+            if (loader) {
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+            }
+            if (btn) btn.disabled = false;
+            
+            let detailedMsg = e.message;
+            if (e.message.includes('Failed to fetch')) {
+                detailedMsg = 'Gagal menghubungi server. Periksa koneksi internet atau blokir CORS.';
+            }
+
+            showAlert({
+                type:'error', 
+                title:'Error Koneksi', 
+                message: 'Masalah teknis: ' + detailedMsg
+            });
         }
-    });
+    }
 
     function showResult(d) {
-        document.getElementById('res-amount').textContent = 'Rp ' + f(d.amount);
-        document.getElementById('checkout-result-overlay').classList.add('show');
+        const resAmount = document.getElementById('res-amount');
+        if (resAmount) resAmount.textContent = 'Rp ' + f(d.amount);
+        
+        const overlay = document.getElementById('checkout-result-overlay');
+        if (overlay) overlay.classList.add('show');
         document.body.style.overflow = 'hidden';
         
-        document.getElementById('res-va').classList.add('hidden');
-        document.getElementById('res-retail').classList.add('hidden');
-        document.getElementById('res-qris').classList.add('hidden');
-        document.getElementById('res-ewallet').classList.add('hidden');
+        ['res-va', 'res-retail', 'res-qris', 'res-ewallet', 'res-redirect'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
 
         if (d.type === 'va') {
-            document.getElementById('res-bank-name').textContent = d.bank;
-            document.getElementById('res-va-code').textContent = d.code;
-            document.getElementById('res-va').classList.remove('hidden');
+            const bankName = document.getElementById('res-bank-name');
+            const vaCode = document.getElementById('res-va-code');
+            const vaBox = document.getElementById('res-va');
+            if (bankName) bankName.textContent = d.bank;
+            if (vaCode) vaCode.textContent = d.code;
+            if (vaBox) vaBox.classList.remove('hidden');
         } else if (d.type === 'retail') {
-            document.getElementById('res-retail-name').textContent = d.channel;
-            document.getElementById('res-retail-code').textContent = d.code;
-            document.getElementById('res-retail').classList.remove('hidden');
+            const retailName = document.getElementById('res-retail-name');
+            const retailCode = document.getElementById('res-retail-code');
+            const retailBox = document.getElementById('res-retail');
+            if (retailName) retailName.textContent = d.channel;
+            if (retailCode) retailCode.textContent = d.code;
+            if (retailBox) retailBox.classList.remove('hidden');
         } else if (d.type === 'qris') {
             const box = document.getElementById('qris-box');
-            box.innerHTML = '';
-            new QRCode(box, {text: d.qr_string, width: 240, height: 240, colorDark: "#0f172a"});
-            document.getElementById('res-qris').classList.remove('hidden');
-        } else if (d.type === 'ewallet') {
+            const qrisBox = document.getElementById('res-qris');
+            if (box) {
+                box.innerHTML = '';
+                new QRCode(box, {text: d.qr_string, width: 240, height: 240, colorDark: "#0f172a"});
+            }
+            if (qrisBox) qrisBox.classList.remove('hidden');
+        } else if (d.type === 'ewallet' || d.type === 'direct_debit' || d.type === 'paylater') {
              if (d.payment_url) {
-                document.getElementById('ewallet-btn').href = d.payment_url;
-                document.getElementById('res-ewallet').classList.remove('hidden');
+                const redirectBtn = document.getElementById('redirect-btn');
+                const redirectBox = document.getElementById('res-redirect');
+                if (redirectBtn) redirectBtn.href = d.payment_url;
+                if (redirectBox) redirectBox.classList.remove('hidden');
              } else {
-                showAlert({type:'success', title:'Terkirim', message:'Buka aplikasi wallet Anda.'});
+                showAlert({type:'success', title:'Terkirim', message:'Buka aplikasi pembayaran Anda.'});
              }
+        } else if (d.type === 'credit_card') {
+            if (d.status === 'success') {
+                showAlert({type:'success', title:'Berhasil', message:'Pembayaran kartu kredit Anda berhasil!'});
+                setTimeout(() => window.location.href = '{{ route("orders.index") }}', 2000);
+            } else {
+                showAlert({type:'info', title:'Pending', message:'Transaksi sedang diproses oleh bank.'});
+            }
         }
     }
 

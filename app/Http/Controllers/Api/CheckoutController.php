@@ -25,27 +25,40 @@ class CheckoutController extends Controller
     /**
      * Constant groupings for payment channels.
      */
-    const VA_BANKS = ['BCA', 'BNI', 'BRI', 'MANDIRI', 'PERMATA', 'BSI', 'CIMB', 'SAHABAT_SAMPOERNA', 'BJB', 'MUAMALAT', 'BNC'];
-    const EWALLETS = ['ID_OVO', 'ID_DANA', 'ID_LINKAJA', 'ID_SHOPEEPAY'];
-    const RETAIL   = ['ALFAMART', 'INDOMARET'];
-    const QRIS     = 'QRIS';
+    const VA_BANKS    = ['BCA', 'BNI', 'BRI', 'MANDIRI', 'PERMATA', 'BSI', 'CIMB', 'SAHABAT_SAMPOERNA', 'BJB', 'MUAMALAT', 'BNC'];
+    const EWALLETS    = ['ID_OVO', 'ID_DANA', 'ID_LINKAJA', 'ID_SHOPEEPAY'];
+    const RETAIL      = ['ALFAMART', 'INDOMARET'];
+    const DIRECT_DEBIT = ['BRI', 'BCA', 'BNI'];
+    const PAYLATER    = ['KREDIVO', 'AKULAKU', 'UANGME'];
+    const CREDIT_CARD = 'CREDIT_CARD';
+    const QRIS        = 'QRIS';
 
     /**
      * Handle the checkout process.
      */
     public function store(Request $request)
     {
+        Log::debug('CheckoutController@store reached', [
+            'request' => $request->all(),
+            'user_id' => session('user_id'),
+            'type'    => session('user_type')
+        ]);
+        
         $request->validate([
             'items'           => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
+            'items.*.variation_id' => 'nullable|exists:product_variations,id',
+            'items.*.variation_name' => 'nullable|string',
             'items.*.quantity'   => 'required|integer|min:1',
             'total'           => 'required|numeric',
             'address'         => 'required|string',
             'shipping_cost'   => 'required|numeric',
             'payment_channel' => 'required|string',
             'payer_name'      => 'required|string|max:255',
-            'payer_phone'     => 'nullable|string', // Some e-wallets might need this
+            'payer_phone'     => 'nullable|string',
             'location_id'     => 'required|exists:locations,id',
+            'token_id'        => 'nullable|string', // For Credit Card
+            'auth_id'         => 'nullable|string', // For Credit Card 3DS
         ]);
 
         $userSession = session('user');
@@ -73,16 +86,25 @@ class CheckoutController extends Controller
 
                 foreach ($items as $item) {
                     $product  = Product::findOrFail($item['product_id']);
+                    $variationId = $item['variation_id'] ?? null;
+                    $variation = $variationId ? \App\Models\ProductVariation::find($variationId) : null;
+                    
                     $price    = $product->getPriceForUser($userSession['type'] ?? 'user');
+                    if ($variation) {
+                        $price += $variation->price_adjustment;
+                    }
+
                     $subtotal = $price * $item['quantity'];
                     $recalculatedSubtotal += $subtotal;
 
                     $orderItemsData[] = [
-                        'product_id'   => $product->id,
-                        'product_name' => $product->name,
-                        'quantity'     => $item['quantity'],
-                        'unit_price'   => $price,
-                        'subtotal'     => $subtotal,
+                        'product_id'     => $product->id,
+                        'variation_id'   => $variationId,
+                        'variation_name' => $item['variation_name'] ?? ($variation ? $variation->name : null),
+                        'product_name'   => $product->name,
+                        'quantity'       => $item['quantity'],
+                        'unit_price'     => $price,
+                        'subtotal'       => $subtotal,
                     ];
                 }
 
@@ -91,6 +113,7 @@ class CheckoutController extends Controller
                 // ── Create Order ──
                 $order = Order::create([
                     'user_id'          => $user->id,
+                    'user_type'        => get_class($user),
                     'order_number'     => (string) Str::uuid(),
                     'status'           => 'pending',
                     'total_amount'     => $recalculatedTotal,
@@ -103,13 +126,26 @@ class CheckoutController extends Controller
                 ]);
 
                 foreach ($orderItemsData as $itemData) {
-                    $order->items()->create($itemData);
+                    $orderItem = $order->items()->create($itemData);
 
                     // Decrease stock from the chosen location
                     DB::table('product_locations')
                         ->where('product_id', $itemData['product_id'])
                         ->where('location_id', $request->location_id)
                         ->decrement('stok', $itemData['quantity']);
+
+                    // Decrease stock from the specific variation if applicable
+                    if (!empty($itemData['variation_id'])) {
+                        DB::table('product_variations')
+                            ->where('id', $itemData['variation_id'])
+                            ->decrement('stock', $itemData['quantity']);
+                    }
+
+                    // Sync main product stock
+                    $product = Product::find($itemData['product_id']);
+                    if ($product) {
+                        $product->syncStock();
+                    }
                 }
 
                 // ── Route to Xendit API ──
@@ -118,9 +154,15 @@ class CheckoutController extends Controller
                 } elseif (in_array($channelUpper, self::VA_BANKS)) {
                     return $this->processVirtualAccount($order, $channelUpper, $request->payer_name);
                 } elseif (in_array($channelUpper, self::EWALLETS)) {
-                    return $this->processEWallet($order, $channelUpper);
+                    return $this->processEWallet($order, $channelUpper, $request->payer_phone);
                 } elseif (in_array($channelUpper, self::RETAIL)) {
                     return $this->processRetailOutlet($order, $channelUpper, $request->payer_name);
+                } elseif (in_array($channelUpper, self::DIRECT_DEBIT)) {
+                    return $this->processDirectDebit($order, $channelUpper);
+                } elseif (in_array($channelUpper, self::PAYLATER)) {
+                    return $this->processPaylater($order, $channelUpper);
+                } elseif ($channelUpper === self::CREDIT_CARD) {
+                    return $this->processCreditCard($order, $request->token_id, $request->auth_id);
                 } else {
                     throw new Exception('Metode pembayaran tidak didukung: ' . $channelUpper);
                 }
@@ -153,9 +195,9 @@ class CheckoutController extends Controller
         return response()->json(['type' => 'qris', 'order_number' => $order->order_number, 'qr_string' => $qris['qr_string'], 'amount' => $order->total_amount]);
     }
 
-    private function processEWallet(Order $order, string $channel)
+    private function processEWallet(Order $order, string $channel, ?string $payerPhone = null)
     {
-        $charge = $this->xenditService->createEWalletCharge($order, $channel);
+        $charge = $this->xenditService->createEWalletCharge($order, $channel, $payerPhone);
         
         // E-wallet response structure: actions[0].url is usually the link to pay
         $paymentUrl = null;
@@ -188,5 +230,45 @@ class CheckoutController extends Controller
         ]);
         session()->forget('cart');
         return response()->json(['type' => 'retail', 'order_number' => $order->order_number, 'code' => $retail['payment_code'], 'channel' => $channel, 'amount' => $order->total_amount]);
+    }
+
+    private function processDirectDebit(Order $order, string $channel)
+    {
+        $charge = $this->xenditService->createDirectDebitCharge($order, $channel);
+        $paymentUrl = $charge['actions'][0]['url'] ?? null;
+        $order->update(['payment_url' => $paymentUrl]);
+        session()->forget('cart');
+        return response()->json(['type' => 'direct_debit', 'order_number' => $order->order_number, 'payment_url' => $paymentUrl]);
+    }
+
+    private function processPaylater(Order $order, string $channel)
+    {
+        $charge = $this->xenditService->createPaylaterCharge($order, $channel);
+        $paymentUrl = null;
+        if (isset($charge['actions'])) {
+            foreach ($charge['actions'] as $action) {
+                if ($action['url_type'] === 'CHECKOUT_URL') {
+                    $paymentUrl = $action['url'];
+                    break;
+                }
+            }
+        }
+        $order->update(['payment_url' => $paymentUrl]);
+        session()->forget('cart');
+        return response()->json(['type' => 'paylater', 'order_number' => $order->order_number, 'payment_url' => $paymentUrl]);
+    }
+
+    private function processCreditCard(Order $order, $tokenId, $authId)
+    {
+        if (!$tokenId) throw new Exception('Token ID Kartu Kredit diperlukan.');
+        $charge = $this->xenditService->createCreditCardCharge($order, $tokenId, $authId);
+        
+        if ($charge['status'] === 'CAPTURED') {
+            $order->update(['payment_status' => 'paid', 'status' => 'processing']);
+            session()->forget('cart');
+            return response()->json(['type' => 'credit_card', 'status' => 'success', 'order_number' => $order->order_number]);
+        } else {
+            return response()->json(['type' => 'credit_card', 'status' => 'pending', 'order_number' => $order->order_number, 'response' => $charge]);
+        }
     }
 }
