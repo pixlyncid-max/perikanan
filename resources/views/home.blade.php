@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Hero Section with Auto-sliding Background -->
-<div class="relative h-[500px] overflow-hidden">
+<div class="relative min-h-[420px] md:h-[500px] overflow-hidden">
     <div id="hero-slider" class="absolute inset-0">
         <div class="hero-slide absolute inset-0 transition-opacity duration-1000 opacity-100">
             <img src="https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1920" alt="Fisheries 1" class="w-full h-full object-cover">
@@ -20,19 +20,19 @@
         </div>
     </div>
     
-    <div class="container mx-auto px-4 h-full flex items-center relative z-10">
+    <div class="container mx-auto px-4 min-h-[420px] md:h-[500px] flex items-center relative z-10 py-16 md:py-0">
         <div class="max-w-2xl text-white">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
                 {{ get_setting('hero_title', 'Indonesian Fisheries Community') }}
             </h1>
-            <p class="text-xl md:text-2xl mb-8 opacity-90">
+            <p class="text-lg md:text-2xl mb-6 md:mb-8 opacity-90">
                 {{ get_setting('hero_subtitle', 'Komunitas perikanan terbesar di Kalimantan Timur. Menghubungkan nelayan, pembudidaya, dan pelaku usaha perikanan.') }}
             </p>
-            <div class="flex flex-wrap gap-4">
-                <a href="{{ get_setting('hero_button1_url', '/produk') }}" class="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center">
+            <div class="flex flex-wrap gap-3 md:gap-4">
+                <a href="{{ get_setting('hero_button1_url', '/produk') }}" class="px-6 md:px-8 py-3 md:py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center">
                     <i class="fas fa-shopping-bag mr-2"></i> {{ get_setting('hero_button1_text', 'Lihat Produk') }}
                 </a>
-                <a href="{{ get_setting('hero_button2_url', '/register') }}" class="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition flex items-center">
+                <a href="{{ get_setting('hero_button2_url', '/register') }}" class="px-6 md:px-8 py-3 md:py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition flex items-center">
                     <i class="fas fa-user-plus mr-2"></i> {{ get_setting('hero_button2_text', 'Gabung Sekarang') }}
                 </a>
             </div>
@@ -108,7 +108,7 @@
 <!-- Chart Section -->
 <div class="bg-gray-50 py-10">
     <div class="container mx-auto px-4">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-8">Statistik Pembudidaya Kaltim</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-8">Statistik Kaltim Tahun {{ isset($chartData) ? $chartData['year'] : date('Y') }}</h2>
         
         <!-- Charts Grid - 4 columns on desktop, 2 on tablet, 1 on mobile -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -279,10 +279,12 @@
     };
 
     // Chart 1: Pembudidaya Ikan (Doughnut Chart)
+    const serverChartData = @json($chartData ?? null);
+    
     const fishData = {
-        labels: ['Samarinda', 'Bontang', 'Balikpapan', 'Kukar', 'Kutim', 'Berau', 'Paser', 'Lainnya'],
+        labels: serverChartData ? serverChartData.labels : ['Samarinda', 'Bontang', 'Balikpapan', 'Kukar', 'Kutim', 'Berau', 'Paser', 'Lainnya'],
         datasets: [{
-            data: [450, 380, 420, 290, 250, 180, 150, 320],
+            data: serverChartData ? serverChartData.fish : [450, 380, 420, 290, 250, 180, 150, 320],
             backgroundColor: [
                 '#0ea5e9', '#06b6d4', '#10b981', '#3b82f6', 
                 '#14b8a6', '#22c55e', '#0d9488', '#64748b'
@@ -319,9 +321,9 @@
 
     // Chart 2: Pembudidaya Udang (Doughnut Chart)
     const shrimpData = {
-        labels: ['Samarinda', 'Bontang', 'Balikpapan', 'Kukar', 'Kutim', 'Berau', 'Paser', 'Lainnya'],
+        labels: serverChartData ? serverChartData.labels : ['Samarinda', 'Bontang', 'Balikpapan', 'Kukar', 'Kutim', 'Berau', 'Paser', 'Lainnya'],
         datasets: [{
-            data: [280, 220, 250, 180, 150, 120, 90, 160],
+            data: serverChartData ? serverChartData.shrimp : [280, 220, 250, 180, 150, 120, 90, 160],
             backgroundColor: [
                 '#f97316', '#fb923c', '#fbbf24', '#f59e0b',
                 '#d97706', '#b45309', '#92400e', '#78350f'
@@ -358,9 +360,9 @@
 
     // Chart 3: Nelayan (Doughnut Chart)
     const fishermanData = {
-        labels: ['Samarinda', 'Bontang', 'Balikpapan', 'Kukar', 'Kutim', 'Berau', 'Paser', 'Lainnya'],
+        labels: serverChartData ? serverChartData.labels : ['Samarinda', 'Bontang', 'Balikpapan', 'Kukar', 'Kutim', 'Berau', 'Paser', 'Lainnya'],
         datasets: [{
-            data: [850, 720, 680, 540, 480, 390, 320, 610],
+            data: serverChartData ? serverChartData.fisherman : [850, 720, 680, 540, 480, 390, 320, 610],
             backgroundColor: [
                 '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6',
                 '#10b981', '#22c55e', '#84cc16', '#65a30d'
@@ -399,7 +401,7 @@
     const othersData = {
         labels: ['Kepiting', 'Rumput Laut', 'Kerang', 'Lobster', 'Abalon', 'Teripang', 'Lainnya'],
         datasets: [{
-            data: [120, 95, 80, 45, 30, 55, 75],
+            data: serverChartData ? serverChartData.others : [120, 95, 80, 45, 30, 55, 75],
             backgroundColor: [
                 '#8b5cf6', '#a78bfa', '#c4b5fd', '#7c3aed',
                 '#6d28d9', '#5b21b6', '#4c1d95'

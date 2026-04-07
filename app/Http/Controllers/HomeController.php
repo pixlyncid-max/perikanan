@@ -15,7 +15,47 @@ class HomeController extends Controller
         $latestArticles = Article::published()->latest()->take(6)->get();
         $categories = Category::active()->ordered()->get();
         
-        return view('home', compact('featuredProducts', 'latestArticles', 'categories'));
+        // Fishery Statistics for Charts
+        $latestYear = \App\Models\FisheryStatistic::max('year') ?? date('Y');
+        $stats = \App\Models\FisheryStatistic::where('year', $latestYear)->get();
+        
+        $cities = ['Samarinda', 'Bontang', 'Balikpapan', 'Kutai Kartanegara', 'Kutai Timur', 'Berau', 'Paser'];
+        
+        $getChartData = function($column) use ($stats, $cities) {
+            $data = [];
+            $otherCount = 0;
+            foreach ($cities as $city) {
+                $stat = $stats->firstWhere('regency_city', $city);
+                $data[] = $stat ? ($stat->{$column} ?? 0) : 0;
+            }
+            // For cities not in main labels
+            $otherCities = ['Kutai Barat', 'Penajam Paser Utara', 'Mahakam Ulu'];
+            foreach($otherCities as $oc) {
+                $stat = $stats->firstWhere('regency_city', $oc);
+                if ($stat) $otherCount += ($stat->{$column} ?? 0);
+            }
+            $data[] = $otherCount;
+            return $data;
+        };
+
+        $chartData = [
+            'labels' => ['Samarinda', 'Bontang', 'Balikpapan', 'Kukar', 'Kutim', 'Berau', 'Paser', 'Lainnya'],
+            'fish' => $getChartData('fish_farmer_count'),
+            'shrimp' => $getChartData('shrimp_farmer_count'),
+            'fisherman' => $getChartData('fisherman_count'),
+            'others' => [
+                (int)$stats->sum('crab_farmer_count'),
+                (int)$stats->sum('seaweed_farmer_count'),
+                (int)$stats->sum('clam_farmer_count'),
+                (int)$stats->sum('lobster_farmer_count'),
+                (int)$stats->sum('abalone_farmer_count'),
+                (int)$stats->sum('sea_cucumber_farmer_count'),
+                (int)$stats->sum('other_farmer_count'),
+            ],
+            'year' => $latestYear
+        ];
+        
+        return view('home', compact('featuredProducts', 'latestArticles', 'categories', 'chartData'));
     }
 
     public function about()

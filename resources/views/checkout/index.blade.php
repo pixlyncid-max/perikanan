@@ -82,15 +82,17 @@
 
     /* ── Sticky Summary Sidebar ── */
     .sidebar-summary { position: sticky; top: 100px; background: #fff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid var(--checkout-border); }
-    .price-summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.95rem; color: var(--checkout-text-muted); font-weight: 500; }
-    .total-row { display: flex; justify-content: space-between; padding: 20px 0; margin-top: 16px; border-top: 1px dashed #e2e8f0; }
-    .total-price { color: var(--shopee-orange-deep); font-size: 1.8rem; font-weight: 900; letter-spacing: -0.02em; }
+    .price-summary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 0.95rem; color: var(--checkout-text-muted); font-weight: 500; gap: 12px; }
+    .price-summary-row > span:first-child { flex: 1; }
+    .price-summary-row > span:last-child { text-align: right; whitespace: nowrap; }
+    .total-row { display: flex; flex-direction: column; align-items: flex-end; padding: 24px 0; margin-top: 16px; border-top: 1px dashed #e2e8f0; gap: 8px; }
+    .total-price { color: var(--shopee-orange-deep); font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.2; }
 
     .btn-checkout-primary { 
-        width: 100%; padding: 16px; background: linear-gradient(135deg, #ea580c 0%, #f43f5e 100%); color: #fff; 
-        font-weight: 800; font-size: 1.1rem; border-radius: 12px; transition: all 0.3s;
+        width: 100%; padding: 14px 12px; background: linear-gradient(135deg, #ea580c 0%, #f43f5e 100%); color: #fff; 
+        font-weight: 800; font-size: 1rem; border-radius: 12px; transition: all 0.3s;
         box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.3); text-transform: uppercase;
-        display: flex; align-items: center; justify-content: center; gap: 10px;
+        display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
     }
     .btn-checkout-primary:hover { transform: translateY(-2px); opacity: 0.95; }
     .btn-checkout-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
@@ -515,8 +517,8 @@
 
                 <!-- RIGHT: SIDEBAR SUMMARY -->
                 <div class="lg:col-span-1">
-                    <div class="sidebar-summary p-8">
-                        <div class="flex items-center gap-2 mb-8">
+                    <div class="sidebar-summary p-6">
+                        <div class="flex items-center gap-2 mb-6">
                             <i class="fas fa-file-invoice-dollar text-slate-400"></i>
                             <h2 class="text-xs font-black text-slate-800 uppercase tracking-widest">Detail Ringkasan</h2>
                         </div>
@@ -532,8 +534,8 @@
                             </div>
                         </div>
 
-                        <div class="total-row mb-8">
-                            <span class="text-xs font-black text-slate-800 uppercase tracking-widest">Total Bayar</span>
+                        <div class="total-row mb-6">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Bayar</span>
                             <div class="total-price" id="total-display">Rp {{ number_format($subtotal, 0, ',', '.') }}</div>
                         </div>
 
@@ -546,10 +548,10 @@
                                 <i class="fas fa-shield-alt text-emerald-500 text-sm"></i>
                                 Keamanan & Privasi Terjamin
                             </div>
-                            <div class="flex items-center justify-between opacity-30 grayscale contrast-150">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Xendit_Logo%2C_2021.svg/80px-Xendit_Logo%2C_2021.svg.png">
-                                <i class="fab fa-cc-visa text-xl"></i>
-                                <i class="fab fa-cc-mastercard text-xl"></i>
+                            <div class="flex items-center gap-4 opacity-40 grayscale contrast-125">
+                                <img src="{{ asset('images/bank/visa.png') }}" class="h-3.5 object-contain" alt="Visa">
+                                <img src="{{ asset('images/bank/jcb.png') }}" class="h-4 object-contain" alt="JCB">
+                                <img src="{{ asset('images/bank/QRIS.png') }}" class="h-4 object-contain" alt="QRIS">
                             </div>
                         </div>
                     </div>
@@ -582,64 +584,124 @@
 </div>
 
 <!-- Result Overlay -->
-<div id="checkout-result-overlay">
-    <div class="result-modal text-center">
+<div id="checkout-result-overlay" class="hidden fixed inset-0 z-[10000] bg-slate-900/60 backdrop-blur-sm items-center justify-center p-4">
+    <div class="result-modal bg-white w-full max-w-[420px] rounded-[24px] p-6 md:p-8 shadow-2xl relative animate-[modalSlideUp_0.3s_ease-out] flex flex-col">
         <!-- VA Result -->
-        <div id="res-va" class="hidden">
-            <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-blue-100"><i class="fas fa-university text-3xl"></i></div>
-            <h3 class="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tighter leading-none">Virtual Account</h3>
-            <p class="text-[10px] text-slate-400 font-bold mb-10 uppercase tracking-widest">Silakan bayar tepat ke nomor di bawah ini</p>
-            <div class="bg-slate-50 p-8 rounded-3xl border border-dashed border-slate-200 mb-10 text-left relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-3 opacity-5"><i class="fas fa-money-check-alt text-6xl"></i></div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Nomor Rekening (<span id="res-bank-name">BCA</span>)</p>
-                <div class="flex items-center justify-between">
-                    <span id="res-va-code" class="text-3xl font-black text-blue-600 tracking-wider">XXXXXXXXX</span>
-                    <button onclick="copy('res-va-code')" class="w-10 h-10 bg-white rounded-xl text-blue-600 shadow-sm hover:scale-110 active:scale-95 transition flex items-center justify-center"><i class="far fa-copy"></i></button>
+        <div id="res-va" class="hidden w-full mx-auto">
+            <div class="mb-5 text-center relative z-20 flex items-center justify-center gap-3">
+                <div id="va-icon-bg" class="w-12 h-12 rounded-full flex items-center justify-center shadow-lg text-white" style="background: linear-gradient(135deg, #1e293b, #0f172a)">
+                    <i class="fas fa-university text-xl"></i>
+                </div>
+                <div class="text-left">
+                    <h3 class="text-xl font-black text-slate-800 tracking-tight">Virtual Account</h3>
+                    <p class="text-[11px] text-slate-500 font-medium">Selesaikan sesuai detail</p>
+                </div>
+            </div>
+            
+            <div id="va-card-bg" class="relative w-full rounded-2xl p-5 shadow-lg overflow-hidden group mb-5 transition-transform" style="background: linear-gradient(135deg, #1e293b, #0f172a)">
+                <div class="absolute inset-0 bg-white/5 border border-white/10 rounded-2xl pointer-events-none"></div>
+                
+                <div class="relative z-10 flex flex-col justify-between h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest mb-1">Bank Penerima</p>
+                            <span id="res-bank-name" class="text-lg font-black text-white tracking-widest drop-shadow-md">BCA</span>
+                        </div>
+                        <i class="fas fa-wifi text-white/30 text-xl transform rotate-90"></i>
+                    </div>
+                    
+                    <div>
+                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest mb-1.5">Nomor Virtual Account</p>
+                        <div class="flex items-center justify-between gap-3">
+                            <span id="res-va-code" class="text-2xl sm:text-3xl font-mono font-black text-white tracking-widest drop-shadow-lg truncate">XXXXXX</span>
+                            <button onclick="copy('res-va-code')" class="shrink-0 w-10 h-10 bg-white/20 active:bg-white/30 backdrop-blur-md rounded-xl text-white transition-all duration-200 flex items-center justify-center" title="Salin">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Retail Result -->
-        <div id="res-retail" class="hidden">
-            <div class="w-20 h-20 bg-orange-50 text-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-orange-100"><i class="fas fa-store text-3xl"></i></div>
-            <h3 class="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tighter leading-none">Kode Pembayaran</h3>
-            <p class="text-[10px] text-slate-400 font-bold mb-10 uppercase tracking-widest italic text-center">Tunjukkan kode ini ke kasir <span id="res-retail-name" class="underline">ALFAMART</span>.</p>
-            <div class="bg-orange-50/50 p-8 rounded-3xl border border-dashed border-orange-200 mb-10 text-left relative group">
-              <div class="absolute top-0 right-0 p-3 opacity-5"><i class="fas fa-barcode text-6xl"></i></div>
-                <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-3">Merchant Code</p>
-                <div class="flex items-center justify-between">
-                    <span id="res-retail-code" class="text-3xl font-black text-orange-600 tracking-wider">XXXXXXXXX</span>
-                    <button onclick="copy('res-retail-code')" class="w-10 h-10 bg-white rounded-xl text-orange-600 shadow-sm hover:scale-110 active:scale-95 transition flex items-center justify-center"><i class="far fa-copy"></i></button>
+        <div id="res-retail" class="hidden w-full mx-auto">
+            <div class="mb-5 text-center relative z-20 flex items-center justify-center gap-3">
+                <div id="retail-icon-bg" class="w-12 h-12 rounded-full flex items-center justify-center shadow-lg text-white" style="background: linear-gradient(135deg, #1e293b, #0f172a)">
+                    <i class="fas fa-store text-xl"></i>
+                </div>
+                <div class="text-left">
+                    <h3 class="text-xl font-black text-slate-800 tracking-tight">Gerai Retail</h3>
+                    <p class="text-[11px] text-slate-500 font-medium">Bawa kode ke kasir</p>
+                </div>
+            </div>
+            
+            <div id="retail-card-bg" class="relative w-full rounded-2xl p-5 shadow-lg overflow-hidden group mb-5" style="background: linear-gradient(135deg, #1e293b, #0f172a)">
+                <div class="absolute inset-0 bg-white/5 border border-white/10 rounded-2xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest mb-1">Merchant</p>
+                            <span id="res-retail-name" class="text-lg font-black text-white tracking-widest drop-shadow-md">ALFAMART</span>
+                        </div>
+                        <i class="fas fa-barcode text-white/30 text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest mb-1.5">Kode Pembayaran</p>
+                        <div class="flex items-center justify-between gap-3">
+                            <span id="res-retail-code" class="text-2xl sm:text-3xl font-mono font-black text-white tracking-widest drop-shadow-lg truncate">XXXXXX</span>
+                            <button onclick="copy('res-retail-code')" class="shrink-0 w-10 h-10 bg-white/20 active:bg-white/30 backdrop-blur-md rounded-xl text-white flex items-center justify-center" title="Salin">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- QRIS Result -->
-        <div id="res-qris" class="hidden">
-            <div id="qris-box" class="mb-4 inline-block bg-white p-6 border-4 border-slate-50 rounded-[40px] shadow-2xl"></div>
-            <h3 class="text-xl font-black text-slate-900 mb-10 tracking-widest uppercase mt-4">SCAN TO PAY</h3>
+        <div id="res-qris" class="hidden w-full mx-auto text-center shrink-0">
+            <div class="flex items-center justify-center gap-3 mb-5">
+                <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center shadow-inner"><i class="fas fa-qrcode text-2xl"></i></div>
+                <div class="text-left">
+                    <h3 class="text-xl font-black text-slate-800 tracking-tight">QRIS</h3>
+                    <p class="text-[11px] text-slate-500 font-medium">Buka e-Wallet / m-Banking</p>
+                </div>
+            </div>
+            <div class="inline-block bg-white rounded-3xl p-4 shadow-xl border border-slate-100 mb-4">
+                <div id="qris-box" class="w-[180px] h-[180px] flex items-center justify-center bg-white mx-auto"></div>
+            </div>
         </div>
 
         <!-- E-Wallet / Redirect Result -->
-        <div id="res-redirect" class="hidden">
-            <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-emerald-100"><i class="fas fa-external-link-alt text-3xl"></i></div>
-            <h3 class="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tighter leading-none">Lanjutkan Pembayaran</h3>
-            <p class="text-sm text-slate-500 font-medium mb-10">Klik tombol di bawah untuk menyelesaikan pembayaran di halaman partner.</p>
-            <a id="redirect-btn" href="#" target="_blank" class="w-full inline-flex items-center justify-center bg-emerald-600 text-white rounded-2xl py-4 font-black uppercase text-sm tracking-widest shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-100 transition">BAYAR SEKARANG</a>
+        <div id="res-redirect" class="hidden w-full mx-auto text-center">
+            <div class="flex items-center justify-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center shadow-inner"><i class="fas fa-mobile-alt text-2xl"></i></div>
+                <div class="text-left">
+                    <h3 class="text-xl font-black text-slate-800 tracking-tight">Lanjut Bayar</h3>
+                    <p class="text-[11px] text-slate-500 font-medium">Selesaikan di halaman partner</p>
+                </div>
+            </div>
+            
+            <a id="redirect-btn" href="#" target="_blank" class="block w-full bg-emerald-600 text-white rounded-2xl py-4 flex flex-col items-center justify-center hover:bg-emerald-700 transition shadow-lg shadow-emerald-200 cursor-pointer">
+                <span class="font-black uppercase tracking-widest text-sm mb-0.5">Buka Halaman Pembayaran</span>
+            </a>
         </div>
 
-        <div class="border-t border-slate-50 pt-10 mt-10">
-            <div class="flex justify-between items-end mb-10">
+        <!-- Shared Footer -->
+        <div class="w-full mx-auto flex flex-col gap-3 shrink-0">
+            <div class="bg-blue-50 border border-blue-100/50 rounded-xl p-4 flex items-center justify-between shadow-sm">
                 <div class="text-left">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Pembayaran</p>
-                    <p id="res-amount" class="text-3xl font-black text-slate-900 tracking-tighter">Rp 0</p>
+                    <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-0.5">Total Pembayaran</p>
+                    <p id="res-amount" class="text-xl font-black text-blue-700 tracking-tight">Rp 0</p>
                 </div>
-                <a href="{{ route('orders.index') }}" class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white transition group">
-                  <i class="fas fa-box-open group-hover:animate-bounce"></i>
+                <a href="{{ route('orders.index') }}" class="w-10 h-10 bg-white rounded-[10px] shadow-sm text-blue-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition" title="Lihat Pesanan">
+                  <i class="fas fa-box-open"></i>
                 </a>
             </div>
-            <div class="bg-blue-50/50 p-5 rounded-2xl border-l-4 border-blue-400 text-left">
-               <p class="text-[10px] text-blue-800 font-bold leading-relaxed italic">Status pesanan akan diperbarui secara otomatis setelah pembayaran terverifikasi. Mohon jangan menutup halaman ini sebelum transaksi selesai.</p>
+            
+            <div class="bg-amber-50 rounded-xl p-3 border border-amber-100 flex gap-3 text-left items-start">
+               <div class="text-amber-500 mt-0.5"><i class="fas fa-info-circle"></i></div>
+               <p class="text-[10px] text-amber-800 font-semibold leading-relaxed">Status otomatis diperbarui setelah sukses pembayaran. <span class="block">Jangan tutup halaman sebelum selesai.</span></p>
             </div>
         </div>
     </div>
@@ -1234,12 +1296,35 @@
             if (el) el.classList.add('hidden');
         });
 
+        const bankColorMap = {
+            'BCA': 'linear-gradient(135deg, #005aa9, #002e5c)',
+            'BSI': 'linear-gradient(135deg, #00A39D, #005B58)',
+            'BRI': 'linear-gradient(135deg, #00529C, #00294F)',
+            'MANDIRI': 'linear-gradient(135deg, #003E7E, #F2A900)',
+            'BNI': 'linear-gradient(135deg, #F15A23, #005E6A)',
+            'PERMATA': 'linear-gradient(135deg, #007A60, #004A3A)',
+            'CIMB': 'linear-gradient(135deg, #A80034, #660020)',
+            'MUAMALAT': 'linear-gradient(135deg, #5C2D91, #3B1B61)',
+            'ALFAMART': 'linear-gradient(135deg, #E3000F, #A0000A)',
+            'INDOMARET': 'linear-gradient(135deg, #003087, #ED1C24)',
+        };
+
         if (d.type === 'va') {
             const bankName = document.getElementById('res-bank-name');
             const vaCode = document.getElementById('res-va-code');
             const vaBox = document.getElementById('res-va');
             if (bankName) bankName.textContent = d.bank;
             if (vaCode) vaCode.textContent = d.code;
+            
+            const rawBank = (d.bank || '').replace('ID_', '');
+            const defaultGrad = 'linear-gradient(135deg, #1e293b, #0f172a)';
+            const gradient = bankColorMap[rawBank.toUpperCase()] || defaultGrad;
+            
+            const iconBg = document.getElementById('va-icon-bg');
+            const cardBg = document.getElementById('va-card-bg');
+            if (iconBg) iconBg.style.background = gradient;
+            if (cardBg) cardBg.style.background = gradient;
+            
             if (vaBox) vaBox.classList.remove('hidden');
         } else if (d.type === 'retail') {
             const retailName = document.getElementById('res-retail-name');
@@ -1247,13 +1332,23 @@
             const retailBox = document.getElementById('res-retail');
             if (retailName) retailName.textContent = d.channel;
             if (retailCode) retailCode.textContent = d.code;
+            
+            const rawBank = (d.channel || '').replace('ID_', '');
+            const defaultGrad = 'linear-gradient(135deg, #1e293b, #0f172a)';
+            const gradient = bankColorMap[rawBank.toUpperCase()] || defaultGrad;
+            
+            const iconBg = document.getElementById('retail-icon-bg');
+            const cardBg = document.getElementById('retail-card-bg');
+            if (iconBg) iconBg.style.background = gradient;
+            if (cardBg) cardBg.style.background = gradient;
+            
             if (retailBox) retailBox.classList.remove('hidden');
         } else if (d.type === 'qris') {
             const box = document.getElementById('qris-box');
             const qrisBox = document.getElementById('res-qris');
             if (box) {
                 box.innerHTML = '';
-                new QRCode(box, {text: d.qr_string, width: 240, height: 240, colorDark: "#0f172a"});
+                new QRCode(box, {text: d.qr_string, width: 180, height: 180, colorDark: "#0f172a"});
             }
             if (qrisBox) qrisBox.classList.remove('hidden');
         } else if (d.type === 'ewallet' || d.type === 'direct_debit' || d.type === 'paylater') {

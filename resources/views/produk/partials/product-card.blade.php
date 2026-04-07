@@ -27,39 +27,39 @@
             </div>
         @endif
     </a>
-    <div class="p-6 flex flex-col flex-grow">
-        <h3 class="text-lg font-bold text-gray-800 mb-2 truncate" title="{{ $product->name }}">
+    <div class="p-4 sm:p-6 flex flex-col flex-grow">
+        <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-1 sm:mb-2 line-clamp-2 leading-tight" title="{{ $product->name }}">
             <a href="{{ route('produk.show', $product->slug) }}" class="hover:text-{{ $colorClass }}-600 transition">
                 {{ $product->name }}
             </a>
         </h3>
-        <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">{{ $product->short_description ?: Str::limit($product->description, 80) }}</p>
+        <p class="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 flex-grow">{{ $product->short_description ?: Str::limit($product->description, 80) }}</p>
         
-        <div class="flex flex-col mt-auto gap-3">
-            <div class="flex items-center justify-between">
-                <div class="flex flex-col">
+        <div class="flex flex-col mt-auto gap-2 sm:gap-3">
+            <div class="flex items-end justify-between gap-2">
+                <div class="flex flex-col min-w-0">
                     @if($product->sale_price > 0)
-                        <span class="text-xs text-gray-400 line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                        <span class="text-xl font-bold text-{{ $colorClass }}-600">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 line-through truncate">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                        <span class="text-sm sm:text-xl font-bold text-{{ $colorClass }}-600 whitespace-nowrap">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</span>
                     @else
-                        <span class="text-xl font-bold text-{{ $colorClass }}-600">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                        <span class="text-sm sm:text-xl font-bold text-{{ $colorClass }}-600 whitespace-nowrap">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                     @endif
                 </div>
                 @php $hasVariations = $product->variations->count() > 0; @endphp
                 <button 
                     onclick="{{ $hasVariations ? "window.location.href='" . route('produk.show', $product->slug) . "?select_variation=1'" : "addToCart($product->id)" }}" 
                     id="cart-btn-{{ $product->id }}" 
-                    class="bg-{{ $colorClass }}-600 text-white px-4 py-2 rounded-lg hover:bg-{{ $colorClass }}-700 transition relative group/btn" 
+                    class="bg-{{ $colorClass }}-600 text-white w-8 h-8 sm:w-10 sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center rounded-lg hover:bg-{{ $colorClass }}-700 transition relative group/btn shrink-0" 
                     title="{{ $hasVariations ? 'Pilih variasi' : 'Tambah ke keranjang' }}"
                     {{ $product->stock < 1 ? 'disabled' : '' }}
                 >
-                    <i class="fas fa-shopping-cart"></i>
+                    <i class="fas fa-shopping-cart text-sm sm:text-base"></i>
                     @if($hasVariations)
-                        <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap pointer-events-none">Pilih Variasi</span>
+                        <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap pointer-events-none z-20">Pilih Variasi</span>
                     @endif
                 </button>
             </div>
-            <div class="text-xs {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600 font-bold' }}">
+            <div class="text-[11px] sm:text-xs font-medium {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600 font-bold' }}">
                 Stok: {{ $product->stock > 0 ? $product->stock : 'Habis' }}
             </div>
         </div>

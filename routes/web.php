@@ -174,6 +174,9 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     
     // Location Management
     Route::resource('locations', \App\Http\Controllers\Admin\LocationController::class);
+
+    // Fishery Statistics Management
+    Route::resource('fishery-statistics', \App\Http\Controllers\Admin\FisheryStatisticController::class);
     
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

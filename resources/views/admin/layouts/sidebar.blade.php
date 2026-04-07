@@ -92,6 +92,13 @@
             <i class="fas fa-sitemap mr-3 text-lg {{ request()->routeIs('admin.organizations.*') ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-400' }}"></i>
             Manajemen Organisasi
         </a>
+
+        <!-- Statistik Pembudidaya Kaltim -->
+        <a href="{{ route('admin.fishery-statistics.index') }}" 
+           class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.fishery-statistics.*') ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+            <i class="fas fa-chart-bar mr-3 text-lg {{ request()->routeIs('admin.fishery-statistics.*') ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-400' }}"></i>
+            Statistik Pembudidaya
+        </a>
         <div class="border-t border-slate-700 my-4"></div>
         
         <!-- Manajemen Artikel -->

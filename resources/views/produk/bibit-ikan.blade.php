@@ -13,9 +13,19 @@
 </div>
 
 <div class="container mx-auto px-4 py-12">
+
+    {{-- Mobile Filter Toggle Button --}}
+    <div class="lg:hidden mb-4">
+        <button id="filter-toggle"
+            class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm border border-gray-100 font-semibold text-gray-700 hover:bg-gray-50 transition">
+            <span><i class="fas fa-sliders-h mr-2 text-emerald-500"></i> Filter Produk</span>
+            <i id="filter-chevron" class="fas fa-chevron-down text-gray-400 transition-transform duration-200"></i>
+        </button>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
+            <div id="filter-panel" class="hidden lg:block bg-white rounded-xl shadow-lg p-6 lg:sticky lg:top-24">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Filter Bibit</h3>
                 <form action="{{ route('produk.bibit-ikan') }}" method="GET" class="space-y-4">
                     <div>
@@ -55,7 +65,7 @@
         </div>
 
         <div class="lg:col-span-3">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 @forelse($products as $product)
                     @include('produk.partials.product-card', ['product' => $product, 'colorClass' => 'emerald'])
                 @empty
@@ -101,4 +111,22 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    const filterToggle = document.getElementById('filter-toggle');
+    const filterPanel = document.getElementById('filter-panel');
+    const filterChevron = document.getElementById('filter-chevron');
+
+    @if(request()->anyFilled(['search', 'subcategory', 'max_price']))
+        filterPanel.classList.remove('hidden');
+        filterChevron.style.transform = 'rotate(180deg)';
+    @endif
+
+    filterToggle?.addEventListener('click', () => {
+        filterPanel.classList.toggle('hidden');
+        const isOpen = !filterPanel.classList.contains('hidden');
+        filterChevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+    });
+</script>
+@endpush
 @endsection

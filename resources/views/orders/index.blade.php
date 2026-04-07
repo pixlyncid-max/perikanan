@@ -14,7 +14,47 @@
 
     @if($orders->count() > 0)
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
+
+            {{-- Mobile Card View (hidden on md+) --}}
+            <div class="md:hidden divide-y divide-gray-100">
+                @foreach($orders as $order)
+                    @php
+                        $statusClasses = [
+                            'pending' => 'bg-yellow-100 text-yellow-700',
+                            'processing' => 'bg-blue-100 text-blue-700',
+                            'completed' => 'bg-green-100 text-green-700',
+                            'cancelled' => 'bg-red-100 text-red-700',
+                        ];
+                        $statusClass = $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-700';
+                    @endphp
+                    <a href="{{ route('orders.show', $order->order_number) }}" class="block p-4 hover:bg-blue-50 transition">
+                        <div class="flex items-start justify-between mb-2">
+                            <div>
+                                <span class="font-mono text-xs text-gray-500 block">#{{ substr($order->order_number, 0, 12) }}...</span>
+                                <span class="font-bold text-gray-800 text-base">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase {{ $statusClass }} shrink-0 ml-2">
+                                {{ $order->status }}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">{{ $order->created_at->format('d M Y, H:i') }}</span>
+                            <div class="flex items-center gap-2">
+                                @if($order->status === 'pending' && $order->payment_url)
+                                    <button onclick="event.preventDefault(); event.stopPropagation(); openCheckoutModal('{{ $order->payment_url }}')"
+                                        class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition">
+                                        Bayar
+                                    </button>
+                                @endif
+                                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+
+            {{-- Desktop Table View (hidden on mobile) --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
@@ -27,6 +67,15 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach($orders as $order)
+                            @php
+                                $statusClasses = [
+                                    'pending' => 'bg-yellow-100 text-yellow-700',
+                                    'processing' => 'bg-blue-100 text-blue-700',
+                                    'completed' => 'bg-green-100 text-green-700',
+                                    'cancelled' => 'bg-red-100 text-red-700',
+                                ];
+                                $statusClass = $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-700';
+                            @endphp
                             <tr class="hover:bg-blue-50 transition cursor-pointer" onclick="window.location='{{ route('orders.show', $order->order_number) }}'">
                                 <td class="px-6 py-4">
                                     <span class="font-mono text-sm text-gray-600">#{{ substr($order->order_number, 0, 8) }}...</span>
@@ -38,15 +87,6 @@
                                     Rp {{ number_format($order->total_amount, 0, ',', '.') }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    @php
-                                        $statusClasses = [
-                                            'pending' => 'bg-yellow-100 text-yellow-700',
-                                            'processing' => 'bg-blue-100 text-blue-700',
-                                            'completed' => 'bg-green-100 text-green-700',
-                                            'cancelled' => 'bg-red-100 text-red-700',
-                                        ];
-                                        $statusClass = $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-700';
-                                    @endphp
                                     <span class="px-3 py-1 rounded-full text-xs font-bold uppercase {{ $statusClass }}">
                                         {{ $order->status }}
                                     </span>
@@ -54,7 +94,7 @@
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         @if($order->status === 'pending' && $order->payment_url)
-                                            <button onclick="event.stopPropagation(); openCheckoutModal('{{ $order->payment_url }}')" 
+                                            <button onclick="event.stopPropagation(); openCheckoutModal('{{ $order->payment_url }}')"
                                                 class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-sm z-10 relative">
                                                 Bayar Sekarang
                                             </button>
