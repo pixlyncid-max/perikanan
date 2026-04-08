@@ -8,6 +8,8 @@ use App\Models\Admin;
 use App\Models\Order;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 
 class AuthController extends Controller
@@ -493,5 +495,122 @@ class AuthController extends Controller
             );
             Session::put('cart', $savedCart);
         }
+    }
+
+    // =========================================================
+    // SOCIAL LOGIN — GOOGLE
+    // =========================================================
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $socialUser = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Google OAuth Error: [' . get_class($e) . '] ' . $e->getMessage());
+            Session::flash('error', 'Login dengan Google gagal. Silakan coba lagi. Error: ' . $e->getMessage());
+            return redirect('/login');
+        }
+
+        return $this->handleSocialLogin($socialUser, 'google');
+    }
+
+    // =========================================================
+    // SOCIAL LOGIN — FACEBOOK
+    // =========================================================
+
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        try {
+            $socialUser = Socialite::driver('facebook')->stateless()->user();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Facebook OAuth Error: [' . get_class($e) . '] ' . $e->getMessage());
+            Session::flash('error', 'Login dengan Facebook gagal. Silakan coba lagi. Error: ' . $e->getMessage());
+            return redirect('/login');
+        }
+
+        return $this->handleSocialLogin($socialUser, 'facebook');
+    }
+
+    /**
+     * Shared logic: cari atau buat user dari data OAuth, lalu login via session.
+     */
+    private function handleSocialLogin($socialUser, string $provider)
+    {
+        $email = $socialUser->getEmail();
+        $name  = $socialUser->getName() ?? $socialUser->getNickname() ?? 'User';
+
+        if (empty($email)) {
+            Session::flash('error', 'Tidak dapat mengambil email dari akun ' . ucfirst($provider) . '. Pastikan email Anda publik.');
+            return redirect('/login');
+        }
+
+        // Cek apakah sudah ada di tabel members
+        $member = Member::where('email', $email)->first();
+        if ($member) {
+            Session::put('user', [
+                'id'    => $member->id,
+                'name'  => $member->name ?? $member->full_name ?? $name,
+                'email' => $email,
+                'type'  => 'member',
+                'table' => 'members',
+            ]);
+            $this->syncCartAfterAuth($member, 'member');
+            Session::regenerate();
+            Session::flash('success', 'Login berhasil via ' . ucfirst($provider) . '! Selamat datang kembali.');
+            return redirect('/');
+        }
+
+        // Cek apakah sudah ada di tabel admins
+        $admin = Admin::where('email', $email)->first();
+        if ($admin) {
+            Session::put('user', [
+                'id'    => $admin->id,
+                'name'  => $admin->name ?? $name,
+                'email' => $email,
+                'type'  => 'admin',
+                'table' => 'admins',
+            ]);
+            Session::regenerate();
+            Session::flash('success', 'Login berhasil via ' . ucfirst($provider) . '! Selamat datang kembali.');
+            return redirect('/');
+        }
+
+        // Cek atau buat di tabel users
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            $user = User::create([
+                'name'     => $name,
+                'email'    => $email,
+                'password' => Hash::make(Str::random(32)),
+                'avatar'   => $socialUser->getAvatar() ?? null,
+                'phone'    => '',
+                'address'  => '',
+                'status'   => 'active',
+                'role'     => 'user',
+            ]);
+        }
+
+        Session::put('user', [
+            'id'    => $user->id,
+            'name'  => $user->name,
+            'email' => $email,
+            'type'  => 'user',
+            'table' => 'users',
+        ]);
+
+        $this->syncCartAfterAuth($user, 'user');
+        Session::regenerate();
+        Session::flash('success', 'Login berhasil via ' . ucfirst($provider) . '! Selamat datang.');
+        return redirect('/');
     }
 }
