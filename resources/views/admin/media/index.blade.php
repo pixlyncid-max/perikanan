@@ -76,8 +76,9 @@
                         </button>
                     </div>
                     
+                    @php $fileName = $file['name']; @endphp
                     <form id="delete-form-{{ $loop->index }}" 
-                          action="{{ route('admin.media.destroy', $file['name']) }}" 
+                          action="{{ route('admin.media.destroy', $fileName) }}" 
                           method="POST" class="hidden">
                         @csrf
                         @method('DELETE')
