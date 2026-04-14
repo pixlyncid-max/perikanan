@@ -88,20 +88,20 @@
         </div>
         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center gap-4">
             <div class="bg-yellow-100 rounded-full p-3">
-                <i class="fas fa-weight text-yellow-600 text-xl"></i>
+                <i class="fas fa-user-friends text-yellow-600 text-xl"></i>
             </div>
             <div>
-                <p class="text-xs font-medium text-yellow-600 uppercase tracking-wide">Volume Produksi (ton)</p>
-                <p class="text-2xl font-bold text-yellow-800">{{ number_format($statistics->sum('production_volume'), 1) }}</p>
+                <p class="text-xs font-medium text-yellow-600 uppercase tracking-wide">Total Pembudidaya Udang</p>
+                <p class="text-2xl font-bold text-yellow-800">{{ number_format($statistics->sum('shrimp_farmer_count')) }}</p>
             </div>
         </div>
         <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 flex items-center gap-4">
             <div class="bg-purple-100 rounded-full p-3">
-                <i class="fas fa-money-bill-wave text-purple-600 text-xl"></i>
+                <i class="fas fa-anchor text-purple-600 text-xl"></i>
             </div>
             <div>
-                <p class="text-xs font-medium text-purple-600 uppercase tracking-wide">Total Nilai Produksi</p>
-                <p class="text-lg font-bold text-purple-800">Rp {{ number_format($statistics->sum('production_value') / 1000000, 1) }}M</p>
+                <p class="text-xs font-medium text-purple-600 uppercase tracking-wide">Total Nelayan Aktif</p>
+                <p class="text-2xl font-bold text-purple-800">{{ number_format($statistics->sum('fisherman_count')) }}</p>
             </div>
         </div>
     </div>
@@ -116,8 +116,8 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kabupaten/Kota</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahun</th>
                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Jml. Pembudidaya</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Vol. Produksi (ton)</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Nilai Produksi (Rp)</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Pembudidaya Udang</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Nelayan Aktif</th>
                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Luas Lahan (ha)</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Komoditas Utama</th>
                         <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
@@ -141,10 +141,10 @@
                             {{ $stat->fish_farmer_count !== null ? number_format($stat->fish_farmer_count) : '-' }}
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700 text-right">
-                            {{ $stat->production_volume !== null ? number_format($stat->production_volume, 2) : '-' }}
+                            {{ $stat->shrimp_farmer_count !== null ? number_format($stat->shrimp_farmer_count) : '-' }}
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700 text-right">
-                            {{ $stat->production_value !== null ? 'Rp ' . number_format($stat->production_value, 0, ',', '.') : '-' }}
+                            {{ $stat->fisherman_count !== null ? number_format($stat->fisherman_count) : '-' }}
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700 text-right">
                             {{ $stat->area_size !== null ? number_format($stat->area_size, 2) : '-' }}

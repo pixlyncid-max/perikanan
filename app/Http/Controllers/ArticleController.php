@@ -58,7 +58,37 @@ class ArticleController extends Controller
             $relatedArticles = $relatedArticles->merge($more);
         }
 
-        return view('article.show', compact('article', 'relatedArticles'));
+        // Get recommended products based on keywords from title
+        $titleWords = explode(' ', preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($article->title)));
+        $keywords = array_values(array_filter($titleWords, function($word) {
+            return strlen($word) > 3; // basic limit to significant words
+        }));
+
+        $recommendedProducts = collect();
+        if (!empty($keywords)) {
+            $productQuery = \App\Models\Product::active();
+
+            $productQuery->where(function($q) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $q->orWhere('name', 'LIKE', '%' . $keyword . '%')
+                      ->orWhere('description', 'LIKE', '%' . $keyword . '%');
+                }
+            });
+
+            // Build relevance sorting logic
+            $relevanceSql = "";
+            foreach ($keywords as $keyword) {
+                $relevanceSql .= ($relevanceSql ? " + " : "") . 
+                    "(CASE WHEN name LIKE '%{$keyword}%' THEN 3 ELSE 0 END) + " .
+                    "(CASE WHEN description LIKE '%{$keyword}%' THEN 1 ELSE 0 END)";
+            }
+
+            $recommendedProducts = $productQuery->orderByRaw("($relevanceSql) DESC")
+                                                ->take(4)
+                                                ->get();
+        }
+
+        return view('article.show', compact('article', 'relatedArticles', 'recommendedProducts', 'keywords'));
     }
 
     public function byCategory($category)

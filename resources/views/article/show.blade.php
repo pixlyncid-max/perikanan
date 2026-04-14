@@ -174,6 +174,108 @@
         </div>
         @endif
 
+        {{-- Recommended Products --}}
+        @if(isset($recommendedProducts) && $recommendedProducts->count() > 0)
+        <div class="mt-12 bg-green-50 rounded-2xl p-8 border border-green-100">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-shopping-bag text-green-600 mr-3"></i> Rekomendasi Produk
+                    </h3>
+                    <p class="text-gray-600 mt-2">Produk pilihan yang relevan dengan artikel ini.</p>
+                </div>
+                <a href="{{ route('produk.index') }}" class="hidden md:inline-flex items-center text-green-600 font-semibold hover:text-green-700 transition">
+                    Lihat Semua <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                @php
+                    if (!function_exists('highlightKeywords')) {
+                        function highlightKeywords($text, $keywords) {
+                            if (empty($keywords)) return e($text);
+                            // Sort keywords by length desc so longer keywords matched first
+                            $sortedKeywords = $keywords;
+                            usort($sortedKeywords, function($a, $b) { return strlen($b) - strlen($a); });
+                            $pattern = '/(' . implode('|', array_map(function($kw) { return preg_quote($kw, '/'); }, $sortedKeywords)) . ')/i';
+                            return preg_replace($pattern, '<mark class="bg-yellow-200 text-yellow-900 px-1 rounded font-bold shadow-sm">$1</mark>', e($text));
+                        }
+                    }
+                @endphp
+
+                @foreach($recommendedProducts as $product)
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col h-full border border-gray-100 border-b-4 border-b-transparent hover:border-b-green-500 transform hover:-translate-y-1">
+                    {{-- Product Image --}}
+                    @php
+                        $imgs = $product->images;
+                        if(is_string($imgs)) $imgs = json_decode($imgs, true);
+                        $firstImg = (!empty($imgs) && is_array($imgs)) ? $imgs[0] : null;
+                    @endphp
+                    <a href="{{ route('produk.show', $product->slug) }}" class="block relative aspect-square overflow-hidden bg-gray-50">
+                        @if($firstImg)
+                            <img src="{{ asset('storage/' . $firstImg) }}"
+                                 alt="{{ $product->name }}"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-gray-300 group-hover:scale-110 transition-transform duration-500">
+                                <i class="fas fa-box text-5xl"></i>
+                            </div>
+                        @endif
+                        
+                        @if($product->isOnSale())
+                            <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10 animate-pulse">
+                                Promo
+                            </div>
+                        @endif
+                    </a>
+
+                    {{-- Product Info --}}
+                    <div class="p-5 flex flex-col flex-grow">
+                        @if($product->category)
+                            <div class="mb-2">
+                                <span class="bg-green-50 text-green-700 px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide uppercase">
+                                    {{ $product->category->name ?? 'Kategori' }}
+                                </span>
+                            </div>
+                        @endif
+
+                        <a href="{{ route('produk.show', $product->slug) }}" class="block group-hover:text-green-600 transition-colors mb-2">
+                            <h4 class="font-bold text-gray-800 text-lg line-clamp-2 leading-tight">
+                                {!! highlightKeywords($product->name, $keywords) !!}
+                            </h4>
+                        </a>
+                        
+                        {{-- Short Description --}}
+                        <p class="text-gray-500 text-sm line-clamp-2 mb-4 flex-grow">
+                            {!! highlightKeywords($product->short_description ?? Str::limit(strip_tags($product->description), 100), $keywords) !!}
+                        </p>
+
+                        <div class="mt-auto flex items-end justify-between pt-4 border-t border-gray-50">
+                            <div>
+                                <span class="text-xs text-gray-400 block mb-1">Mulai dari</span>
+                                @if($product->isOnSale())
+                                    <div class="flex flex-col">
+                                        <span class="text-xs text-gray-400 line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                        <span class="font-black text-green-600 text-lg">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                                    </div>
+                                @else
+                                    <span class="font-black text-green-600 text-lg">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            
+            <div class="mt-8 text-center md:hidden">
+                <a href="{{ route('produk.index') }}" class="inline-flex items-center justify-center w-full bg-green-600 text-white font-semibold py-3 px-6 rounded-xl hover:bg-green-700 transition">
+                    Lihat Semua Produk
+                </a>
+            </div>
+        </div>
+        @endif
+
     </div>
 </div>
 @endsection
