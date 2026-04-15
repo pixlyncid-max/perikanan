@@ -15,6 +15,14 @@
             </div>
         @endif
 
+        @if($product->stock < 1)
+            <div class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none bg-white/20">
+                <div class="bg-gray-900/70 w-24 h-24 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg border border-white/10">
+                    <span class="text-white font-semibold text-lg tracking-wide">Habis</span>
+                </div>
+            </div>
+        @endif
+
         @if($product->featured)
             <div class="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm z-10">
                 <i class="fas fa-star mr-1"></i> Unggulan
@@ -49,7 +57,7 @@
                 <button 
                     onclick="{{ $hasVariations ? "window.location.href='" . route('produk.show', $product->slug) . "?select_variation=1'" : "addToCart($product->id)" }}" 
                     id="cart-btn-{{ $product->id }}" 
-                    class="bg-{{ $colorClass }}-600 text-white w-8 h-8 sm:w-10 sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center rounded-lg hover:bg-{{ $colorClass }}-700 transition relative group/btn shrink-0" 
+                    class="text-white w-8 h-8 sm:w-10 sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center rounded-lg transition relative group/btn shrink-0 {{ $product->stock < 1 ? 'bg-gray-400 cursor-not-allowed opacity-70' : 'bg-'.$colorClass.'-600 hover:bg-'.$colorClass.'-700' }}" 
                     title="{{ $hasVariations ? 'Pilih variasi' : 'Tambah ke keranjang' }}"
                     {{ $product->stock < 1 ? 'disabled' : '' }}
                 >

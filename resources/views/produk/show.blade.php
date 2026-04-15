@@ -3,20 +3,20 @@
 @section('content')
 <div class="bg-gray-50 min-h-screen py-12">
     <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-4">
             <!-- Breadcrumbs -->
-            <nav class="text-base text-gray-900" aria-label="Breadcrumb">
-                <ol class="flex items-center space-x-2">
-                    <li><a href="{{ route('home') }}" class="hover:text-blue-600 transition">Beranda</a></li>
-                    <li><i class="fas fa-chevron-right text-xs"></i></li>
-                    <li><a href="{{ route('produk.index') }}" class="hover:text-blue-600 transition">Produk</a></li>
-                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+            <nav class="text-sm md:text-base text-gray-900" aria-label="Breadcrumb">
+                <ol class="flex items-center flex-wrap gap-2">
+                    <li><a href="{{ route('home') }}" class="hover:text-blue-600 transition whitespace-nowrap">Beranda</a></li>
+                    <li class="flex items-center"><i class="fas fa-chevron-right text-xs text-gray-400"></i></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:text-blue-600 transition whitespace-nowrap">Produk</a></li>
+                    <li class="flex items-center"><i class="fas fa-chevron-right text-xs text-gray-400"></i></li>
                     <li class="font-bold text-black">{{ $product->name }}</li>
                 </ol>
             </nav>
 
             <!-- Back Button -->
-            <a href="javascript:history.back()" class="inline-flex items-center text-base font-bold text-gray-900 hover:text-blue-600 transition-all group">
+            <a href="javascript:history.back()" class="inline-flex items-center text-sm md:text-base font-bold text-gray-900 hover:text-blue-600 transition-all group shrink-0 self-start md:self-auto">
                 <i class="fas fa-arrow-left mr-2 transition-transform group-hover:-translate-x-1"></i> Kembali
             </a>
         </div>
@@ -44,6 +44,13 @@
                                 <i class="fas fa-box text-9xl"></i>
                             </div>
                         @endif
+
+                        {{-- Sold Out Overlay --}}
+                        <div id="sold-out-overlay" class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none bg-white/20 transition-opacity duration-300 {{ $product->stock < 1 ? 'opacity-100' : 'opacity-0' }}">
+                            <div class="bg-gray-900/70 w-32 h-32 rounded-full flex items-center justify-center backdrop-blur-sm shadow-xl border border-white/10">
+                                <span class="text-white font-semibold text-xl tracking-wide">Habis</span>
+                            </div>
+                        </div>
                         
                         {{-- Zoom Button --}}
                         <button type="button" onclick="openZoom()" class="absolute bottom-4 right-4 bg-white/80 backdrop-blur shadow-sm p-3 rounded-full text-gray-600 hover:text-blue-600 transition opacity-0 group-hover:opacity-100 z-10">
@@ -296,6 +303,18 @@
         } else {
             stockDisplay.classList.remove('text-red-600');
             stockDisplay.classList.add('text-green-600');
+        }
+
+        // Toggle Out of Stock Overlay
+        const soldOutOverlay = document.getElementById('sold-out-overlay');
+        if (soldOutOverlay) {
+            if (stock <= 0) {
+                soldOutOverlay.classList.remove('opacity-0');
+                soldOutOverlay.classList.add('opacity-100');
+            } else {
+                soldOutOverlay.classList.add('opacity-0');
+                soldOutOverlay.classList.remove('opacity-100');
+            }
         }
 
         // Update Main Description with Variation Description (if available)
