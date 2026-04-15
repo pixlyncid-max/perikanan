@@ -585,7 +585,7 @@
 
 <!-- Result Overlay -->
 <div id="checkout-result-overlay" class="hidden fixed inset-0 z-[10000] bg-slate-900/60 backdrop-blur-sm items-center justify-center p-4">
-    <div class="result-modal bg-white w-full max-w-[420px] rounded-[24px] p-6 md:p-8 shadow-2xl relative animate-[modalSlideUp_0.3s_ease-out] flex flex-col">
+    <div class="result-modal bg-white w-full max-w-[420px] md:max-w-[560px] rounded-[24px] p-6 md:p-8 shadow-2xl relative animate-[modalSlideUp_0.3s_ease-out] flex flex-col">
         <!-- VA Result -->
         <div id="res-va" class="hidden w-full mx-auto">
             <div class="mb-5 text-center relative z-20 flex items-center justify-center gap-3">
@@ -612,9 +612,9 @@
                     
                     <div>
                         <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest mb-1.5">Nomor Virtual Account</p>
-                        <div class="flex items-center justify-between gap-3">
-                            <span id="res-va-code" class="text-2xl sm:text-3xl font-mono font-black text-white tracking-widest drop-shadow-lg truncate">XXXXXX</span>
-                            <button onclick="copy('res-va-code')" class="shrink-0 w-10 h-10 bg-white/20 active:bg-white/30 backdrop-blur-md rounded-xl text-white transition-all duration-200 flex items-center justify-center" title="Salin">
+                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <span id="res-va-code" class="text-xl sm:text-2xl md:text-3xl font-mono font-black text-white tracking-tight sm:tracking-widest drop-shadow-lg w-full break-all">XXXXXX</span>
+                            <button onclick="copy('res-va-code')" class="self-start sm:self-auto shrink-0 w-10 h-10 bg-white/20 active:bg-white/30 backdrop-blur-md rounded-xl text-white transition-all duration-200 flex items-center justify-center" title="Salin">
                                 <i class="far fa-copy"></i>
                             </button>
                         </div>
@@ -647,9 +647,9 @@
                     </div>
                     <div>
                         <p class="text-[9px] font-bold text-white/70 uppercase tracking-widest mb-1.5">Kode Pembayaran</p>
-                        <div class="flex items-center justify-between gap-3">
-                            <span id="res-retail-code" class="text-2xl sm:text-3xl font-mono font-black text-white tracking-widest drop-shadow-lg truncate">XXXXXX</span>
-                            <button onclick="copy('res-retail-code')" class="shrink-0 w-10 h-10 bg-white/20 active:bg-white/30 backdrop-blur-md rounded-xl text-white flex items-center justify-center" title="Salin">
+                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <span id="res-retail-code" class="text-xl sm:text-2xl md:text-3xl font-mono font-black text-white tracking-tight sm:tracking-widest drop-shadow-lg w-full break-all">XXXXXX</span>
+                            <button onclick="copy('res-retail-code')" class="self-start sm:self-auto shrink-0 w-10 h-10 bg-white/20 active:bg-white/30 backdrop-blur-md rounded-xl text-white flex items-center justify-center" title="Salin">
                                 <i class="far fa-copy"></i>
                             </button>
                         </div>
@@ -1364,10 +1364,80 @@
             if (d.status === 'success') {
                 showAlert({type:'success', title:'Berhasil', message:'Pembayaran kartu kredit Anda berhasil!'});
                 setTimeout(() => window.location.href = '{{ route("orders.index") }}', 2000);
+                return; // No need to poll for credit card success
             } else {
                 showAlert({type:'info', title:'Pending', message:'Transaksi sedang diproses oleh bank.'});
             }
         }
+
+        // Start payment status polling
+        if (d.order_number) {
+            startPaymentPolling(d.order_number);
+        }
+    }
+
+    // ── Payment Status Polling ──────────────────────────────────
+    let pollingInterval = null;
+    let pollingAttempts = 0;
+    const MAX_POLLING_ATTEMPTS = 360; // 30 minutes (5s interval)
+
+    function startPaymentPolling(orderNumber) {
+        // Clear any existing polling
+        if (pollingInterval) clearInterval(pollingInterval);
+        pollingAttempts = 0;
+
+        pollingInterval = setInterval(async () => {
+            pollingAttempts++;
+
+            // Stop polling after max attempts
+            if (pollingAttempts >= MAX_POLLING_ATTEMPTS) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/orders/${orderNumber}/payment-status`);
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                if (data.payment_status === 'paid') {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+
+                    // Show success notification
+                    showAlert({
+                        type: 'success',
+                        title: 'Pembayaran Berhasil!',
+                        message: 'Pembayaran Anda telah diterima. Mengalihkan ke halaman pesanan...',
+                        primaryText: 'Lihat Pesanan',
+                        onConfirm: () => {
+                            window.location.href = `/orders/${orderNumber}`;
+                        }
+                    });
+
+                    // Auto redirect after 4 seconds
+                    setTimeout(() => {
+                        window.location.href = `/orders/${orderNumber}`;
+                    }, 4000);
+
+                } else if (data.payment_status === 'failed' || data.payment_status === 'expired') {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+
+                    showAlert({
+                        type: 'error',
+                        title: 'Pembayaran Gagal',
+                        message: 'Pembayaran telah kedaluwarsa atau gagal. Silakan buat pesanan baru.',
+                        primaryText: 'OK'
+                    });
+                }
+            } catch (e) {
+                // Silently ignore network errors, will retry next interval
+                console.warn('Polling error:', e);
+            }
+        }, 5000); // Check every 5 seconds
     }
 
     function f(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }

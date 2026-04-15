@@ -39,6 +39,16 @@ class CheckoutPageController extends Controller
         }
 
         if (empty($cart)) {
+            // If cart is empty, it might be because checkout was already completed.
+            // Check if user has recent orders to redirect appropriately.
+            $hasRecentOrder = \App\Models\Order::where('user_id', $userSession['id'])
+                ->where('created_at', '>=', now()->subMinutes(30))
+                ->exists();
+
+            if ($hasRecentOrder) {
+                return redirect(route('orders.index'))->with('info', 'Pesanan Anda sudah dibuat. Silakan cek status pesanan di bawah ini.');
+            }
+
             return redirect(route('cart.index'))->with('error', 'Produk yang dipilih tidak valid atau sudah tidak ada di keranjang.');
         }
 

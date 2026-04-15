@@ -21,8 +21,12 @@ class OrderController extends Controller
             $search = $request->get('search');
             $query->where(function($q) use ($search) {
                 $q->where('order_number', 'like', "%{$search}%")
-                  ->orWhereHas('user', function($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%");
+                  ->orWhereHasMorph('user', [\App\Models\User::class, \App\Models\Member::class], function($uq, $type) use ($search) {
+                      if ($type === \App\Models\User::class) {
+                          $uq->where('name', 'like', "%{$search}%");
+                      } else {
+                          $uq->where('full_name', 'like', "%{$search}%");
+                      }
                   });
             });
         }
@@ -47,7 +51,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load(['user', 'items.product', 'member', 'location']);
+        $order->load(['user', 'items.product', 'location']);
         return view('admin.orders.show', compact('order'));
     }
 

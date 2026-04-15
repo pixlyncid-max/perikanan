@@ -186,8 +186,8 @@
                             <i class="fas fa-shopping-cart"></i>
                             Tambah ke Keranjang
                         </button>
-                        <button class="bg-gray-100 text-gray-800 px-6 py-4 rounded-xl font-bold hover:bg-gray-200 transition">
-                            <i class="far fa-heart"></i>
+                        <button onclick="toggleWishlist({{ $product->id }})" id="wishlist-btn-{{ $product->id }}" class="bg-gray-100 px-6 py-4 rounded-xl font-bold hover:bg-gray-200 transition flex items-center justify-center">
+                            <i id="wishlist-icon-{{ $product->id }}" class="far fa-heart text-gray-800 text-xl transition-colors duration-300"></i>
                         </button>
                     </div>
                 </div>
@@ -401,7 +401,49 @@
                 }, 2000);
             }
         }
+
+        // Initialize Wishlist State
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const wishlistIcon = document.getElementById('wishlist-icon-{{ $product->id }}');
+        if (wishlistIcon && wishlist.includes({{ $product->id }})) {
+            wishlistIcon.classList.remove('far', 'text-gray-800');
+            wishlistIcon.classList.add('fas', 'text-red-500');
+        }
     });
+
+    function toggleWishlist(productId) {
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const icon = document.getElementById('wishlist-icon-' + productId);
+        
+        if (wishlist.includes(productId)) {
+            // Remove from wishlist
+            wishlist = wishlist.filter(id => id !== productId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            
+            icon.classList.remove('fas', 'text-red-500');
+            icon.classList.add('far', 'text-gray-800');
+            icon.classList.remove('animate-ping');
+            
+            if (typeof showToast === 'function') {
+                showToast('Dihapus', 'Produk berhasil dihapus dari daftar favorit.', 'info');
+            }
+        } else {
+            // Add to wishlist
+            wishlist.push(productId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            
+            icon.classList.remove('far', 'text-gray-800');
+            icon.classList.add('fas', 'text-red-500');
+            
+            // Add small pop animation
+            icon.classList.add('animate-ping');
+            setTimeout(() => icon.classList.remove('animate-ping'), 300);
+            
+            if (typeof showToast === 'function') {
+                showToast('Ditambahkan ke Favorit!', 'Produk berhasil ditambahkan. Anda dapat melihat daftar favorit melalui ikon hati di menu atas.', 'success');
+            }
+        }
+    }
 </script>
 @endpush
 

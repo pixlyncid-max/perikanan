@@ -173,4 +173,16 @@ class ProdukController extends Controller
             
         return view('produk.show', compact('product', 'relatedProducts'));
     }
+
+    public function favorit(Request $request)
+    {
+        $ids = [];
+        if ($request->has('ids') && !empty($request->ids)) {
+            $ids = explode(',', $request->ids);
+            // Limit to max 50 ids to prevent excessively long queries
+            $ids = array_slice($ids, 0, 50);
+        }
+        $products = Product::whereIn('id', $ids)->active()->get();
+        return view('produk.favorit', compact('products'));
+    }
 }

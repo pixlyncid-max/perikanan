@@ -127,7 +127,7 @@
                             <div class="mb-8">
                                 <p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-3 font-bold">Nomor Virtual Account</p>
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                    <span id="va-number" class="text-[32px] md:text-[40px] font-mono font-black text-white tracking-[0.1em] drop-shadow-xl truncate">{{ $order->payment_code }}</span>
+                                    <span id="va-number" class="text-[32px] md:text-[40px] font-mono font-black text-white tracking-[0.1em] drop-shadow-xl break-all">{{ $order->payment_code }}</span>
                                     <button onclick="copy('va-number')" class="shrink-0 w-14 h-14 bg-white/10 hover:bg-white/20 active:bg-white/30 backdrop-blur-md border border-white/10 rounded-2xl text-white transition-all duration-200 flex items-center justify-center group" title="Salin nomor">
                                         <i class="far fa-copy text-2xl group-hover:scale-110 transition-transform"></i>
                                     </button>

@@ -25,3 +25,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/xendit/webhook', [XenditWebhookController::class, 'handle'])
     ->name('xendit.webhook')
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+
+// Order Payment Status Check (for polling)
+Route::get('/orders/{order_number}/payment-status', function ($order_number) {
+    $order = \App\Models\Order::where('order_number', $order_number)->first();
+    if (!$order) {
+        return response()->json(['payment_status' => 'unknown'], 404);
+    }
+    return response()->json([
+        'payment_status' => $order->payment_status,
+        'status' => $order->status,
+    ]);
+})->name('api.order.payment-status');
+

@@ -277,10 +277,7 @@
                                     <p class="text-blue-200 text-xs uppercase tracking-wider mb-0.5 font-medium">Lokasi</p>
                                     <p class="font-semibold text-white text-sm">{{ $ketuaUmum['location'] }}</p>
                                 </div>
-                                <div class="info-box">
-                                    <p class="text-blue-200 text-xs uppercase tracking-wider mb-0.5 font-medium">Pengalaman</p>
-                                    <p class="font-semibold text-white text-sm">{{ $ketuaUmum['experience'] }}</p>
-                                </div>
+
                             </div>
                         </div>
                     </div>

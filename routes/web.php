@@ -65,6 +65,7 @@ Route::prefix('produk')->name('produk.')->group(function () {
     Route::get('/komunitas-air-tawar', [ProdukController::class, 'komunitasAirTawar'])->name('komunitas-air-tawar');
     Route::get('/sewa-pancing-laut', [ProdukController::class, 'sewaPancingLaut'])->name('sewa-pancing-laut');
     Route::get('/komunitas-air-laut', [ProdukController::class, 'komunitasAirLaut'])->name('komunitas-air-laut');
+    Route::get('/favorit', [ProdukController::class, 'favorit'])->name('favorit');
     Route::get('/{slug}', [ProdukController::class, 'show'])->name('show');
 });
 

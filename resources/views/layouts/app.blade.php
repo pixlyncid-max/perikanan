@@ -218,6 +218,11 @@
 
                 <!-- Cart & Auth Buttons -->
                 <div class="hidden md:flex items-center space-x-3">
+                    <!-- Favorit Icon -->
+                    <a href="{{ route('produk.favorit') }}" id="navbar-favorit-icon" class="relative p-2 text-gray-700 hover:text-red-500 transition">
+                        <i class="far fa-heart text-xl"></i>
+                    </a>
+                    
                     <!-- Cart Icon -->
                     <a href="{{ route('cart.index') }}" id="navbar-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
@@ -283,6 +288,11 @@
 
                 <!-- Mobile Cart & Menu Button -->
                 <div class="flex items-center gap-3 md:hidden">
+                    <!-- Favorit Mobile -->
+                    <a href="{{ route('produk.favorit') }}" class="relative p-2 text-gray-700 hover:text-red-500 transition">
+                        <i class="far fa-heart text-xl"></i>
+                    </a>
+                    
                     <a href="{{ route('cart.index') }}" id="mobile-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         @php $cartCount = array_sum(array_column(Session::get('cart', []), 'quantity')); @endphp
@@ -447,6 +457,9 @@
             </div>
         </div>
     @endif
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[100000] flex flex-col gap-3 pointer-events-none"></div>
 
     <!-- Main Content -->
     <main class="flex-grow">
@@ -803,10 +816,49 @@
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+
+        // Global Toast Notifications
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if(!container) return;
+            
+            const toast = document.createElement('div');
+            
+            const bgHover = type === 'success' ? 'hover:bg-green-50' : (type === 'error' ? 'hover:bg-red-50' : 'hover:bg-blue-50');
+            const iconColor = type === 'success' ? 'text-green-500' : (type === 'error' ? 'text-red-500' : 'text-blue-500');
+            const iconClass = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+            
+            toast.className = `bg-white rounded-xl shadow-xl flex items-start gap-3 p-4 border border-gray-100 transform transition-all duration-300 translate-y-full opacity-0 pointer-events-auto max-w-sm ${bgHover}`;
+            
+            toast.innerHTML = `
+                <div class="${iconColor} text-xl shrink-0 mt-0.5">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="flex-grow">
+                    <h4 class="font-bold text-gray-900 text-sm">${title}</h4>
+                    <p class="text-xs text-gray-600 mt-1 leading-relaxed">${message}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 transition shrink-0 p-1">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-full', 'opacity-0');
+            });
+            
+            // Auto remove
+            setTimeout(() => {
+                toast.classList.add('translate-y-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
     </script>
 
 
     @stack('scripts')
 </body>
-</html>
 </html>
