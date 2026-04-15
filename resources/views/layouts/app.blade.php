@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @if(get_setting('site_favicon'))
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . get_setting('site_favicon')) }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . get_setting('site_favicon')) }}?v={{ get_setting('updated_at', time()) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . get_setting('site_favicon')) }}?v={{ get_setting('updated_at', time()) }}">
+    @else
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ @filemtime(public_path('favicon.ico')) ?: time() }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}?v={{ @filemtime(public_path('favicon-16x16.png')) ?: time() }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v={{ @filemtime(public_path('favicon-32x32.png')) ?: time() }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}?v={{ @filemtime(public_path('apple-touch-icon.png')) ?: time() }}">
+        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('android-chrome-192x192.png') }}?v={{ @filemtime(public_path('android-chrome-192x192.png')) ?: time() }}">
+        <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('android-chrome-512x512.png') }}?v={{ @filemtime(public_path('android-chrome-512x512.png')) ?: time() }}">
     @endif
     @if(get_setting('site_description'))
         <meta name="description" content="{{ get_setting('site_description') }}">
@@ -218,10 +226,6 @@
 
                 <!-- Cart & Auth Buttons -->
                 <div class="hidden md:flex items-center space-x-3">
-                    <!-- Favorit Icon -->
-                    <a href="{{ route('produk.favorit') }}" id="navbar-favorit-icon" class="relative p-2 text-gray-700 hover:text-red-500 transition">
-                        <i class="far fa-heart text-xl"></i>
-                    </a>
                     
                     <!-- Cart Icon -->
                     <a href="{{ route('cart.index') }}" id="navbar-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
@@ -261,6 +265,9 @@
                                 <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
                                     <i class="fas fa-shopping-bag mr-2"></i>Pesanan Saya
                                 </a>
+                                <a href="{{ route('produk.favorit') }}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <i class="fas fa-heart mr-2 text-red-400"></i>Favorit Saya
+                                </a>
                                 <a href="/member-card" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
                                     <i class="fas fa-id-card mr-2"></i>Kartu Anggota
                                 </a>
@@ -288,10 +295,6 @@
 
                 <!-- Mobile Cart & Menu Button -->
                 <div class="flex items-center gap-3 md:hidden">
-                    <!-- Favorit Mobile -->
-                    <a href="{{ route('produk.favorit') }}" class="relative p-2 text-gray-700 hover:text-red-500 transition">
-                        <i class="far fa-heart text-xl"></i>
-                    </a>
                     
                     <a href="{{ route('cart.index') }}" id="mobile-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
@@ -365,6 +368,7 @@
                     <?php else: ?>
                         <?php $userMobile = \Illuminate\Support\Facades\Session::get('user'); ?>
                         <a href="{{ route('orders.index') }}" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Pesanan Saya</a>
+                        <a href="{{ route('produk.favorit') }}" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"><i class="fas fa-heart mr-2 text-red-400"></i>Favorit Saya</a>
                         <a href="/member-card" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Kartu Anggota</a>
                         <?php if($userMobile['type'] === 'admin'): ?>
                             <a href="/admin/dashboard" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Panel Admin</a>
