@@ -14,7 +14,7 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-lg p-8">
-            <form class="space-y-6" action="/login" method="POST">
+            <form class="space-y-6" action="{{ route('login') }}" method="POST">
                 @csrf
                 <div>
 
@@ -34,7 +34,10 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-lock text-gray-400"></i>
                         </div>
-                        <input id="password" name="password" type="password" required class="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="••••••••">
+                        <input id="password" name="password" type="password" required class="appearance-none block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="••••••••">
+                        <button type="button" onclick="togglePassword('password', 'toggle-icon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-600 transition">
+                            <i id="toggle-icon" class="fas fa-eye"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -44,7 +47,7 @@
                         <label for="remember" class="ml-2 block text-sm text-gray-700">Ingat saya</label>
                     </div>
                     <div class="text-sm">
-                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Lupa password?</a>
+                        <a href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500">Lupa password?</a>
                     </div>
                 </div>
 
@@ -85,10 +88,27 @@
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-600">
                     Belum punya akun? 
-                    <a href="/register" class="font-medium text-blue-600 hover:text-blue-500">Daftar sekarang</a>
+                    <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:text-blue-500">Daftar sekarang</a>
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(inputId, iconId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleIcon = document.getElementById(iconId);
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
+</script>
 @endsection
