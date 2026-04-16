@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cookie;
 
 
 class AuthController extends Controller
@@ -82,6 +83,16 @@ class AuthController extends Controller
         // --- CART SYNC ON LOGIN ---
         $this->syncCartAfterAuth($user, $userType);
         // --- END CART SYNC ---
+
+        // Handle Remember Me
+        if ($remember) {
+            $token = Str::random(60);
+            $user->remember_token = $token;
+            $user->save();
+            
+            $table = $userType === 'member' ? 'members' : ($userType === 'admin' ? 'admins' : 'users');
+            Cookie::queue('fisheries_remember', "$token|$table", 43200); // 30 days
+        }
 
         // Regenerate session ID for security
         Session::regenerate();
@@ -214,6 +225,25 @@ class AuthController extends Controller
         // Clear session
         Session::forget('user');
         Session::flush();
+
+        // Clear Remember Me if exists
+        if (Cookie::has('fisheries_remember')) {
+            $rememberToken = Cookie::get('fisheries_remember');
+            $parts = explode('|', $rememberToken);
+            if (count($parts) === 2) {
+                $token = $parts[0];
+                $table = $parts[1];
+                
+                if ($table === 'members') {
+                    Member::where('remember_token', $token)->update(['remember_token' => null]);
+                } elseif ($table === 'admins') {
+                    Admin::where('remember_token', $token)->update(['remember_token' => null]);
+                } elseif ($table === 'users') {
+                    User::where('remember_token', $token)->update(['remember_token' => null]);
+                }
+            }
+            Cookie::queue(Cookie::forget('fisheries_remember'));
+        }
 
         return redirect('/');
     }
