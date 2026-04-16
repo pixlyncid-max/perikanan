@@ -38,18 +38,18 @@ Route::get('/partnership', function () {
 //Organization Routes
 Route::prefix('organization')->name('organization.')->group(function () {
     Route::get('/structure', [OrganizationController::class, 'structure'])->name('structure');
-    Route::get('/dpc/{code}', [OrganizationController::class, 'showDpc'])
-        ->name('dpc')
-        ->where('code', '[a-z0-9-]+');
-});
+//    Route::get('/dpc/{code}', [OrganizationController::class, 'showDpc'])
+//        ->name('dpc')
+//        ->where('code', '[a-z0-9-]+');
+//});
 // Route::prefix('organization')->name('organization.')->group(function () {
 //     Route::get('/structure', function () {
 //         return view('errors.coming-soon');
 //     })->name('structure');
-//     Route::get('/dpc/{code}', function ($code) {
-//         return view('errors.coming-soon');
-//     })->name('dpc')->where('code', '[a-z0-9-]+');
-// });
+    Route::get('/dpc/{code}', function ($code) {
+        return view('errors.coming-soon');
+    })->name('dpc')->where('code', '[a-z0-9-]+');
+});
 
 // Produk Routes
 Route::prefix('produk')->name('produk.')->group(function () {
