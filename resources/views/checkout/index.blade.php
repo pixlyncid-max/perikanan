@@ -43,20 +43,42 @@
     .product-row { display: grid; grid-template-columns: 1.5fr 1fr 0.5fr 1fr; gap: 16px; padding: 24px 28px; align-items: center; border-bottom: 1px solid #f8fafc; transition: background 0.2s; }
     .product-row:hover { background: #fafafa; }
     .product-row:last-child { border-bottom: none; }
-    .product-info { display: flex; gap: 16px; align-items: center; }
+    .product-info-container { display: flex; gap: 16px; align-items: center; }
     .product-img { width: 64px; height: 64px; border-radius: 8px; border: 1px solid #f1f5f9; object-fit: cover; }
+    .product-detail { display: flex; flex-direction: column; gap: 2px; }
     .product-name { font-size: 0.95rem; color: var(--checkout-text-main); font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+    .product-variant { font-size: 0.8rem; color: var(--checkout-text-muted); font-weight: 500; }
+    .mobile-price-row { display: none; }
     .col-label { font-size: 0.75rem; color: var(--checkout-text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
     .price-tag { font-size: 0.95rem; color: var(--checkout-text-main); font-weight: 500; }
     .subtotal-tag { font-size: 1rem; font-weight: 700; color: var(--checkout-text-main); }
 
     /* ── Shipping Options ── */
-    .shipping-box { background: #fafdff; border-top: 1px solid var(--checkout-border); padding: 24px 28px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-    .ship-card { border: 2px solid #e2e8f0; border-radius: 10px; padding: 14px 18px; cursor: pointer; transition: all 0.2s; background: #fff; min-width: 180px; display: flex; align-items: center; gap: 12px; flex: 1; }
-    .ship-card:hover { border-color: var(--checkout-primary-hover); }
-    .ship-card.selected { border-color: var(--checkout-primary); background: var(--checkout-primary-soft); }
+    .shipping-box { background: #fafdff; border-top: 1px solid var(--checkout-border); padding: 24px 28px; }
+    .ship-card { 
+        position: relative; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px 24px; 
+        cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: #fff; 
+        display: flex; flex-direction: column; gap: 6px; overflow: hidden;
+    }
+    .ship-card:hover { border-color: #2dd4bf; background: #f0fdfa; transform: translateY(-2px); }
+    .ship-card.selected { border-color: #0d9488; background: #f0fdfa; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1); }
     .ship-card input { display: none; }
-    .ship-icon { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--checkout-primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    .ship-card-header { display: flex; justify-content: space-between; align-items: center; }
+    .ship-name { font-size: 1rem; font-weight: 800; color: #1e293b; }
+    .ship-price { font-size: 1rem; font-weight: 800; color: #1e293b; }
+    
+    .ship-card-body { display: flex; flex-direction: column; gap: 4px; }
+    .ship-guarantee { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 700; color: #0d9488; }
+    .ship-subtext { font-size: 0.75rem; color: #64748b; font-weight: 500; line-height: 1.5; }
+    
+    .ship-badge { 
+        position: absolute; top: -1px; left: -1px; width: 34px; height: 34px; 
+        background: #0d9488; clip-path: polygon(0 0, 100% 0, 0 100%);
+        display: none; align-items: flex-start; justify-content: flex-start; padding: 6px 0 0 6px;
+        color: #fff; font-size: 12px; z-index: 10;
+    }
+    .ship-card.selected .ship-badge { display: flex; }
 
     /* ── Payment Selector ── */
     .payment-grid { display: grid; grid-template-cols: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; padding: 4px 0; }
@@ -76,26 +98,74 @@
     .payment-option-v2 input { position: absolute; opacity: 0; }
     
     /* ── Payment Categories (Tabs) ── */
-    .payment-category-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-    .payment-category-chip {
-        border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 18px; 
-        font-size: 0.75rem; font-weight: 700; color: #64748b; cursor: pointer; 
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); background: #fff;
-        display: flex; align-items: center; justify-content: center; position: relative;
-        border-bottom-width: 3px; min-width: 120px; text-align: center;
+    .payment-category-container { 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px; 
+        margin-bottom: 28px; 
+        padding-top: 10px; /* Space for the badges */
+        padding-right: 10px;
     }
-    .payment-category-chip:hover { border-color: #cbd5e1; background: #f8fafc; color: var(--checkout-primary); }
+    @media (min-width: 1024px) {
+        .payment-category-container { 
+            display: flex; 
+            flex-wrap: nowrap; 
+            overflow-x: auto; 
+            gap: 10px; 
+            padding-bottom: 8px;
+            padding-top: 10px;
+            padding-right: 10px;
+        }
+        .payment-category-container::-webkit-scrollbar { display: none; }
+    }
+    
+    .payment-category-chip {
+        background: #fff;
+        border: 1.5px solid #f1f5f9; 
+        border-radius: 14px; 
+        padding: 12px 10px; 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+        color: #64748b; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        position: relative;
+        text-align: center;
+        min-height: 54px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .payment-category-chip:hover:not(.disabled) { border-color: #cbd5e1; background: #f8fafc; transform: translateY(-1px); }
     .payment-category-chip.active {
-        border-color: var(--checkout-primary); color: var(--checkout-primary);
-        background: var(--checkout-primary-soft);
+        border-color: #3b82f6; 
+        color: #2563eb;
+        background: #eff6ff;
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+        transform: translateY(-2px);
     }
     .payment-category-chip.active::after {
-        content: '\f058'; font-family: 'Font Awesome 5 Free'; font-weight: 900;
-        position: absolute; bottom: 4px; right: 4px; font-size: 10px; background: #fff; border-radius: 50%;
+        content: '\f058'; 
+        font-family: 'Font Awesome 5 Free'; 
+        font-weight: 900;
+        position: absolute; 
+        top: -6px; 
+        right: -6px; 
+        font-size: 14px; 
+        color: #3b82f6;
+        background: #fff; 
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .payment-category-chip.disabled {
-        opacity: 0.5; cursor: not-allowed; background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8;
+        opacity: 0.4; 
+        cursor: not-allowed; 
+        background: #f8fafc; 
+        border-color: #e2e8f0; 
+        color: #94a3b8;
     }
+    .payment-category-chip span { line-height: 1.2; }
     
     .payment-sub-section { display: none; animation: fadeInSub 0.3s ease forwards; }
     .payment-sub-section.active { display: block; }
@@ -207,32 +277,43 @@
 
     /* Mobile Responsive Overrides */
     @media (max-width: 1024px) {
-        .sidebar-summary { position: static; margin-top: 24px; box-shadow: var(--card-shadow); border-radius: 12px; }
+        .sidebar-summary { position: static; margin-top: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 12px; }
     }
 
     @media (max-width: 768px) {
-        .address-card { padding: 16px; border-radius: 8px; }
-        .address-info-grid { grid-template-cols: 1fr; gap: 16px; }
-        .btn-change-address { width: 100%; padding: 10px; }
+        .address-card { padding: 16px; border-radius: 12px; border: 1.5px solid #f1f5f9; }
+        .address-info-grid { grid-template-cols: 1fr; gap: 12px; }
+        .btn-change-address { width: 100%; padding: 12px; border-radius: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; }
         
         .product-list-header { display: none; }
-        .product-row { grid-template-columns: 1fr; padding: 16px; gap: 12px; border-radius: 8px; margin: 0 12px; border: 1px solid #f1f5f9; margin-bottom: 12px; }
-        .product-row .price-tag, .product-row .subtotal-tag { 
-            text-align: left !important; display: flex; justify-content: space-between; align-items: center; 
-            padding-top: 8px; border-top: 1px solid #f8fafc;
+        .product-row { 
+            display: flex; flex-direction: row; padding: 16px; gap: 16px; align-items: flex-start;
+            border-bottom: 1px solid #f1f5f9; margin: 0; background: #fff; border-radius: 0; 
+            box-shadow: none;
         }
-        .product-row div[data-label]::before { 
-            content: attr(data-label); font-size: 0.7rem; color: var(--checkout-text-muted); 
-            font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; 
-        }
-        .product-info { flex-direction: row; align-items: flex-start; gap: 12px; }
-        .product-name { font-size: 0.85rem; }
+        .product-info-container { display: contents; }
+        .product-img { width: 84px; height: 84px; border-radius: 8px; flex-shrink: 0; object-fit: cover; }
+        .product-detail { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 84px; }
+        .product-name { font-size: 0.85rem; font-weight: 500; color: #1e293b; line-height: 1.4; margin-bottom: 2px; -webkit-line-clamp: 2; }
+        .product-variant { font-size: 0.75rem; color: #94a3b8; font-weight: 500; margin-bottom: 4px; }
         
-        .shipping-box { flex-direction: column; align-items: stretch; padding: 16px; gap: 16px; border-top: none; }
-        .shipping-box > div { width: 100%; text-align: left; }
-        .ship-card { min-width: 0; width: 100%; box-shadow: none; border-width: 1.5px; }
+        .mobile-price-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+        .mobile-price { font-size: 1rem; font-weight: 700; color: #ea580c; }
+        .mobile-qty { font-size: 0.8rem; color: #64748b; font-weight: 500; }
         
-        .result-modal { padding: 24px; border-radius: 16px; width: 95%; max-height: 95vh; overflow-y: auto; }
+        .desktop-only { display: none; }
+        
+        .shipping-box { padding: 24px; border-top: none; }
+        .ship-card { min-width: 0; width: 100%; border-width: 1.5px; border-radius: 12px; padding: 16px; margin-bottom: 8px; }
+        .ship-name, .ship-price { font-size: 0.95rem; }
+        .ship-guarantee { font-size: 0.8rem; }
+        .ship-subtext { font-size: 0.75rem; }
+
+        .checkout-section { margin-bottom: 24px; border-radius: 16px; }
+        .section-header { padding: 16px 20px; }
+        .p-8 { padding: 16px !important; }
+        .p-6 { padding: 12px !important; }
+        .result-modal { padding: 24px; border-radius: 20px; width: 95%; }
         
         .address-modal-content { 
             border-radius: 20px 20px 0 0; position: fixed; bottom: 0; left: 0; right: 0; 
@@ -243,16 +324,23 @@
         #address-modal-overlay { padding: 0; align-items: flex-end; }
         
         .mobile-bottom-bar { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: #fff; 
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.1); z-index: 1000;
-            display: flex; align-items: center; justify-content: flex-end; padding: 12px 20px;
-            border-top: 1px solid #f1f5f9;
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.05); z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 28px;
+            border-top: 1px solid rgba(241, 245, 249, 0.8);
+        }
+        .mobile-bottom-bar .btn-submit-mobile {
+            background: linear-gradient(135deg, #ea580c, #f43f5e);
+            color: #fff; font-weight: 900; padding: 12px 24px; border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(234, 88, 12, 0.3); font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 0.02em;
         }
 
-        .sidebar-summary { padding: 20px; border-radius: 0; border: none; border-top: 1px solid #f1f5f9; box-shadow: none; background: #fff; }
-        .sidebar-summary .btn-checkout-primary { display: none; } /* Use mobile bottom bar instead */
+        .sidebar-summary { padding: 24px; border-radius: 20px; border: 1px solid #f1f5f9; margin-top: 24px; margin-bottom: 80px; }
+        .sidebar-summary .btn-checkout-primary { display: none; }
     }
-</style>
+    </style>
 @endpush
 
 @section('content')
@@ -368,56 +456,103 @@
                         <div class="divide-y divide-slate-50">
                             @foreach($cart as $id => $item)
                             <div class="product-row">
-                                <div class="product-info">
+                                <div class="product-info-container">
                                     @if($item['image'])
                                         <img src="{{ asset('storage/'.$item['image']) }}" class="product-img">
                                     @else
                                         <div class="product-img bg-slate-100 flex items-center justify-center text-slate-300"><i class="fas fa-fish"></i></div>
                                     @endif
-                                    <span class="product-name">{{ $item['name'] }}</span>
+                                    <div class="product-detail">
+                                        <div class="product-name">{{ $item['name'] }}</div>
+                                        @if(!empty($item['variation_name']))
+                                            <div class="product-variant">{{ $item['variation_name'] }}</div>
+                                        @endif
+                                        
+                                        <!-- Mobile-only price row -->
+                                        <div class="mobile-price-row">
+                                            <span class="mobile-price">Rp {{ number_format($item['price'], 0, ',', '.') }}</span>
+                                            <span class="mobile-qty">x{{ $item['quantity'] }}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="price-tag text-center" data-label="Harga">Rp {{ number_format($item['price'], 0, ',', '.') }}</div>
-                                <div class="price-tag text-center" data-label="Jumlah">{{ $item['quantity'] }}</div>
-                                <div class="subtotal-tag text-right" data-label="Subtotal">Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</div>
+                                <div class="price-tag text-center desktop-only">Rp {{ number_format($item['price'], 0, ',', '.') }}</div>
+                                <div class="price-tag text-center desktop-only">{{ $item['quantity'] }}</div>
+                                <div class="subtotal-tag text-right desktop-only">Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</div>
                             </div>
                             @endforeach
                         </div>
 
                         <!-- Shipping Option -->
-                        <div class="shipping-box">
-                            <div class="flex flex-col md:flex-row md:items-center gap-6">
-                                <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap"><i class="fas fa-shipping-fast text-blue-500 mr-2"></i> Opsi Pengiriman:</span>
-                                <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="shipping-box bg-white border-t border-slate-100">
+                            <div class="flex flex-col gap-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                                        <i class="fas fa-shipping-fast text-xs"></i>
+                                    </div>
+                                    <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                                        Opsi Pengiriman
+                                    </span>
+                                </div>
+                                <div class="space-y-3">
                                     <label class="ship-card selected" onclick="updateShip(this, 0)">
                                         <input type="radio" name="shipping" value="0" checked>
-                                        <div class="ship-icon"><i class="fas fa-walking"></i></div>
-                                        <div>
-                                            <div class="text-sm font-bold text-slate-800">Ambil Sendiri</div>
-                                            <div class="text-[10px] text-green-600 font-bold uppercase tracking-tighter">Gratis Ongkir</div>
+                                        <div class="ship-badge"><i class="fas fa-check"></i></div>
+                                        <div class="ship-card-header">
+                                            <span class="ship-name">Ambil Sendiri</span>
+                                            <span class="ship-price">Rp 0</span>
+                                        </div>
+                                        <div class="ship-card-body">
+                                            <div class="ship-guarantee"><i class="fas fa-walking"></i> Pengambilan Mandiri</div>
+                                            <div class="ship-subtext">Gratis Ongkir • Ambil di lokasi terdekat</div>
                                         </div>
                                     </label>
+                                    
                                     <label class="ship-card" onclick="updateShip(this, 15000)">
                                         <input type="radio" name="shipping" value="15000">
-                                        <div class="ship-icon"><i class="fas fa-truck"></i></div>
-                                        <div>
-                                            <div class="text-sm font-bold text-slate-800">Kurir Lokal</div>
-                                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">1-3 Hari Kerja</div>
+                                        <div class="ship-badge"><i class="fas fa-check"></i></div>
+                                        <div class="ship-card-header">
+                                            <span class="ship-name">Kurir Lokal</span>
+                                            <span class="ship-price">Rp 15.000</span>
+                                        </div>
+                                        <div class="ship-card-body">
+                                            <div class="ship-guarantee"><i class="fas fa-truck"></i> Garansi tiba {{ date('d M', strtotime('+2 days')) }} - {{ date('d M', strtotime('+4 days')) }}</div>
+                                            <div class="ship-subtext">Voucher s/d Rp10.000 jika pesanan belum tiba</div>
                                         </div>
                                     </label>
                                 </div>
                             </div>
-                            <div class="text-right whitespace-nowrap">
-                                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ongkos Kirim</div>
-                                <div class="text-lg font-black text-blue-600" id="ship-display">Rp 0</div>
-                            </div>
                         </div>
 
-                        <!-- Pesanan Subtotal -->
-                        <div class="p-6 bg-slate-50/50 flex justify-end items-center gap-6">
-                            <div class="text-right">
-                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Total Pesanan ({{ count($cart) }} Produk)</p>
-                              <div class="text-2xl font-black text-blue-600 mt-1" id="total-summary-display">Rp {{ number_format($subtotal, 0, ',', '.') }}</div>
+                        <!-- Pesanan Subtotal Summary Area -->
+                        <div class="p-6 lg:p-10 bg-slate-50/40 border-t border-slate-100">
+                        <!-- Pesanan Subtotal Summary Area -->
+                        <div class="p-6 lg:p-10 bg-slate-50/40 border-t border-slate-100">
+                            <!-- Desktop Layout: Full Width -->
+                            <div class="hidden lg:flex flex-col gap-5">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Ongkos Kirim</span>
+                                    <span class="text-xl font-bold text-slate-800" id="ship-display">Rp 0</span>
+                                </div>
+                                <div class="w-full h-px bg-slate-200/60 my-1"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Total Pesanan ({{ count($cart) }} Produk)</span>
+                                    <span class="text-4xl font-black text-blue-600 whitespace-nowrap" id="total-summary-display">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                                </div>
                             </div>
+
+                            <!-- Mobile Layout: Full Width (Already standard) -->
+                            <div class="flex lg:hidden flex-col gap-4">
+                                <div class="flex justify-between items-center gap-10">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ongkos Kirim</span>
+                                    <span class="text-lg font-bold text-slate-800 text-right" id="ship-display-mobile">Rp 0</span>
+                                </div>
+                                <div class="w-full h-px bg-slate-200/60 my-1"></div>
+                                <div class="flex justify-between items-center gap-10">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Pesanan ({{ count($cart) }} Produk)</span>
+                                    <span class="text-2xl font-black text-blue-600 text-right whitespace-nowrap" id="total-summary-display-mobile">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                        </div>
                         </div>
                     </div>
 
@@ -430,13 +565,24 @@
                         <div class="p-8">
                             <!-- Category Selector -->
                             <div class="payment-category-container">
-                                <div class="payment-category-chip active" onclick="selectPaymentCategory(this, 'va')">Transfer Bank</div>
-                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'ewallet')">E-Wallet</div>
-                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'qris')">QRIS</div>
-                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'cc')">Kartu Kredit/Debit</div>
-                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'retail')">Tunai / Retail</div>
-                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'direct')">Debit Instan</div>
-                                <div class="payment-category-chip disabled" title="Segera Hadir">COD</div>
+                                <div class="payment-category-chip active" onclick="selectPaymentCategory(this, 'va')">
+                                    <span>Transfer Bank</span>
+                                </div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'ewallet')">
+                                    <span>E-Wallet</span>
+                                </div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'qris')">
+                                    <span>QRIS</span>
+                                </div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'cc')">
+                                    <span class="text-[0.65rem] sm:text-[0.75rem]">Kartu Kredit / Debit</span>
+                                </div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'retail')">
+                                    <span>Tunai / Retail</span>
+                                </div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'direct')">
+                                    <span>Debit Instan</span>
+                                </div>
                             </div>
 
                             <!-- Virtual Accounts (Initially Active) -->
@@ -651,12 +797,14 @@
 </div>
 
 <!-- Mobile Bottom Bar -->
-<div class="mobile-bottom-bar md:hidden">
-    <div class="text-right mr-4">
-        <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Total Pembayaran</div>
-        <div class="text-xl font-black text-orange-600" id="mobile-total">Rp {{ number_format($subtotal, 0, ',', '.') }}</div>
+<div class="mobile-bottom-bar flex items-center justify-between md:hidden">
+    <div class="flex flex-col">
+        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Bayar</span>
+        <div class="text-xl font-black text-blue-600" id="mobile-total">Rp {{ number_format($subtotal, 0, ',', '.') }}</div>
     </div>
-    <button type="button" onclick="document.getElementById('btn-submit').click()" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3.5 font-black text-xs rounded-xl shadow-lg shadow-orange-200 transition active:scale-95 uppercase tracking-widest">Pesan</button>
+    <button type="button" onclick="document.getElementById('btn-submit').click()" class="btn-submit-mobile">
+        BUAT PESANAN
+    </button>
 </div>
 
 <!-- Loading Overlay -->
@@ -1218,11 +1366,17 @@
           shipping = val;
           const total = subtotal + shipping;
           
-          document.getElementById('ship-display').textContent = shipping === 0 ? 'Rp 0' : 'Rp ' + f(shipping);
-          document.getElementById('sidebar-ship').textContent = shipping === 0 ? 'Rp 0' : 'Rp ' + f(shipping);
-          document.getElementById('total-display').textContent = 'Rp ' + f(total);
-          document.getElementById('mobile-total').textContent = 'Rp ' + f(total);
-          document.getElementById('total-summary-display').textContent = 'Rp ' + f(total);
+          const shipText = shipping === 0 ? 'Rp 0' : 'Rp ' + f(shipping);
+          const totalText = 'Rp ' + f(total);
+
+          if(document.getElementById('ship-display')) document.getElementById('ship-display').textContent = shipText;
+          if(document.getElementById('ship-display-mobile')) document.getElementById('ship-display-mobile').textContent = shipText;
+          if(document.getElementById('sidebar-ship')) document.getElementById('sidebar-ship').textContent = shipText;
+          
+          if(document.getElementById('total-display')) document.getElementById('total-display').textContent = totalText;
+          if(document.getElementById('mobile-total')) document.getElementById('mobile-total').textContent = totalText;
+          if(document.getElementById('total-summary-display')) document.getElementById('total-summary-display').textContent = totalText;
+          if(document.getElementById('total-summary-display-mobile')) document.getElementById('total-summary-display-mobile').textContent = totalText;
         }
     };
 
