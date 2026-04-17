@@ -75,26 +75,96 @@
     .payment-option-v2 span { font-size: 0.7rem; font-weight: 800; color: var(--checkout-text-main); }
     .payment-option-v2 input { position: absolute; opacity: 0; }
     
+    /* ── Payment Categories (Tabs) ── */
+    .payment-category-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .payment-category-chip {
+        border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 18px; 
+        font-size: 0.75rem; font-weight: 700; color: #64748b; cursor: pointer; 
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); background: #fff;
+        display: flex; align-items: center; justify-content: center; position: relative;
+        border-bottom-width: 3px; min-width: 120px; text-align: center;
+    }
+    .payment-category-chip:hover { border-color: #cbd5e1; background: #f8fafc; color: var(--checkout-primary); }
+    .payment-category-chip.active {
+        border-color: var(--checkout-primary); color: var(--checkout-primary);
+        background: var(--checkout-primary-soft);
+    }
+    .payment-category-chip.active::after {
+        content: '\f058'; font-family: 'Font Awesome 5 Free'; font-weight: 900;
+        position: absolute; bottom: 4px; right: 4px; font-size: 10px; background: #fff; border-radius: 50%;
+    }
+    .payment-category-chip.disabled {
+        opacity: 0.5; cursor: not-allowed; background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8;
+    }
+    
+    .payment-sub-section { display: none; animation: fadeInSub 0.3s ease forwards; }
+    .payment-sub-section.active { display: block; }
+    @keyframes fadeInSub { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    
     /* ── Credit Card Form ── */
-    #cc-form-container { display: none; margin-top: 20px; padding: 24px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; }
-    #cc-form-container.show { display: block; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    #cc-form-container { display: none; margin-top: 24px; padding: 20px; background: #fafbfc; border-radius: 20px; border: 1px solid #eef2f6; }
+    #cc-form-container.show { display: block; animation: fadeIn 0.4s ease; }
+    
+    .cc-input-group { 
+        background: #fff; border-radius: 14px; border: 1.5px solid #e2e8f0; 
+        overflow: hidden; transition: all 0.3s;
+    }
+    .cc-input-group:focus-within { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+    
+    .cc-field { position: relative; display: flex; align-items: center; padding: 14px 16px; background: #fff; }
+    .cc-field i { color: #94a3b8; width: 20px; text-align: center; flex-shrink: 0; }
+    .cc-field input { 
+        width: 100%; padding-left: 12px; font-size: 1rem; font-weight: 700; 
+        color: #1e293b; border: none; outline: none; background: transparent;
+        min-width: 0;
+    }
+    .cc-field input::placeholder { color: #cbd5e1; font-weight: 500; }
+    
+    .cc-card-icons {
+        position: absolute; right: 14px; top: 0; bottom: 0;
+        display: flex; gap: 6px; align-items: center; background: #fff; padding-left: 6px;
+    }
+    .cc-card-icons img { height: 16px; transition: all 0.3s; }
+    
+    @media (max-width: 640px) {
+        .cc-card-icons img { height: 14px; }
+        .cc-card-icons img.grayscale { display: none; }
+        .cc-field input#cc-number { padding-right: 54px !important; }
+    }
+    @media (min-width: 641px) {
+        .cc-field input#cc-number { padding-right: 85px !important; }
+    }
+    
+    .cc-divider-v { width: 1.5px; background: #e2e8f0; }
+    .cc-divider-h { height: 1.5px; background: #e2e8f0; }
 
     /* ── Sticky Summary Sidebar ── */
-    .sidebar-summary { position: sticky; top: 100px; background: #fff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid var(--checkout-border); }
-    .price-summary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 0.95rem; color: var(--checkout-text-muted); font-weight: 500; gap: 12px; }
+    .sidebar-summary { 
+        position: sticky; top: 100px; background: #fff; border-radius: 24px; 
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02); 
+        border: 1px solid rgba(241, 245, 249, 0.8); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+    .sidebar-summary::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+        background: linear-gradient(90deg, #ea580c, #f43f5e);
+    }
+    .price-summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 0.9rem; color: var(--checkout-text-muted); font-weight: 500; gap: 12px; }
     .price-summary-row > span:first-child { flex: 1; }
-    .price-summary-row > span:last-child { text-align: right; whitespace: nowrap; }
-    .total-row { display: flex; flex-direction: column; align-items: flex-end; padding: 24px 0; margin-top: 16px; border-top: 1px dashed #e2e8f0; gap: 8px; }
-    .total-price { color: var(--shopee-orange-deep); font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.2; }
+    .price-summary-row > span:last-child { text-align: right; white-space: nowrap; color: var(--checkout-text-main); font-weight: 700; }
+    
+    .total-row { display: flex; flex-direction: column; align-items: flex-end; padding: 28px 0; margin-top: 20px; border-top: 1px dashed #e2e8f0; gap: 4px; }
+    .total-price { color: #ea580c; font-size: 1.8rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
 
     .btn-checkout-primary { 
-        width: 100%; padding: 14px 12px; background: linear-gradient(135deg, #ea580c 0%, #f43f5e 100%); color: #fff; 
-        font-weight: 800; font-size: 1rem; border-radius: 12px; transition: all 0.3s;
-        box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.3); text-transform: uppercase;
-        display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
+        width: 100%; padding: 16px 12px; background: linear-gradient(135deg, #ea580c 0%, #f43f5e 100%); color: #fff; 
+        font-weight: 900; font-size: 1rem; border-radius: 16px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 10px 20px -5px rgba(234, 88, 12, 0.4); text-transform: uppercase;
+        display: flex; align-items: center; justify-content: center; gap: 10px; white-space: nowrap;
+        border: none; cursor: pointer;
     }
-    .btn-checkout-primary:hover { transform: translateY(-2px); opacity: 0.95; }
+    .btn-checkout-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 25px -5px rgba(234, 88, 12, 0.5); }
+    .btn-checkout-primary:active { transform: translateY(-1px) scale(0.98); }
     .btn-checkout-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
 
     /* ── Results ── */
@@ -357,11 +427,22 @@
                             <h2 class="section-title"><i class="fas fa-wallet"></i> Metode Pembayaran</h2>
                         </div>
                         
-                        <div class="p-8 space-y-8">
-                            <!-- Virtual Accounts -->
-                            <div>
+                        <div class="p-8">
+                            <!-- Category Selector -->
+                            <div class="payment-category-container">
+                                <div class="payment-category-chip active" onclick="selectPaymentCategory(this, 'va')">Transfer Bank</div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'ewallet')">E-Wallet</div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'qris')">QRIS</div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'cc')">Kartu Kredit/Debit</div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'retail')">Tunai / Retail</div>
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'direct')">Debit Instan</div>
+                                <div class="payment-category-chip disabled" title="Segera Hadir">COD</div>
+                            </div>
+
+                            <!-- Virtual Accounts (Initially Active) -->
+                            <div id="sub-payment-va" class="payment-sub-section active">
                                 <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Transfer Bank (Virtual Account)
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Pilihan Bank (Virtual Account)
                                 </h4>
                                 <div class="payment-grid">
                                     @foreach([
@@ -381,135 +462,141 @@
                                     @endforeach
                                     <label class="payment-option-v2" onclick="selectPayment(this)">
                                         <input type="radio" name="payment_channel" value="PERMATA">
-                                        <div class="flex flex-col items-center gap-1">
-                                            <i class="fas fa-university text-slate-400 text-sm"></i>
-                                            <span class="text-[8px] font-bold">Bank Lainnya</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-black uppercase tracking-tight text-slate-400">Bank Lainnya</span>
+                                            <i class="fas fa-university text-slate-300 text-lg"></i>
                                         </div>
                                     </label>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <!-- E-Wallet & QRIS -->
-                                <div class="space-y-8">
-                                    <div>
-                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-purple-500"></div> E-Wallet
-                                        </h4>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            @foreach([
-                                                'ID_DANA'       => asset('images/bank/DANA.png'), 
-                                                'ID_OVO'        => asset('images/bank/OVO.png'),
-                                                'ID_SHOPEEPAY'  => asset('images/bank/shopeepay.png'),
-                                                'ID_LINKAJA'    => asset('images/bank/LinkAja.png')
-                                            ] as $code => $url)
-                                            <label class="payment-option-v2" onclick="selectPayment(this)">
-                                                <input type="radio" name="payment_channel" value="{{$code}}">
-                                                <img src="{{$url}}">
-                                            </label>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div> QR Code
-                                        </h4>
-                                        <label class="payment-option-v2 h-[60px]" onclick="selectPayment(this)">
-                                            <input type="radio" name="payment_channel" value="QRIS" checked>
-                                            <img src="{{ asset('images/bank/QRIS.png') }}" class="h-8">
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Retail & Direct Debit -->
-                                <div class="space-y-8">
-                                    <div>
-                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div> Gerai Retail
-                                        </h4>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            @foreach([
-                                                'ALFAMART'  => asset('images/bank/alfamart.png'), 
-                                                'INDOMARET' => asset('images/bank/indomaret.png')
-                                            ] as $code => $url)
-                                            <label class="payment-option-v2" onclick="selectPayment(this)">
-                                                <input type="radio" name="payment_channel" value="{{$code}}">
-                                                <img src="{{$url}}">
-                                            </label>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div> Direct Debit
-                                        </h4>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            @foreach([
-                                                'BRI' => asset('images/bank/bri_directdebit.png'), 
-                                                'BCA' => asset('images/bank/BCA.png')
-                                            ] as $code => $url)
-                                            <label class="payment-option-v2" onclick="selectPayment(this)">
-                                                <input type="radio" name="payment_channel" value="{{$code}}">
-                                                <div class="flex flex-col items-center gap-1">
-                                                    <img src="{{$url}}" class="h-4">
-                                                    <span class="text-[8px] font-bold">Direct Debit</span>
-                                                </div>
-                                            </label>
-                                            @endforeach
-                                        </div>
-                                    </div>
+                            <!-- E-Wallet -->
+                            <div id="sub-payment-ewallet" class="payment-sub-section">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-purple-500"></div> Dompet Digital (E-Wallet)
+                                </h4>
+                                <div class="payment-grid">
+                                    @foreach([
+                                        'ID_DANA'       => asset('images/bank/DANA.png'), 
+                                        'ID_OVO'        => asset('images/bank/OVO.png'),
+                                        'ID_SHOPEEPAY'  => asset('images/bank/shopeepay.png'),
+                                        'ID_LINKAJA'    => asset('images/bank/LinkAja.png')
+                                    ] as $code => $url)
+                                    <label class="payment-option-v2" onclick="selectPayment(this)">
+                                        <input type="radio" name="payment_channel" value="{{$code}}">
+                                        <img src="{{$url}}">
+                                    </label>
+                                    @endforeach
                                 </div>
                             </div>
 
-                            <!-- PayLater & Credit Card -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <div>
-                                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Cicilan (PayLater)
-                                    </h4>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        @foreach([
-                                            'KREDIVO' => asset('images/bank/kredivo.png'), 
-                                            'AKULAKU' => asset('images/bank/akulaku.png')
-                                        ] as $code => $url)
-                                        <label class="payment-option-v2" onclick="selectPayment(this)">
-                                            <input type="radio" name="payment_channel" value="{{$code}}">
-                                            <img src="{{$url}}">
-                                        </label>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-slate-800"></div> Kartu Kredit / Debit Online
-                                    </h4>
-                                    <label class="payment-option-v2" onclick="selectPaymentCard(this)">
-                                        <input type="radio" name="payment_channel" value="CREDIT_CARD">
-                                        <div class="flex items-center gap-3">
-                                            <img src="{{ asset('images/bank/visa.png') }}" class="h-4">
-                                            <img src="{{ asset('images/bank/jcb.png') }}" class="h-4">
-                                        </div>
+                            <!-- QRIS -->
+                            <div id="sub-payment-qris" class="payment-sub-section">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div> Scan QR Code
+                                </h4>
+                                <div class="max-w-xs">
+                                    <label class="payment-option-v2" onclick="selectPayment(this)">
+                                        <input type="radio" name="payment_channel" value="QRIS">
+                                        <img src="{{ asset('images/bank/QRIS.png') }}" class="h-8">
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- Credit Card Form (Hidden) -->
-                            <div id="cc-form-container">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="md:col-span-2 modal-field-group">
-                                        <label class="modal-label-abs">Nomor Kartu</label>
-                                        <input type="text" id="cc-number" class="modal-input" placeholder="0000 0000 0000 0000">
+                            <!-- Kartu Kredit -->
+                            <div id="sub-payment-cc" class="payment-sub-section">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-slate-800"></div> Bayar dengan Kartu Kredit / Debit Online
+                                </h4>
+                                <label class="payment-option-v2 mb-6" onclick="selectPaymentTabCard(this)">
+                                    <input type="radio" name="payment_channel" value="CREDIT_CARD">
+                                    <div class="flex items-center gap-3">
+                                        <img src="{{ asset('images/bank/visa_logo.png') }}" class="h-4">
+                                        <img src="{{ asset('images/bank/mastercard.png') }}" class="h-4">
+                                        <img src="{{ asset('images/bank/jcb.png') }}" class="h-4">
                                     </div>
-                                    <div class="modal-field-group">
-                                        <label class="modal-label-abs">Masa Berlaku (MM/YY)</label>
-                                        <input type="text" id="cc-expiry" class="modal-input" placeholder="MM / YY">
+                                </label>
+                                
+                                <div id="cc-form-container">
+                                    <div class="mb-4 text-left">
+                                        <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                            <i class="far fa-credit-card text-blue-500"></i> Detail Kartu Kredit / Debit
+                                        </h4>
                                     </div>
-                                    <div class="modal-field-group">
-                                        <label class="modal-label-abs">CVV</label>
-                                        <input type="text" id="cc-cvv" class="modal-input" placeholder="123">
+                                    
+                                    <div class="cc-input-group">
+                                        <!-- Card Number -->
+                                        <div class="cc-field">
+                                            <i class="far fa-credit-card text-lg"></i>
+                                            <input type="text" id="cc-number" placeholder="0000 0000 0000 0000" maxlength="19">
+                                            <div class="cc-card-icons">
+                                                <img src="{{ asset('images/bank/visa_logo.png') }}" id="icon-visa" class="grayscale opacity-40">
+                                                <img src="{{ asset('images/bank/mastercard.png') }}" id="icon-mastercard" class="grayscale opacity-40">
+                                                <img src="{{ asset('images/bank/jcb.png') }}" id="icon-jcb" class="grayscale opacity-40">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="cc-divider-h"></div>
+                                        
+                                        <!-- Expiry & CVV -->
+                                        <div class="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+                                            <div class="cc-field flex-1">
+                                                <i class="far fa-calendar-alt text-lg"></i>
+                                                <input type="text" id="cc-expiry" placeholder="MM/YY" maxlength="5">
+                                            </div>
+                                            <div class="cc-field flex-1">
+                                                <i class="fas fa-lock text-lg"></i>
+                                                <input type="password" id="cc-cvv" placeholder="CVV" maxlength="4">
+                                                <button type="button" onclick="toggleCvv()" class="text-slate-400 hover:text-blue-500 transition-colors px-1 ml-auto">
+                                                    <i class="far fa-eye" id="cvv-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <p class="text-[10px] text-slate-400 font-bold mt-4 flex items-center gap-2">
+                                        <i class="fas fa-shield-halved text-emerald-500 text-xs"></i> 
+                                        <span>Data terenkripsi aman oleh Xendit & tidak disimpan di server.</span>
+                                    </p>
                                 </div>
-                                <p class="text-[9px] text-slate-400 font-medium mt-3 italic"><i class="fas fa-lock mr-1"></i> Data kartu Anda dienkripsi secara aman oleh Xendit dan tidak disimpan di server kami.</p>
+                            </div>
+
+                            <!-- Tunai / Retail -->
+                            <div id="sub-payment-retail" class="payment-sub-section">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div> Gerai Retail / Agen
+                                </h4>
+                                <div class="payment-grid">
+                                    @foreach([
+                                        'ALFAMART'  => asset('images/bank/alfamart.png'), 
+                                        'INDOMARET' => asset('images/bank/indomaret.png')
+                                    ] as $code => $url)
+                                    <label class="payment-option-v2" onclick="selectPayment(this)">
+                                        <input type="radio" name="payment_channel" value="{{$code}}">
+                                        <img src="{{$url}}">
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Debit Instan -->
+                            <div id="sub-payment-direct" class="payment-sub-section">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div> Pilihan Debit Instan
+                                </h4>
+                                <div class="payment-grid">
+                                    @foreach([
+                                        'BRI' => asset('images/bank/bri_directdebit.png'), 
+                                        'BCA' => asset('images/bank/BCA.png')
+                                    ] as $code => $url)
+                                    <label class="payment-option-v2" onclick="selectPayment(this)">
+                                        <input type="radio" name="payment_channel" value="{{$code}}">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Direct</span>
+                                            <img src="{{$url}}" class="h-4">
+                                        </div>
+                                    </label>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -517,7 +604,7 @@
 
                 <!-- RIGHT: SIDEBAR SUMMARY -->
                 <div class="lg:col-span-1">
-                    <div class="sidebar-summary p-6">
+                    <div class="sidebar-summary p-6 backdrop-blur-sm bg-white/95 transition-all duration-300 hover:shadow-2xl">
                         <div class="flex items-center gap-2 mb-6">
                             <i class="fas fa-file-invoice-dollar text-slate-400"></i>
                             <h2 class="text-xs font-black text-slate-800 uppercase tracking-widest">Detail Ringkasan</h2>
@@ -549,7 +636,8 @@
                                 Keamanan & Privasi Terjamin
                             </div>
                             <div class="flex items-center gap-4 opacity-40 grayscale contrast-125">
-                                <img src="{{ asset('images/bank/visa.png') }}" class="h-3.5 object-contain" alt="Visa">
+                                <img src="{{ asset('images/bank/visa_logo.png') }}" class="h-3.5 object-contain" alt="Visa">
+                                <img src="{{ asset('images/bank/mastercard.png') }}" class="h-3.5 object-contain" alt="Mastercard">
                                 <img src="{{ asset('images/bank/jcb.png') }}" class="h-4 object-contain" alt="JCB">
                                 <img src="{{ asset('images/bank/QRIS.png') }}" class="h-4 object-contain" alt="QRIS">
                             </div>
@@ -1086,20 +1174,39 @@
         }
     };
 
-    window.selectPayment = function(el) {
-        document.querySelectorAll('.payment-option-v2').forEach(i => i.classList.remove('selected'));
-        el.classList.add('selected');
-        document.getElementById('cc-form-container').classList.remove('show');
-        const radio = el.querySelector('input');
-        if (radio) radio.checked = true;
+    window.selectPaymentCategory = function(el, targetId) {
+        document.querySelectorAll('.payment-category-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        
+        document.querySelectorAll('.payment-sub-section').forEach(s => s.classList.remove('active'));
+        const sub = document.getElementById('sub-payment-' + targetId);
+        if (sub) sub.classList.add('active');
+        
+        // Hide CC form when switching away from CC category
+        if (targetId !== 'cc') {
+            const ccForm = document.getElementById('cc-form-container');
+            if (ccForm) ccForm.classList.remove('show');
+        }
     };
 
-    window.selectPaymentCard = function(el) {
+    window.selectPaymentTabCard = function(el) {
         document.querySelectorAll('.payment-option-v2').forEach(i => i.classList.remove('selected'));
         el.classList.add('selected');
         document.getElementById('cc-form-container').classList.add('show');
         const radio = el.querySelector('input');
         if (radio) radio.checked = true;
+    };
+
+    window.selectPayment = function(el) {
+        document.querySelectorAll('.payment-option-v2').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        const radio = el.querySelector('input');
+        if (radio) radio.checked = true;
+    };
+
+    window.selectPaymentCard = function(el) {
+        // Legacy, keeping for compatibility during migration if needed
+        window.selectPaymentTabCard(el);
     };
 
     window.updateShip = function(el, val) {
@@ -1449,6 +1556,77 @@
             setTimeout(() => b.innerHTML = h, 2000);
         });
     };
+
+    window.toggleCvv = function() {
+        const cvvInput = document.getElementById('cc-cvv');
+        const cvvEye = document.getElementById('cvv-eye');
+        if (cvvInput.type === 'password') {
+            cvvInput.type = 'text';
+            cvvEye.classList.remove('fa-eye');
+            cvvEye.classList.add('fa-eye-slash', 'text-blue-500');
+        } else {
+            cvvInput.type = 'password';
+            cvvEye.classList.remove('fa-eye-slash', 'text-blue-500');
+            cvvEye.classList.add('fa-eye');
+        }
+    };
+
+    // Credit Card Input Formatters
+    const ccNumEl = document.getElementById('cc-number');
+    if (ccNumEl) {
+        ccNumEl.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let formattedValue = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) formattedValue += ' ';
+                formattedValue += value[i];
+            }
+            e.target.value = formattedValue;
+            
+            const isVisa = value.startsWith('4');
+            const isMastercard = /^(5[1-5]|2[2-7])/.test(value);
+            const isJcb = /^(35)/.test(value);
+            
+            const iconVisa = document.getElementById('icon-visa');
+            const iconMc = document.getElementById('icon-mastercard');
+            const iconJcb = document.getElementById('icon-jcb');
+            
+            if (iconVisa && iconMc && iconJcb) {
+                if (value.length > 0) {
+                    iconVisa.classList.toggle('grayscale', !isVisa);
+                    iconVisa.classList.toggle('opacity-40', !isVisa);
+                    
+                    iconMc.classList.toggle('grayscale', !isMastercard);
+                    iconMc.classList.toggle('opacity-40', !isMastercard);
+                    
+                    iconJcb.classList.toggle('grayscale', !isJcb);
+                    iconJcb.classList.toggle('opacity-40', !isJcb);
+                } else {
+                    iconVisa.classList.add('grayscale', 'opacity-40');
+                    iconMc.classList.add('grayscale', 'opacity-40');
+                    iconJcb.classList.add('grayscale', 'opacity-40');
+                }
+            }
+        });
+    }
+
+    const ccExpEl = document.getElementById('cc-expiry');
+    if (ccExpEl) {
+        ccExpEl.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    }
+
+    const ccCvvEl = document.getElementById('cc-cvv');
+    if (ccCvvEl) {
+        ccCvvEl.addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+    }
 })();
 </script>
 @endpush
