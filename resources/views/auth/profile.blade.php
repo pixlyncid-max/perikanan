@@ -103,8 +103,33 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('profile.update') }}" method="POST" class="flex flex-col gap-6">
+                        <form id="delete-avatar-form" action="{{ route('profile.avatar.delete') }}" method="POST" class="hidden">
                             @csrf
+                        </form>
+
+                        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
+                            @csrf
+                            
+                            <!-- Foto Profil -->
+                            <div class="w-full relative flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                @if($user->avatar)
+                                    <div class="relative inline-block flex-shrink-0">
+                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm">
+                                        <button type="button" onclick="showAlert({ type: 'warning', title: 'Hapus Foto', message: 'Apakah Anda yakin ingin menghapus foto profil?', primaryText: 'Ya, Hapus', secondaryText: 'Batal', onConfirm: () => document.getElementById('delete-avatar-form').submit() })" class="absolute -top-1 -right-1 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-red-600 shadow-md transition" title="Hapus Foto">
+                                            <i class="fas fa-times text-[10px]"></i>
+                                        </button>
+                                    </div>
+                                @else
+                                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl font-bold border border-blue-200 shadow-sm flex-shrink-0">
+                                        {{ substr($user->name ?: 'U', 0, 1) }}
+                                    </div>
+                                @endif
+                                <div class="w-full">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Foto Profil (Opsional)</label>
+                                    <input type="file" name="avatar" accept="image/*" class="block w-full text-sm text-gray-500 file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition">
+                                    <p class="mt-1 text-xs text-gray-400">Format: JPG, PNG, GIF. Maks: 2MB.</p>
+                                </div>
+                            </div>
                             
                             <!-- Nama Lengkap -->
                             <div class="w-full">

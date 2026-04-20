@@ -249,9 +249,13 @@
                         <?php $user = \Illuminate\Support\Facades\Session::get('user'); ?>
                         <div class="dropdown relative">
                             <button class="dropdown-toggle flex items-center space-x-2 text-gray-700 hover:text-blue-600 font-medium transition" onclick="toggleDropdown(this)">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-blue-600"></i>
-                                </div>
+                                @if(!empty($user['avatar']))
+                                    <img src="{{ asset('storage/' . $user['avatar']) }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                                @else
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-blue-600 text-sm"></i>
+                                    </div>
+                                @endif
                                 <span><?php echo e($user['name'] ?? 'User'); ?></span>
                                 <?php if($user['type'] === 'admin'): ?>
                                     <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">ADMIN</span>
@@ -367,18 +371,54 @@
                         <a href="/register" class="block px-3 py-2 bg-blue-600 text-white rounded-lg font-medium text-center">Daftar</a>
                     <?php else: ?>
                         <?php $userMobile = \Illuminate\Support\Facades\Session::get('user'); ?>
-                        <a href="{{ route('orders.index') }}" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Pesanan Saya</a>
-                        <a href="{{ route('produk.favorit') }}" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"><i class="fas fa-heart mr-2 text-red-400"></i>Favorit Saya</a>
-                        <a href="/member-card" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Kartu Anggota</a>
-                        <?php if($userMobile['type'] === 'admin'): ?>
-                            <a href="/admin/dashboard" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Panel Admin</a>
-                        <?php endif; ?>
-                        <a href="{{ route('profile') }}" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Profil</a>
+                        <!-- Mobile Profile Card -->
+                        <a href="{{ route('profile') }}" class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-blue-50 transition mb-2">
+                            @if(!empty($userMobile['avatar']))
+                                <img src="{{ asset('storage/' . $userMobile['avatar']) }}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0">
+                            @else
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold flex-shrink-0 border-2 border-white shadow-sm">
+                                    {{ substr($userMobile['name'] ?? 'U', 0, 1) }}
+                                </div>
+                            @endif
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-gray-900 truncate text-sm">{{ $userMobile['name'] ?? 'User' }}</span>
+                                    @if($userMobile['type'] === 'admin')
+                                        <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">ADMIN</span>
+                                    @elseif($userMobile['type'] === 'member')
+                                        <span class="bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">MEMBER</span>
+                                    @endif
+                                </div>
+                                <p class="text-xs text-gray-500 truncate">{{ $userMobile['email'] ?? '' }}</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs flex-shrink-0"></i>
+                        </a>
 
-                        <form action="/logout" method="POST" class="block">
-                            @csrf
-                            <button type="submit" class="w-full text-left px-3 py-2 text-red-600 font-medium">Logout</button>
-                        </form>
+                        <div class="space-y-0.5">
+                            <a href="{{ route('orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                                <i class="fas fa-shopping-bag text-orange-500 w-5 text-center text-sm"></i>Pesanan Saya
+                            </a>
+                            <a href="{{ route('produk.favorit') }}" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                                <i class="fas fa-heart text-red-400 w-5 text-center text-sm"></i>Favorit Saya
+                            </a>
+                            <a href="/member-card" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                                <i class="fas fa-id-card text-green-500 w-5 text-center text-sm"></i>Kartu Anggota
+                            </a>
+                            <?php if($userMobile['type'] === 'admin'): ?>
+                                <a href="/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                                    <i class="fas fa-cog text-blue-500 w-5 text-center text-sm"></i>Panel Admin
+                                </a>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="border-t mt-2 pt-2">
+                            <form action="/logout" method="POST" class="block">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg font-medium transition">
+                                    <i class="fas fa-sign-out-alt w-5 text-center text-sm"></i>Logout
+                                </button>
+                            </form>
+                        </div>
                     <?php endif; ?>
                 </div>
 

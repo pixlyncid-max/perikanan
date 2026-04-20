@@ -71,12 +71,12 @@ class AuthController extends Controller
             return redirect('/login');
         }
 
-        // Login successful - set session
         Session::put('user', [
             'id' => $user->id,
             'name' => $displayName,
             'email' => $email,
             'type' => $userType,
+            'avatar' => $user->avatar ?? null,
             'table' => $userType === 'member' ? 'members' : ($userType === 'admin' ? 'admins' : 'users'),
         ]);
 
@@ -168,6 +168,7 @@ class AuthController extends Controller
                 'name' => $name,
                 'email' => $email,
                 'type' => 'member',
+                'avatar' => $member->avatar ?? null,
                 'table' => 'members',
             ]);
 
@@ -196,6 +197,7 @@ class AuthController extends Controller
             'name' => $name,
             'email' => $email,
             'type' => 'user',
+            'avatar' => $user->avatar ?? null,
             'table' => 'users',
         ]);
 
@@ -441,6 +443,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Update fields
@@ -452,6 +455,17 @@ class AuthController extends Controller
 
         $user->phone = $request->phone;
         $user->address = $request->address;
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
+            $session['avatar'] = $avatarPath; // Update session
+        }
+
         $user->save();
 
         // Sync session
@@ -459,6 +473,48 @@ class AuthController extends Controller
         Session::put('user', $session);
 
         return back()->with('success', 'Profil Anda berhasil diperbarui.');
+    }
+
+    /**
+     * Delete user profile avatar
+     */
+    public function deleteAvatar(\Illuminate\Http\Request $request)
+    {
+        if (!Session::has('user')) {
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $session = Session::get('user');
+        $user = null;
+
+        if ($session['type'] === 'admin') {
+            $user = Admin::find($session['id']);
+        } elseif ($session['type'] === 'member') {
+            $user = Member::find($session['id']);
+        } else {
+            $user = User::find($session['id']);
+        }
+
+        if (!$user) {
+            return back()->with('error', 'User tidak ditemukan.');
+        }
+
+        if ($user->avatar) {
+            // hapus file lama jika ada
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = null;
+            $user->save();
+
+            // Sync session
+            $session['avatar'] = null;
+            Session::put('user', $session);
+
+            return back()->with('success', 'Foto profil berhasil dihapus.');
+        }
+
+        return back()->with('error', 'Tidak ada foto profil untuk dihapus.');
     }
 
     /**
@@ -592,6 +648,7 @@ class AuthController extends Controller
                 'name'  => $member->name ?? $member->full_name ?? $name,
                 'email' => $email,
                 'type'  => 'member',
+                'avatar' => $member->avatar ?? null,
                 'table' => 'members',
             ]);
             $this->syncCartAfterAuth($member, 'member');
@@ -608,6 +665,7 @@ class AuthController extends Controller
                 'name'  => $admin->name ?? $name,
                 'email' => $email,
                 'type'  => 'admin',
+                'avatar' => $admin->avatar ?? null,
                 'table' => 'admins',
             ]);
             Session::regenerate();
@@ -635,6 +693,7 @@ class AuthController extends Controller
             'name'  => $user->name,
             'email' => $email,
             'type'  => 'user',
+            'avatar' => $user->avatar ?? null,
             'table' => 'users',
         ]);
 
