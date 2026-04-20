@@ -136,6 +136,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
     Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/avatar/delete', [AuthController::class, 'deleteAvatar'])->name('profile.avatar.delete');
+    Route::post('/profile/delete-account', [AuthController::class, 'deleteAccount'])->name('profile.delete-account');
     Route::post('/profile/update-address', [AuthController::class, 'updateAddress'])->name('profile.update-address');
 });
 

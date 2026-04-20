@@ -24,7 +24,7 @@
                     <div class="p-6 md:p-8 text-center">
                         <div class="relative inline-block mb-4">
                             @if($user->avatar)
-                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md mx-auto">
+                                <img src="{{ str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md mx-auto">
                             @else
                                 <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-3xl font-bold mx-auto border-4 border-white shadow-md">
                                     {{ substr($user->name ?: 'U', 0, 1) }}
@@ -114,7 +114,7 @@
                             <div class="w-full relative flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 @if($user->avatar)
                                     <div class="relative inline-block flex-shrink-0">
-                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm">
+                                        <img src="{{ str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm">
                                         <button type="button" onclick="showAlert({ type: 'warning', title: 'Hapus Foto', message: 'Apakah Anda yakin ingin menghapus foto profil?', primaryText: 'Ya, Hapus', secondaryText: 'Batal', onConfirm: () => document.getElementById('delete-avatar-form').submit() })" class="absolute -top-1 -right-1 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-red-600 shadow-md transition" title="Hapus Foto">
                                             <i class="fas fa-times text-[10px]"></i>
                                         </button>
@@ -210,6 +210,43 @@
                     <!-- Decorative Icon -->
                     <i class="fas fa-fish absolute -right-6 -bottom-6 text-[120px] text-white/10 rotate-12"></i>
                 </div>
+
+                @if($type !== 'admin')
+                <!-- Zona Bahaya: Hapus Akun -->
+                <div class="mt-8 bg-white rounded-2xl md:rounded-3xl shadow-sm border border-red-100 overflow-hidden">
+                    <div class="px-6 md:px-8 py-5 border-b border-red-50 bg-red-50/50">
+                        <h3 class="text-lg font-bold text-red-700 flex items-center gap-2">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Zona Bahaya
+                        </h3>
+                    </div>
+                    <div class="p-6 md:p-8">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                            <div class="flex-grow">
+                                <h4 class="font-semibold text-gray-900 mb-1">Hapus Akun Permanen</h4>
+                                <p class="text-sm text-gray-500 leading-relaxed">
+                                    Menghapus akun akan menghilangkan semua data profil Anda secara permanen.
+                                    @if($type === 'user')
+                                        <span class="text-blue-600 font-medium">Ingin mendaftar sebagai Member? Hapus akun User ini terlebih dahulu, lalu daftar ulang sebagai Member.</span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <form id="delete-account-form" action="{{ route('profile.delete-account') }}" method="POST" class="hidden">
+                                    @csrf
+                                </form>
+                                <button type="button"
+                                    onclick="showAlert({ type: 'error', title: 'Hapus Akun?', message: 'Tindakan ini tidak dapat dibatalkan. Semua data profil Anda akan dihapus secara permanen. Apakah Anda yakin?', primaryText: 'Ya, Hapus Akun Saya', secondaryText: 'Batal', onConfirm: () => document.getElementById('delete-account-form').submit() })"
+                                    class="w-full md:w-auto px-6 py-2.5 bg-white border-2 border-red-300 text-red-600 font-semibold rounded-xl hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200 flex items-center justify-center gap-2 text-sm">
+                                    <i class="fas fa-trash-alt"></i>
+                                    Hapus Akun
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
             </div>
         </div>
     </div>

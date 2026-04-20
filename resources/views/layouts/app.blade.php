@@ -250,7 +250,7 @@
                         <div class="dropdown relative">
                             <button class="dropdown-toggle flex items-center space-x-2 text-gray-700 hover:text-blue-600 font-medium transition" onclick="toggleDropdown(this)">
                                 @if(!empty($user['avatar']))
-                                    <img src="{{ asset('storage/' . $user['avatar']) }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                                    <img src="{{ str_starts_with($user['avatar'], 'http') ? $user['avatar'] : asset('storage/' . $user['avatar']) }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-gray-200">
                                 @else
                                     <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-user text-blue-600 text-sm"></i>
@@ -374,7 +374,7 @@
                         <!-- Mobile Profile Card -->
                         <a href="{{ route('profile') }}" class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-blue-50 transition mb-2">
                             @if(!empty($userMobile['avatar']))
-                                <img src="{{ asset('storage/' . $userMobile['avatar']) }}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0">
+                                <img src="{{ str_starts_with($userMobile['avatar'], 'http') ? $userMobile['avatar'] : asset('storage/' . $userMobile['avatar']) }}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0">
                             @else
                                 <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold flex-shrink-0 border-2 border-white shadow-sm">
                                     {{ substr($userMobile['name'] ?? 'U', 0, 1) }}

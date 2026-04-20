@@ -518,6 +518,54 @@ class AuthController extends Controller
     }
 
     /**
+     * Delete user account permanently
+     */
+    public function deleteAccount(\Illuminate\Http\Request $request)
+    {
+        if (!Session::has('user')) {
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $session = Session::get('user');
+        $user = null;
+
+        if ($session['type'] === 'admin') {
+            return back()->with('error', 'Akun admin tidak dapat dihapus dari sini.');
+        } elseif ($session['type'] === 'member') {
+            $user = Member::find($session['id']);
+        } else {
+            $user = User::find($session['id']);
+        }
+
+        if (!$user) {
+            return back()->with('error', 'User tidak ditemukan.');
+        }
+
+        // Hapus avatar jika ada
+        if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+        }
+
+        // Hapus cart data
+        \App\Models\ShoppingCart::where('user_id', $session['id'])
+            ->where('user_type', $session['type'])
+            ->delete();
+
+        // Hapus akun
+        $user->delete();
+
+        // Clear session & cookie
+        Session::forget('user');
+        Session::flush();
+
+        if (Cookie::has('fisheries_remember')) {
+            Cookie::queue(Cookie::forget('fisheries_remember'));
+        }
+
+        return redirect('/')->with('success', 'Akun Anda berhasil dihapus. Anda dapat mendaftar kembali kapan saja.');
+    }
+
+    /**
      * Update user address via AJAX
      */
     public function updateAddress(\Illuminate\Http\Request $request)

@@ -40,30 +40,6 @@
     </div>
 </div>
 
-<!-- Stats Section -->
-<div class="bg-blue-600 py-8">
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
-            <div>
-                <div class="text-3xl md:text-4xl font-bold mb-1">{{ get_setting('stats_members', '2000+') }}</div>
-                <div class="text-sm opacity-90">{{ get_setting('stats_members_label', 'Anggota Aktif') }}</div>
-            </div>
-            <div>
-                <div class="text-3xl md:text-4xl font-bold mb-1">{{ get_setting('stats_dpc', '10') }}</div>
-                <div class="text-sm opacity-90">{{ get_setting('stats_dpc_label', 'DPC Kaltim') }}</div>
-            </div>
-            <div>
-                <div class="text-3xl md:text-4xl font-bold mb-1">{{ get_setting('stats_products', '50+') }}</div>
-                <div class="text-sm opacity-90">{{ get_setting('stats_products_label', 'Produk Unggulan') }}</div>
-            </div>
-            <div>
-                <div class="text-3xl md:text-4xl font-bold mb-1">{{ get_setting('stats_partners', '500+') }}</div>
-                <div class="text-sm opacity-90">{{ get_setting('stats_partners_label', 'Mitra Bisnis') }}</div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- News Slider -->
 <div class="container mx-auto px-4 py-12">
     <div class="flex items-center justify-between mb-8">
