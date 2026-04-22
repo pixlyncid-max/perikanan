@@ -1029,10 +1029,13 @@
         if (rawAddr && rawAddr.trim() !== '') {
             try {
                 // Determine if it needs one or two parses (handles stringified JSON in DB)
-                let d = (typeof rawAddr === 'string' && rawAddr.startsWith('{')) ? JSON.parse(rawAddr) : rawAddr;
-                if (typeof d === 'string') d = JSON.parse(d); // Second parse if still string
+                let d = rawAddr;
+                if (typeof rawAddr === 'string' && rawAddr.startsWith('{')) {
+                    d = JSON.parse(rawAddr);
+                    if (typeof d === 'string') d = JSON.parse(d);
+                }
                 
-                if (d && d.prov_name) {
+                if (typeof d === 'object' && d !== null && d.prov_name) {
                     const fullRegion = `${d.prov_name}, ${d.city_name}, ${d.dist_name}`;
                     const fullAddr = `${d.address}${d.detail ? ', ' + d.detail : ''}`;
                     
@@ -1052,7 +1055,11 @@
                     document.getElementById('display-address-text').textContent = rawAddr;
                     document.getElementById('cust_address').value = rawAddr;
                 }
-            } catch (e) { console.error('Address parse error', e, rawAddr); }
+            } catch (e) { 
+                console.error('Address parse error', e, rawAddr); 
+                document.getElementById('display-address-text').textContent = rawAddr;
+                document.getElementById('cust_address').value = rawAddr;
+            }
         }
     })();
 
@@ -1392,7 +1399,7 @@
         const city = document.getElementById('cust_city').value.trim();
         const channel = document.querySelector('input[name="payment_channel"]:checked')?.value;
 
-        if (!name || !phone || !address || !city) {
+        if (!name || !phone || !address) {
             toggleAddressEdit();
             return showAlert({type:'warning', title:'Alamat Belum Lengkap', message:'Silakan lengkapi alamat pengiriman Anda.'});
         }
