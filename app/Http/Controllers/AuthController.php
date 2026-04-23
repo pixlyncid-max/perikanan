@@ -129,6 +129,24 @@ class AuthController extends Controller
             return redirect('/register');
         }
 
+        // Password strength validation
+        if (strlen($password) < 8) {
+            Session::flash('error', 'Password minimal 8 karakter.');
+            return redirect('/register');
+        }
+        if (!preg_match('/[A-Z]/', $password)) {
+            Session::flash('error', 'Password harus mengandung minimal 1 huruf besar (A-Z).');
+            return redirect('/register');
+        }
+        if (!preg_match('/[a-z]/', $password)) {
+            Session::flash('error', 'Password harus mengandung minimal 1 huruf kecil (a-z).');
+            return redirect('/register');
+        }
+        if (!preg_match('/[0-9]/', $password)) {
+            Session::flash('error', 'Password harus mengandung minimal 1 angka (0-9).');
+            return redirect('/register');
+        }
+
         // Check if email exists in any table
         $existingUser = User::where('email', $email)->first();
         $existingMember = Member::where('email', $email)->first();
