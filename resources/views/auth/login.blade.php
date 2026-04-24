@@ -40,21 +40,21 @@
                         </button>
                     </div>
                     <!-- Password Validation Checklist -->
-                    <div id="login-password-checklist" class="mt-2 space-y-1 hidden" style="transition: all 0.3s ease;">
-                        <div class="flex items-center text-xs" id="login-check-length">
-                            <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="login-icon-length"></i>
+                    <div id="login-password-checklist" class="mt-2 space-y-1.5 hidden" style="transition: all 0.3s ease;">
+                        <div class="flex items-center text-sm" id="login-check-length">
+                            <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="login-icon-length"></i>
                             <span class="text-gray-500 transition-colors duration-300" id="login-text-length">Minimal 8 karakter</span>
                         </div>
-                        <div class="flex items-center text-xs" id="login-check-uppercase">
-                            <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="login-icon-uppercase"></i>
+                        <div class="flex items-center text-sm" id="login-check-uppercase">
+                            <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="login-icon-uppercase"></i>
                             <span class="text-gray-500 transition-colors duration-300" id="login-text-uppercase">Minimal 1 huruf besar (A-Z)</span>
                         </div>
-                        <div class="flex items-center text-xs" id="login-check-lowercase">
-                            <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="login-icon-lowercase"></i>
+                        <div class="flex items-center text-sm" id="login-check-lowercase">
+                            <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="login-icon-lowercase"></i>
                             <span class="text-gray-500 transition-colors duration-300" id="login-text-lowercase">Minimal 1 huruf kecil (a-z)</span>
                         </div>
-                        <div class="flex items-center text-xs" id="login-check-number">
-                            <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="login-icon-number"></i>
+                        <div class="flex items-center text-sm" id="login-check-number">
+                            <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="login-icon-number"></i>
                             <span class="text-gray-500 transition-colors duration-300" id="login-text-number">Minimal 1 angka (0-9)</span>
                         </div>
                     </div>

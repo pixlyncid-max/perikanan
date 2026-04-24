@@ -96,21 +96,21 @@
                             </button>
                         </div>
                         <!-- Password Validation Checklist -->
-                        <div id="reg-password-checklist" class="mt-2 space-y-1 hidden" style="transition: all 0.3s ease;">
-                            <div class="flex items-center text-xs" id="reg-check-length">
-                                <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="reg-icon-length"></i>
+                        <div id="reg-password-checklist" class="mt-2 space-y-1.5 hidden" style="transition: all 0.3s ease;">
+                            <div class="flex items-center text-sm" id="reg-check-length">
+                                <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="reg-icon-length"></i>
                                 <span class="text-gray-500 transition-colors duration-300" id="reg-text-length">Minimal 8 karakter</span>
                             </div>
-                            <div class="flex items-center text-xs" id="reg-check-uppercase">
-                                <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="reg-icon-uppercase"></i>
+                            <div class="flex items-center text-sm" id="reg-check-uppercase">
+                                <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="reg-icon-uppercase"></i>
                                 <span class="text-gray-500 transition-colors duration-300" id="reg-text-uppercase">Minimal 1 huruf besar (A-Z)</span>
                             </div>
-                            <div class="flex items-center text-xs" id="reg-check-lowercase">
-                                <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="reg-icon-lowercase"></i>
+                            <div class="flex items-center text-sm" id="reg-check-lowercase">
+                                <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="reg-icon-lowercase"></i>
                                 <span class="text-gray-500 transition-colors duration-300" id="reg-text-lowercase">Minimal 1 huruf kecil (a-z)</span>
                             </div>
-                            <div class="flex items-center text-xs" id="reg-check-number">
-                                <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="reg-icon-number"></i>
+                            <div class="flex items-center text-sm" id="reg-check-number">
+                                <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="reg-icon-number"></i>
                                 <span class="text-gray-500 transition-colors duration-300" id="reg-text-number">Minimal 1 angka (0-9)</span>
                             </div>
                         </div>
@@ -128,8 +128,8 @@
                         </div>
                         <!-- Confirmation match indicator -->
                         <div id="reg-confirm-message" class="mt-2 hidden" style="transition: all 0.3s ease;">
-                            <div class="flex items-center text-xs">
-                                <i class="fas fa-circle text-gray-300 mr-2 text-[6px] transition-all duration-300" id="reg-icon-match"></i>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-circle text-gray-300 mr-2 text-[10px] transition-all duration-300" id="reg-icon-match"></i>
                                 <span class="text-gray-500 transition-colors duration-300" id="reg-text-match">Password harus sama</span>
                             </div>
                         </div>
