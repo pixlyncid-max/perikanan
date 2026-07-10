@@ -3,14 +3,7 @@
 @section('title', 'Pakan Hidup - FISHERIES')
 
 @section('content')
-<div class="relative bg-gradient-to-r from-green-600 to-green-500 py-16">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Pakan Hidup</h1>
-            <p class="text-xl opacity-90">Pakan alami untuk kesehatan dan pertumbuhan optimal</p>
-        </div>
-    </div>
-</div>
+
 
 <div class="container mx-auto px-4 py-12">
 

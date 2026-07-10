@@ -27,108 +27,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/app.js') }}" defer></script>
     
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
         }
-        .dropdown-menu {
-            display: none;
-        }
-        .dropdown-menu.active {
-            display: block;
-        }
-        .dropdown-toggle.active {
-            color: #2563eb;
-        }
+        /* Tailwind purge guard — these are still set by app.css */
         .dropdown-toggle.active i {
             transform: rotate(180deg);
         }
         .dropdown-toggle i {
             transition: transform 0.2s ease;
-        }
-
-        /* Success Modal Styles */
-        #success-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            animation: modalFadeIn 0.3s ease-out;
-        }
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translate(-50%, -60%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
-        }
-
-        /* Flying Animation Styles */
-        .fly-item {
-            position: fixed;
-            z-index: 9999;
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-            pointer-events: none;
-            transition: all 0.8s cubic-bezier(0.42, 0, 0.58, 1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            border: 2px solid white;
-        }
-
-        /* Checkout Modal Styles */
-        #checkout-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        #checkout-modal-content {
-            background: white;
-            width: 100%;
-            max-width: 800px;
-            height: 85vh;
-            max-height: 800px;
-            min-height: 500px;
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes modalPop {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        /* Alert Modal Styles */
-        #alert-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-        #alert-modal-content {
-            background: white;
-            width: 100%;
-            max-width: 450px;
-            border-radius: 2rem;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
     </style>
 
@@ -137,118 +49,114 @@
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
+
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav class="sticky top-0 z-50 bg-[#002A49] transition-all duration-300 border-b border-white/5">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
-                <a href="/" class="flex items-center space-x-2">
-                    <img src="{{ asset('images/Logo_Symbol.png') }}" alt="Logo Symbol" class="h-10 w-10 object-contain">
-                    <img src="{{ asset('images/Logo_Font.png') }}" alt="Logo Font" class="h-8 object-contain">
+                <a href="/" class="flex items-center space-x-2 group">
+                    <img src="{{ asset('images/Logo_Symbol_White.png') }}" alt="Logo Symbol" class="h-10 w-10 object-contain group-hover:scale-105 transition-transform duration-300">
+                    <img src="{{ asset('images/Logo_font_Putih.png') }}" alt="Logo Font" class="h-8 object-contain">
                 </a>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="/" class="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition">Beranda</a>
+                    <a href="/" class="px-3 py-2 text-white/90 hover:text-white font-medium transition">Beranda</a>
                     
                     <!-- Organization Dropdown -->
                     <div class="dropdown relative">
-                        <button class="dropdown-toggle px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition flex items-center" onclick="toggleDropdown(this)">
+                        <button class="dropdown-toggle px-3 py-2 text-white/90 hover:text-white font-medium transition flex items-center" onclick="toggleDropdown(this)">
                             Organisasi <i class="fas fa-chevron-down ml-1 text-xs"></i>
                         </button>
 
-                        <div class="dropdown-menu absolute top-full left-0 w-64 bg-white rounded-lg shadow-xl border mt-1 py-2">
-                            <a href="/organization/structure" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Struktur Organisasi</a>
-                            <div class="border-t my-1"></div>
-                            <p class="px-4 py-1 text-xs text-gray-500 font-semibold">DPC KALTIM</p>
-                            <a href="/organization/dpc/samarinda" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Samarinda</a>
-                            <a href="/organization/dpc/balikpapan" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Balikpapan</a>
-                            <a href="/organization/dpc/bontang" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Bontang</a>
-                            <a href="/organization/dpc/berau" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Berau</a>
-                            <a href="/organization/dpc/kutai-kartanegara" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Kutai Kartanegara</a>
-                            <a href="/organization/dpc/paser" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Paser</a>
-                            <a href="/organization/dpc/penajam-paser-utara" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Penajam Paser Utara</a>
-                            <a href="/organization/dpc/kutai-barat" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Kutai Barat</a>
-                            <a href="/organization/dpc/kutai-timur" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Kutai Timur</a>
-                            <a href="/organization/dpc/mahakam-ulu" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">DPC Mahakam Ulu</a>
-
-
+                        <div class="dropdown-menu absolute top-full left-0 w-64 bg-[#002A49] rounded-lg shadow-xl border border-white/10 mt-1 py-2">
+                            <a href="/organization/dpp" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white">Dewan Pengurus Pusat (DPP)</a>
+                            <a href="/organization/dpw" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white">Dewan Pengurus Wilayah (DPW)</a>
+                            <a href="/organization/dpc" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white">Dewan Pengurus Cabang (DPC)</a>
                         </div>
                     </div>
 
                     <!-- Produk Dropdown -->
                     <div class="dropdown relative">
-                        <button class="dropdown-toggle px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition flex items-center" onclick="toggleDropdown(this)">
+                        <button class="dropdown-toggle px-3 py-2 text-white/90 hover:text-white font-medium transition flex items-center" onclick="toggleDropdown(this)">
                             Produk <i class="fas fa-chevron-down ml-1 text-xs"></i>
                         </button>
 
-                        <div class="dropdown-menu absolute top-full left-0 w-64 bg-white rounded-lg shadow-xl border mt-1 py-2">
+                        <div class="dropdown-menu absolute top-full left-0 w-64 bg-[#002A49] rounded-lg shadow-xl border border-white/10 mt-1 py-2">
                             <!-- Semua Produk -->
-                            <a href="/produk" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-medium border-b border-gray-200">Semua Produk</a>
+                            <a href="/produk" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white font-medium border-b border-white/10">Semua Produk</a>
                             
                             <!-- SPOT AIR TAWAR -->
-                            <div class="px-4 py-1.5 border-t border-gray-200">
-                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider cursor-default">SPOT AIR TAWAR</span>
+                            <div class="px-4 py-1.5 border-t border-white/10">
+                                <span class="text-xs font-bold text-white/50 uppercase tracking-wider cursor-default">SPOT AIR TAWAR</span>
                             </div>
 
-                            <a href="/produk/pelet-pakan" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Pelet Pakan Ikan</a>
-                            <a href="/produk/pakan-hidup" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Pakan Hidup</a>
-                            <a href="/produk/sewa-pancing" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Sewa Pancing</a>
-                            <a href="/produk/kolam-pemancingan" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Kolam Pemancingan</a>
-                            <a href="/produk/komunitas-air-tawar" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Komunitas Air Tawar</a>
+                            <a href="/produk/pelet-pakan" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Pelet Pakan Ikan</a>
+                            <a href="/produk/pakan-hidup" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Pakan Hidup</a>
+                            <a href="/produk/sewa-pancing" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Sewa Pancing</a>
+                            <a href="/produk/kolam-pemancingan" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Kolam Pemancingan</a>
+                            <a href="/produk/komunitas-air-tawar" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Komunitas Air Tawar</a>
                             
                             <!-- SPOT AIR LAUT -->
-                            <div class="px-4 py-1.5 border-t border-gray-200 mt-1">
-                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider cursor-default">SPOT AIR LAUT</span>
+                            <div class="px-4 py-1.5 border-t border-white/10 mt-1">
+                                <span class="text-xs font-bold text-white/50 uppercase tracking-wider cursor-default">SPOT AIR LAUT</span>
                             </div>
 
-                            <a href="/produk/umpan-laut" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Umpan Ikan Laut</a>
-                            <a href="/produk/sewa-pancing-laut" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Sewa Pancing Laut</a>
-                            <a href="/produk/penyewaan-kapal" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Sewa Kapal</a>
-                            <a href="/produk/komunitas-air-laut" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Komunitas Air Laut</a>
+                            <a href="/produk/umpan-laut" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Umpan Ikan Laut</a>
+                            <a href="/produk/sewa-pancing-laut" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Sewa Pancing Laut</a>
+                            <a href="/produk/penyewaan-kapal" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Sewa Kapal</a>
+                            <a href="/produk/komunitas-air-laut" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Komunitas Air Laut</a>
                             
                             <!-- LAIN-LAIN -->
-                            <div class="px-4 py-1.5 border-t border-gray-200 mt-1">
-                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider cursor-default">LAIN-LAIN</span>
+                            <div class="px-4 py-1.5 border-t border-white/10 mt-1">
+                                <span class="text-xs font-bold text-white/50 uppercase tracking-wider cursor-default">LAIN-LAIN</span>
                             </div>
 
-                            <a href="/produk/vitamin-air" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Vitamin</a>
-                            <a href="/produk/bibit-ikan" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 pl-6">Bibit</a>
+                            <a href="/produk/vitamin-air" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Vitamin</a>
+                            <a href="/produk/bibit-ikan" class="block px-4 py-2 text-white/95 hover:bg-[#019ADA] hover:text-white pl-6">Bibit</a>
                         </div>
                     </div>
 
-
-                    <a href="/about" class="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition">Tentang Kami</a>
-                    <a href="/partnership" class="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition">Kemitraan</a>
-                    <a href="/article" class="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition">Artikel</a>
-                    <a href="/contact" class="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition">Kontak</a>
+                    <a href="/about" class="px-3 py-2 text-white/90 hover:text-white font-medium transition">Tentang Kami</a>
+                    <a href="/partnership" class="px-3 py-2 text-white/90 hover:text-white font-medium transition">Kemitraan</a>
+                    <a href="/article" class="px-3 py-2 text-white/90 hover:text-white font-medium transition">Artikel</a>
+                    <a href="/contact" class="px-3 py-2 text-white/90 hover:text-white font-medium transition">Kontak</a>
                 </div>
 
                 <!-- Cart & Auth Buttons -->
                 <div class="hidden md:flex items-center space-x-3">
                     
                     <!-- Cart Icon -->
-                    <a href="{{ route('cart.index') }}" id="navbar-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
+                    <a href="{{ route('cart.index') }}" id="navbar-cart-icon" class="relative p-2 text-white/90 hover:text-white transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         @php $cartCount = array_sum(array_column(Session::get('cart', []), 'quantity')); @endphp
                         @if($cartCount > 0)
-                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-[#019ADA] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#002A49]">
                                 {{ $cartCount }}
                             </span>
                         @else
-                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white hidden">
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-[#019ADA] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#002A49] hidden">
                                 0
                             </span>
                         @endif
                     </a>
 
+                    <!-- Hubungi Kami CTA -->
+                    @php
+                        $waNumber = preg_replace('/[^0-9]/', '', get_setting('whatsapp_number', '6281255245604'));
+                        if (str_starts_with($waNumber, '0')) $waNumber = '62' . substr($waNumber, 1);
+                    @endphp
+                    <a href="https://wa.me/{{ $waNumber }}" target="_blank" class="inline-flex items-center justify-center px-4 bg-[#019ADA] text-white rounded-full font-medium hover:bg-[#017CB3] transition-all duration-300 text-xs shadow hover:shadow-md h-[30px]">
+                        Hubungi Kami
+                    </a>
+
                     <?php if(!is_logged_in()): ?>
-                        <a href="/login" class="px-4 py-2 text-blue-600 font-medium hover:text-blue-700 transition">Login</a>
-                        <a href="/register" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">Daftar</a>
+                        <a href="/login" class="px-4 py-2 text-white/90 font-medium hover:text-white transition">Login</a>
                     <?php else: ?>
                         <?php $user = \Illuminate\Support\Facades\Session::get('user'); ?>
                         <div class="dropdown relative">
-                            <button class="dropdown-toggle flex items-center space-x-2 text-gray-700 hover:text-blue-600 font-medium transition" onclick="toggleDropdown(this)">
+                            <button class="dropdown-toggle flex items-center space-x-2 text-white/90 hover:text-white font-medium transition" onclick="toggleDropdown(this)">
                                 @if(!empty($user['avatar']))
                                     <img src="{{ str_starts_with($user['avatar'], 'http') ? $user['avatar'] : asset('storage/' . $user['avatar']) }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-gray-200">
                                 @else
@@ -265,29 +173,29 @@
                                 <i class="fas fa-chevron-down text-xs"></i>
                             </button>
 
-                            <div class="dropdown-menu absolute top-full right-0 w-48 bg-white rounded-lg shadow-xl border mt-1 py-2">
-                                <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                            <div class="dropdown-menu absolute top-full right-0 w-52 bg-[#002A49] rounded-lg shadow-2xl border border-white/10 mt-1 py-2 z-[9999]">
+                                <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-white/90 hover:bg-[#019ADA] hover:text-white transition-colors">
                                     <i class="fas fa-shopping-bag mr-2"></i>Pesanan Saya
                                 </a>
-                                <a href="{{ route('produk.favorit') }}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                <a href="{{ route('produk.favorit') }}" class="block px-4 py-2 text-white/90 hover:bg-[#019ADA] hover:text-white transition-colors">
                                     <i class="fas fa-heart mr-2 text-red-400"></i>Favorit Saya
                                 </a>
-                                <a href="/member-card" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                <a href="/member-card" class="block px-4 py-2 text-white/90 hover:bg-[#019ADA] hover:text-white transition-colors">
                                     <i class="fas fa-id-card mr-2"></i>Kartu Anggota
                                 </a>
                                 <?php if($user['type'] === 'admin'): ?>
-                                    <a href="/admin/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <a href="/admin/dashboard" class="block px-4 py-2 text-white/90 hover:bg-[#019ADA] hover:text-white transition-colors">
                                         <i class="fas fa-cog mr-2"></i>Panel Admin
                                     </a>
                                 <?php endif; ?>
 
-                                <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                <a href="{{ route('profile') }}" class="block px-4 py-2 text-white/90 hover:bg-[#019ADA] hover:text-white transition-colors">
                                     <i class="fas fa-user-cog mr-2"></i>Profil
                                 </a>
-                                <div class="border-t my-1"></div>
+                                <div class="border-t border-white/10 my-1"></div>
                                 <form action="/logout" method="POST" class="block">
                                     @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors">
                                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                                     </button>
                                 </form>
@@ -300,130 +208,144 @@
                 <!-- Mobile Cart & Menu Button -->
                 <div class="flex items-center gap-3 md:hidden">
                     
-                    <a href="{{ route('cart.index') }}" id="mobile-cart-icon" class="relative p-2 text-gray-700 hover:text-blue-600 transition">
+                    <a href="{{ route('cart.index') }}" id="mobile-cart-icon" class="relative p-2 text-white/90 hover:text-white transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         @php $cartCount = array_sum(array_column(Session::get('cart', []), 'quantity')); @endphp
                         @if($cartCount > 0)
-                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-[#019ADA] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#002A49]">
                                 {{ $cartCount }}
                             </span>
                         @else
-                            <span class="cart-counter-badge absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white hidden">
+                            <span class="cart-counter-badge absolute top-0 right-0 bg-[#019ADA] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#002A49] hidden">
                                 0
                             </span>
                         @endif
                     </a>
 
                     <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md">
+                    <button id="mobile-menu-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 focus:outline-none transition-all duration-200">
                         <i id="menu-icon" class="fas fa-bars text-xl transition-transform duration-200"></i>
                     </button>
                 </div>
 
-
             </div>
         </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t shadow-lg max-h-[80vh] overflow-y-auto">
-            <div class="px-4 py-3 space-y-1">
-
-                <a href="/" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Beranda</a>
-                <a href="/organization/structure" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Organisasi</a>
-                <!-- Produk Mobile Menu -->
-                <div class="space-y-1">
-                    <a href="/produk" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium border-b border-gray-200">Semua Produk</a>
-                    
-                    <div class="px-3 py-1 border-t border-gray-200">
-                        <span class="text-xs font-bold text-gray-500 uppercase">SPOT AIR TAWAR</span>
-                    </div>
-
-                    <a href="/produk/pelet-pakan" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Pelet Pakan Ikan</a>
-                    <a href="/produk/pakan-hidup" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Pakan Hidup</a>
-                    <a href="/produk/sewa-pancing" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Sewa Pancing</a>
-                    <a href="/produk/kolam-pemancingan" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Kolam Pemancingan</a>
-                    <a href="/produk/komunitas-air-tawar" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Komunitas Air Tawar</a>
-                    
-                    <div class="px-3 py-1 border-t border-gray-200 mt-1">
-                        <span class="text-xs font-bold text-gray-500 uppercase">SPOT AIR LAUT</span>
-                    </div>
-
-                    <a href="/produk/umpan-laut" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Umpan Ikan Laut</a>
-                    <a href="/produk/sewa-pancing-laut" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Sewa Pancing Laut</a>
-                    <a href="/produk/penyewaan-kapal" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Sewa Kapal</a>
-                    <a href="/produk/komunitas-air-laut" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Komunitas Air Laut</a>
-                    
-                    <div class="px-3 py-1 border-t border-gray-200 mt-1">
-                        <span class="text-xs font-bold text-gray-500 uppercase">LAIN-LAIN</span>
-                    </div>
-
-                    <a href="/produk/vitamin-air" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Vitamin</a>
-                    <a href="/produk/bibit-ikan" class="block px-3 py-2 text-gray-600 hover:text-blue-600 pl-6">Bibit</a>
+    </nav>
+ 
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden fixed left-0 right-0 top-16 bg-white border-b shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto z-[9999]">
+        <div class="px-4 py-3 space-y-1">
+            <a href="/" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold border-b border-gray-100">Beranda</a>
+            
+            <!-- Organisasi Collapsible Mobile -->
+            <div class="border-b border-gray-100">
+                <button onclick="document.getElementById('mobile-org-menu').classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')" class="w-full flex justify-between items-center px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold focus:outline-none">
+                    <span>Organisasi</span>
+                    <i class="fas fa-chevron-down text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="mobile-org-menu" class="hidden pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-lg">
+                    <a href="/organization/dpp" class="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600">Dewan Pengurus Pusat (DPP)</a>
+                    <a href="/organization/dpw" class="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600">Dewan Pengurus Wilayah (DPW)</a>
+                    <a href="/organization/dpc" class="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600">Dewan Pengurus Cabang (DPC)</a>
                 </div>
+            </div>
 
-                <a href="/about" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Tentang Kami</a>
-                <a href="/partnership" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Kemitraan</a>
-                <a href="/article" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Artikel</a>
-                <a href="/contact" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium">Kontak</a>
-                <div class="border-t pt-2 mt-2">
-                    <?php if(!is_logged_in()): ?>
-                        <a href="/login" class="block px-3 py-2 text-blue-600 font-medium">Login</a>
-                        <a href="/register" class="block px-3 py-2 bg-blue-600 text-white rounded-lg font-medium text-center">Daftar</a>
-                    <?php else: ?>
-                        <?php $userMobile = \Illuminate\Support\Facades\Session::get('user'); ?>
-                        <!-- Mobile Profile Card -->
-                        <a href="{{ route('profile') }}" class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-blue-50 transition mb-2">
-                            @if(!empty($userMobile['avatar']))
-                                <img src="{{ str_starts_with($userMobile['avatar'], 'http') ? $userMobile['avatar'] : asset('storage/' . $userMobile['avatar']) }}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0">
-                            @else
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold flex-shrink-0 border-2 border-white shadow-sm">
-                                    {{ substr($userMobile['name'] ?? 'U', 0, 1) }}
-                                </div>
-                            @endif
-                            <div class="flex-grow min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-semibold text-gray-900 truncate text-sm">{{ $userMobile['name'] ?? 'User' }}</span>
-                                    @if($userMobile['type'] === 'admin')
-                                        <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">ADMIN</span>
-                                    @elseif($userMobile['type'] === 'member')
-                                        <span class="bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">MEMBER</span>
-                                    @endif
-                                </div>
-                                <p class="text-xs text-gray-500 truncate">{{ $userMobile['email'] ?? '' }}</p>
+            <!-- Produk Collapsible Mobile -->
+            <div class="border-b border-gray-100">
+                <button onclick="document.getElementById('mobile-product-menu').classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')" class="w-full flex justify-between items-center px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold focus:outline-none">
+                    <span>Produk</span>
+                    <i class="fas fa-chevron-down text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="mobile-product-menu" class="hidden pl-4 pb-2 space-y-1 bg-gray-50/50 rounded-lg">
+                    <a href="/produk" class="block px-3 py-2 text-sm text-gray-700 hover:text-blue-600 font-medium border-b border-gray-200/50">Semua Produk</a>
+                    
+                    <div class="px-3 py-1 mt-2">
+                        <span class="text-[10px] font-bold text-gray-450 uppercase tracking-wider">SPOT AIR TAWAR</span>
+                    </div>
+                    <a href="/produk/pelet-pakan" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Pelet Pakan Ikan</a>
+                    <a href="/produk/pakan-hidup" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Pakan Hidup</a>
+                    <a href="/produk/sewa-pancing" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Sewa Pancing</a>
+                    <a href="/produk/kolam-pemancingan" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Kolam Pemancingan</a>
+                    <a href="/produk/komunitas-air-tawar" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Komunitas Air Tawar</a>
+                    
+                    <div class="px-3 py-1 mt-2 border-t border-gray-100 pt-2">
+                        <span class="text-[10px] font-bold text-gray-450 uppercase tracking-wider">SPOT AIR LAUT</span>
+                    </div>
+                    <a href="/produk/umpan-laut" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Umpan Ikan Laut</a>
+                    <a href="/produk/sewa-pancing-laut" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Sewa Pancing Laut</a>
+                    <a href="/produk/penyewaan-kapal" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Sewa Kapal</a>
+                    <a href="/produk/komunitas-air-laut" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Komunitas Air Laut</a>
+                    
+                    <div class="px-3 py-1 mt-2 border-t border-gray-100 pt-2">
+                        <span class="text-[10px] font-bold text-gray-450 uppercase tracking-wider">LAIN-LAIN</span>
+                    </div>
+                    <a href="/produk/vitamin-air" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Vitamin</a>
+                    <a href="/produk/bibit-ikan" class="block px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 pl-5">Bibit</a>
+                </div>
+            </div>
+
+            <a href="/about" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold border-b border-gray-100">Tentang Kami</a>
+            <a href="/partnership" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold border-b border-gray-100">Kemitraan</a>
+            <a href="/article" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold border-b border-gray-100">Artikel</a>
+            <a href="/contact" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold border-b border-gray-100">Kontak</a>
+            <div class="border-t pt-2 mt-2">
+                <?php if(!is_logged_in()): ?>
+                    <a href="/login" class="block px-3 py-2 text-blue-600 font-medium">Login</a>
+                    <a href="/register" class="block px-3 py-2 bg-blue-600 text-white rounded-lg font-medium text-center">Daftar</a>
+                <?php else: ?>
+                    <?php $userMobile = \Illuminate\Support\Facades\Session::get('user'); ?>
+                    <!-- Mobile Profile Card -->
+                    <a href="{{ route('profile') }}" class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-blue-50 transition mb-2">
+                        @if(!empty($userMobile['avatar']))
+                            <img src="{{ str_starts_with($userMobile['avatar'], 'http') ? $userMobile['avatar'] : asset('storage/' . $userMobile['avatar']) }}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0">
+                        @else
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold flex-shrink-0 border-2 border-white shadow-sm">
+                                {{ substr($userMobile['name'] ?? 'U', 0, 1) }}
                             </div>
-                            <i class="fas fa-chevron-right text-gray-300 text-xs flex-shrink-0"></i>
+                        @endif
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-gray-900 truncate text-sm">{{ $userMobile['name'] ?? 'User' }}</span>
+                                @if($userMobile['type'] === 'admin')
+                                    <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">ADMIN</span>
+                                @elseif($userMobile['type'] === 'member')
+                                    <span class="bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">MEMBER</span>
+                                @endif
+                            </div>
+                            <p class="text-xs text-gray-500 truncate">{{ $userMobile['email'] ?? '' }}</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-300 text-xs flex-shrink-0"></i>
+                    </a>
+
+                    <div class="space-y-0.5">
+                        <a href="{{ route('orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                            <i class="fas fa-shopping-bag text-orange-500 w-5 text-center text-sm"></i>Pesanan Saya
                         </a>
-
-                        <div class="space-y-0.5">
-                            <a href="{{ route('orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
-                                <i class="fas fa-shopping-bag text-orange-500 w-5 text-center text-sm"></i>Pesanan Saya
+                        <a href="{{ route('produk.favorit') }}" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                            <i class="fas fa-heart text-red-400 w-5 text-center text-sm"></i>Favorit Saya
+                        </a>
+                        <a href="/member-card" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                            <i class="fas fa-id-card text-green-500 w-5 text-center text-sm"></i>Kartu Anggota
+                        </a>
+                        <?php if($userMobile['type'] === 'admin'): ?>
+                            <a href="/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
+                                <i class="fas fa-cog text-blue-500 w-5 text-center text-sm"></i>Panel Admin
                             </a>
-                            <a href="{{ route('produk.favorit') }}" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
-                                <i class="fas fa-heart text-red-400 w-5 text-center text-sm"></i>Favorit Saya
-                            </a>
-                            <a href="/member-card" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
-                                <i class="fas fa-id-card text-green-500 w-5 text-center text-sm"></i>Kartu Anggota
-                            </a>
-                            <?php if($userMobile['type'] === 'admin'): ?>
-                                <a href="/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg font-medium transition">
-                                    <i class="fas fa-cog text-blue-500 w-5 text-center text-sm"></i>Panel Admin
-                                </a>
-                            <?php endif; ?>
-                        </div>
+                        <?php endif; ?>
+                    </div>
 
-                        <div class="border-t mt-2 pt-2">
-                            <form action="/logout" method="POST" class="block">
-                                @csrf
-                                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg font-medium transition">
-                                    <i class="fas fa-sign-out-alt w-5 text-center text-sm"></i>Logout
-                                </button>
-                            </form>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
+                    <div class="border-t mt-2 pt-2">
+                        <form action="/logout" method="POST" class="block">
+                            @csrf
+                            <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg font-medium transition">
+                                <i class="fas fa-sign-out-alt w-5 text-center text-sm"></i>Logout
+                            </button>
+                        </form>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
+    </div>
     </nav>
 
     <!-- Success Modal (Centered) -->
@@ -511,8 +433,26 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white">
-        <div class="container mx-auto px-4 py-12">
+    <footer class="bg-[#002A49] text-white border-t border-white/5 relative mt-20">
+        <!-- Animated Water Wave Divider before Footer -->
+        <div class="footer-wave-container" style="position: absolute; top: 0; left: 0; right: 0; transform: translateY(-99%); z-index: 10; pointer-events: none; overflow: hidden; line-height: 0; background: transparent;">
+            <!-- Wave Layer 1 (back, slowest) -->
+            <svg class="footer-wave footer-wave-1" viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <path d="M0,60 C120,80 240,40 360,55 C480,70 600,30 720,50 C840,70 960,35 1080,55 C1200,75 1320,40 1440,60 L1440,100 L0,100 Z" fill="rgba(0,42,73,0.4)"/>
+            </svg>
+            <!-- Wave Layer 2 (middle) -->
+            <svg class="footer-wave footer-wave-2" viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <path d="M0,65 C160,85 320,35 480,55 C640,75 800,30 960,55 C1120,80 1280,40 1440,65 L1440,100 L0,100 Z" fill="rgba(0,42,73,0.6)"/>
+            </svg>
+            <!-- Wave Layer 3 (front, fastest) -->
+            <svg class="footer-wave footer-wave-3" viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <path d="M0,70 C200,90 400,45 600,65 C800,85 1000,40 1200,60 C1300,70 1380,50 1440,70 L1440,100 L0,100 Z" fill="#002A49"/>
+            </svg>
+        </div>
+        <!-- Animated underwater light effect -->
+        <div class="footer-underwater-glow"></div>
+
+        <div class="container mx-auto px-4 py-12 relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- About -->
                 <div>
@@ -520,33 +460,33 @@
                         <img src="{{ asset('images/Logo_Symbol_White.png') }}" alt="Logo Symbol" class="h-10 w-10 object-contain">
                         <img src="{{ asset('images/Logo_font_Putih.png') }}" alt="Logo Font" class="h-8 object-contain">
                     </div>
-                    <p class="text-gray-400 text-sm mb-4">
+                    <p class="text-white/70 text-sm mb-4">
                         {{ get_setting('footer_description', 'Indonesian Fisheries Community - Komunitas perikanan terbesar di Kalimantan Timur.') }}
                     </p>
                     <div class="flex space-x-3">
                         @if(get_setting('instagram_url'))
-                            <a href="{{ get_setting('instagram_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-pink-600 transition">
-                                <i class="fab fa-instagram"></i>
+                            <a href="{{ get_setting('instagram_url') }}" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-pink-600 transition">
+                                <i class="fab fa-instagram text-white"></i>
                             </a>
                         @endif
                         @if(get_setting('facebook_url'))
-                            <a href="{{ get_setting('facebook_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-blue-600 transition">
-                                <i class="fab fa-facebook-f"></i>
+                            <a href="{{ get_setting('facebook_url') }}" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-blue-600 transition">
+                                <i class="fab fa-facebook-f text-white"></i>
                             </a>
                         @endif
                         @if(get_setting('tiktok_url'))
-                            <a href="{{ get_setting('tiktok_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-black transition">
-                                <i class="fab fa-tiktok"></i>
+                            <a href="{{ get_setting('tiktok_url') }}" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-black transition">
+                                <i class="fab fa-tiktok text-white"></i>
                             </a>
                         @endif
                         @if(get_setting('youtube_url'))
-                            <a href="{{ get_setting('youtube_url') }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-red-600 transition">
-                                <i class="fab fa-youtube"></i>
+                            <a href="{{ get_setting('youtube_url') }}" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-red-600 transition">
+                                <i class="fab fa-youtube text-white"></i>
                             </a>
                         @endif
                         @if(get_setting('whatsapp_number'))
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', get_setting('whatsapp_number')) }}" target="_blank" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-green-500 transition">
-                                <i class="fab fa-whatsapp"></i>
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', get_setting('whatsapp_number')) }}" target="_blank" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-green-500 transition">
+                                <i class="fab fa-whatsapp text-white"></i>
                             </a>
                         @endif
                     </div>
@@ -554,8 +494,8 @@
 
                 <!-- Quick Links -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Tautan Cepat</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
+                    <h4 class="text-lg font-semibold mb-4 text-white">Tautan Cepat</h4>
+                    <ul class="space-y-2 text-white/70 text-sm">
                         <li><a href="/about" class="hover:text-white transition">Tentang Kami</a></li>
                         <li><a href="/produk" class="hover:text-white transition">Produk</a></li>
                         <li><a href="/organization/structure" class="hover:text-white transition">Struktur Organisasi</a></li>
@@ -566,8 +506,8 @@
 
                 <!-- Products -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Produk</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
+                    <h4 class="text-lg font-semibold mb-4 text-white">Produk</h4>
+                    <ul class="space-y-2 text-white/70 text-sm">
                         <li><a href="/produk/pelet-pakan" class="hover:text-white transition">Pelet Pakan Ikan</a></li>
                         <li><a href="/produk/pakan-hidup" class="hover:text-white transition">Pakan Hidup</a></li>
                         <li><a href="/produk/umpan-laut" class="hover:text-white transition">Umpan Ikan Laut</a></li>
@@ -579,8 +519,8 @@
 
                 <!-- Contact -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Kontak</h4>
-                    <ul class="space-y-3 text-gray-400 text-sm">
+                    <h4 class="text-lg font-semibold mb-4 text-white">Kontak</h4>
+                    <ul class="space-y-3 text-white/70 text-sm">
                         <li class="flex items-start space-x-3">
                             <i class="fas fa-map-marker-alt mt-1"></i>
                             <span>{!! nl2br(e(get_setting('site_address', 'Jl. Delima Dalam Blok E<br>Sidodadi, Kec. Samarinda Ulu<br>Kota Samarinda, Kalimantan Timur 75243'))) !!}</span>
@@ -597,9 +537,19 @@
                 </div>
             </div>
 
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+            <div class="border-t border-white/10 mt-8 pt-8 text-center text-white/50 text-sm">
                 <p>{{ get_setting('footer_copyright', '© 2026 FISHERIES - Indonesian Fisheries Community. All rights reserved.') }}</p>
             </div>
+        </div>
+
+        <!-- Animated water flow at bottom of footer -->
+        <div class="footer-water-bottom">
+            <svg class="footer-bottom-wave footer-bottom-wave-1" viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <path d="M0,15 C120,25 240,5 360,15 C480,25 600,5 720,15 C840,25 960,5 1080,15 C1200,25 1320,5 1440,15 L1440,40 L0,40 Z" fill="rgba(1,154,218,0.12)"/>
+            </svg>
+            <svg class="footer-bottom-wave footer-bottom-wave-2" viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <path d="M0,20 C180,30 360,10 540,20 C720,30 900,10 1080,20 C1260,30 1380,12 1440,20 L1440,40 L0,40 Z" fill="rgba(1,154,218,0.08)"/>
+            </svg>
         </div>
     </footer>
 
@@ -687,7 +637,7 @@
             
             const cartIcon = cartIconLink || document.querySelector('.fa-shopping-cart').parentElement;
 
-            fetch('{{ route("cart.add") }}', {
+            fetch('{{ route("cart.add", [], false) }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -901,7 +851,6 @@
             }, 3500);
         }
     </script>
-
 
     @stack('scripts')
 </body>

@@ -4,35 +4,35 @@
 
 @section('content')
 <!-- Hero Section with Auto-sliding Background -->
-<div class="relative min-h-[420px] md:h-[500px] overflow-hidden">
+<div class="relative min-h-[450px] md:min-h-[550px] md:h-[600px] overflow-hidden home-hero-indicator">
     <div id="hero-slider" class="absolute inset-0">
         <div class="hero-slide absolute inset-0 transition-opacity duration-1000 opacity-100">
             <img src="https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=1920" alt="Fisheries 1" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-cyan-900/60"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#002A49]/90 to-[#019ADA]/40"></div>
         </div>
         <div class="hero-slide absolute inset-0 transition-opacity duration-1000 opacity-0">
             <img src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=1920" alt="Fisheries 2" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-cyan-900/60"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#002A49]/90 to-[#019ADA]/40"></div>
         </div>
         <div class="hero-slide absolute inset-0 transition-opacity duration-1000 opacity-0">
             <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920" alt="Fisheries 3" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-cyan-900/60"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#002A49]/90 to-[#019ADA]/40"></div>
         </div>
     </div>
     
-    <div class="container mx-auto px-4 min-h-[420px] md:h-[500px] flex items-center relative z-10 py-16 md:py-0">
-        <div class="max-w-2xl text-white">
-            <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
+    <div class="container mx-auto px-4 min-h-[450px] md:min-h-[550px] md:h-[600px] flex items-center relative z-10 py-16 md:py-0">
+        <div class="max-w-3xl text-white">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 md:mb-6 leading-tight tracking-tight font-sans">
                 {{ get_setting('hero_title', 'Indonesian Fisheries Community') }}
             </h1>
-            <p class="text-lg md:text-2xl mb-6 md:mb-8 opacity-90">
+            <p class="text-lg md:text-xl mb-8 md:mb-10 opacity-90 leading-relaxed max-w-2xl font-light text-white/90">
                 {{ get_setting('hero_subtitle', 'Komunitas perikanan terbesar di Kalimantan Timur. Menghubungkan nelayan, pembudidaya, dan pelaku usaha perikanan.') }}
             </p>
-            <div class="flex flex-wrap gap-3 md:gap-4">
-                <a href="{{ get_setting('hero_button1_url', '/produk') }}" class="px-6 md:px-8 py-3 md:py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center">
+            <div class="flex flex-wrap gap-4">
+                <a href="{{ get_setting('hero_button1_url', '/produk') }}" class="px-8 py-4 bg-[#019ADA] text-white rounded-full font-semibold hover:bg-[#017CB3] transition-all duration-300 flex items-center shadow-lg hover:shadow-xl hover:-translate-y-0.5">
                     <i class="fas fa-shopping-bag mr-2"></i> {{ get_setting('hero_button1_text', 'Lihat Produk') }}
                 </a>
-                <a href="{{ get_setting('hero_button2_url', '/register') }}" class="px-6 md:px-8 py-3 md:py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition flex items-center">
+                <a href="{{ get_setting('hero_button2_url', '/register') }}" class="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-full font-semibold hover:bg-white/20 hover:border-white/30 transition-all duration-300 flex items-center backdrop-blur-sm shadow-md hover:-translate-y-0.5">
                     <i class="fas fa-user-plus mr-2"></i> {{ get_setting('hero_button2_text', 'Gabung Sekarang') }}
                 </a>
             </div>
@@ -130,75 +130,77 @@
 </div>
 
 <!-- Featured Products -->
-<div class="container mx-auto px-4 py-12">
-    <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Produk Unggulan</h2>
-        <a href="/produk" class="text-blue-600 font-medium hover:text-blue-700 flex items-center">
-            Lihat Semua <i class="fas fa-arrow-right ml-2"></i>
-        </a>
-    </div>
-    
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <a href="/produk/pelet-pakan" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
-            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-500 transition">
-                <i class="fas fa-cookie text-orange-500 text-2xl group-hover:text-white transition"></i>
-            </div>
-            <h3 class="font-semibold text-gray-800">Pelet Pakan</h3>
-            <p class="text-sm text-gray-600 mt-1">Nutrisi lengkap</p>
-        </a>
+<div class="bg-gradient-to-r from-[#002A49] to-[#019ADA] py-16 text-white my-12 rounded-2xl">
+    <div class="container mx-auto px-6">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-white">Produk Unggulan</h2>
+            <a href="/produk" class="text-white/90 font-medium hover:text-white flex items-center bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition">
+                Lihat Semua <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
         
-        <a href="/produk/pakan-hidup" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500 transition">
-                <i class="fas fa-bug text-green-500 text-2xl group-hover:text-white transition"></i>
-            </div>
-            <h3 class="font-semibold text-gray-800">Pakan Hidup</h3>
-            <p class="text-sm text-gray-600 mt-1">Artemia & cacing</p>
-        </a>
-        
-        <a href="/produk/umpan-laut" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
-            <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-cyan-500 transition">
-                <i class="fas fa-fish text-cyan-500 text-2xl group-hover:text-white transition"></i>
-            </div>
-            <h3 class="font-semibold text-gray-800">Umpan Laut</h3>
-            <p class="text-sm text-gray-600 mt-1">Untuk mancing</p>
-        </a>
-        
-        <a href="/produk/penyewaan-kapal" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500 transition">
-                <i class="fas fa-ship text-blue-500 text-2xl group-hover:text-white transition"></i>
-            </div>
-            <h3 class="font-semibold text-gray-800">Sewa Kapal</h3>
-            <p class="text-sm text-gray-600 mt-1">Kapal nelayan</p>
-        </a>
-        
-        <a href="/produk/vitamin-air" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
-            <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-teal-500 transition">
-                <i class="fas fa-flask text-teal-500 text-2xl group-hover:text-white transition"></i>
-            </div>
-            <h3 class="font-semibold text-gray-800">Vitamin Air</h3>
-            <p class="text-sm text-gray-600 mt-1">Perawatan kolam</p>
-        </a>
-        
-        <a href="/produk/bibit-ikan" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
-            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-500 transition">
-                <i class="fas fa-seedling text-emerald-500 text-2xl group-hover:text-white transition"></i>
-            </div>
-            <h3 class="font-semibold text-gray-800">Bibit Ikan</h3>
-            <p class="text-sm text-gray-600 mt-1">Berkualitas unggul</p>
-        </a>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <a href="/produk/pelet-pakan" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
+                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-500 transition">
+                    <i class="fas fa-cookie text-orange-500 text-2xl group-hover:text-white transition"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800">Pelet Pakan</h3>
+                <p class="text-sm text-gray-600 mt-1">Nutrisi lengkap</p>
+            </a>
+            
+            <a href="/produk/pakan-hidup" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500 transition">
+                    <i class="fas fa-bug text-green-500 text-2xl group-hover:text-white transition"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800">Pakan Hidup</h3>
+                <p class="text-sm text-gray-600 mt-1">Artemia & cacing</p>
+            </a>
+            
+            <a href="/produk/umpan-laut" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
+                <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-cyan-500 transition">
+                    <i class="fas fa-fish text-cyan-500 text-2xl group-hover:text-white transition"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800">Umpan Laut</h3>
+                <p class="text-sm text-gray-600 mt-1">Untuk mancing</p>
+            </a>
+            
+            <a href="/produk/penyewaan-kapal" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500 transition">
+                    <i class="fas fa-ship text-blue-500 text-2xl group-hover:text-white transition"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800">Sewa Kapal</h3>
+                <p class="text-sm text-gray-600 mt-1">Kapal nelayan</p>
+            </a>
+            
+            <a href="/produk/vitamin-air" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
+                <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-teal-500 transition">
+                    <i class="fas fa-flask text-teal-500 text-2xl group-hover:text-white transition"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800">Vitamin Air</h3>
+                <p class="text-sm text-gray-600 mt-1">Perawatan kolam</p>
+            </a>
+            
+            <a href="/produk/bibit-ikan" class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition group">
+                <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-500 transition">
+                    <i class="fas fa-seedling text-emerald-500 text-2xl group-hover:text-white transition"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800">Bibit Ikan</h3>
+                <p class="text-sm text-gray-600 mt-1">Berkualitas unggul</p>
+            </a>
+        </div>
     </div>
 </div>
 
 <!-- CTA Section -->
-<div class="bg-gradient-to-r from-blue-600 to-cyan-500 py-16">
-    <div class="container mx-auto px-4 text-center text-white">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Siap Bergabung?</h2>
-        <p class="text-xl mb-8 opacity-90">Jadilah bagian dari komunitas perikanan terbesar di Kalimantan Timur</p>
-        <div class="flex flex-wrap justify-center gap-4">
-            <a href="/register" class="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition">
+<div class="bg-white pt-12 pb-24 cta-section">
+    <div class="container mx-auto px-4 text-center text-gray-900 relative z-10">
+        <h2 class="text-2xl md:text-3xl font-bold mb-3 tracking-tight">Siap Bergabung?</h2>
+        <p class="text-sm md:text-base mb-6 opacity-90 font-light text-gray-600 max-w-xl mx-auto">Jadilah bagian dari komunitas perikanan terbesar di Kalimantan Timur</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="/register" class="px-6 py-2.5 bg-[#002A49] text-white rounded-full font-semibold hover:bg-[#0e3a5c] hover:scale-105 transition-all duration-300 shadow-md text-sm">
                 Daftar Anggota
             </a>
-            <a href="/partnership" class="px-8 py-4 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 transition">
+            <a href="/partnership" class="px-6 py-2.5 bg-[#019ADA] text-white rounded-full font-semibold hover:bg-[#017CB3] hover:scale-105 transition-all duration-300 shadow-md text-sm">
                 Jadi Mitra
             </a>
         </div>

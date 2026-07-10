@@ -3,14 +3,7 @@
 @section('title', 'Vitamin Air - FISHERIES')
 
 @section('content')
-<div class="relative bg-gradient-to-r from-teal-600 to-teal-500 py-16">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Vitamin Air</h1>
-            <p class="text-xl opacity-90">Suplemen kualitas tinggi untuk kesehatan ekosistem perairan</p>
-        </div>
-    </div>
-</div>
+
 
 <div class="container mx-auto px-4 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">

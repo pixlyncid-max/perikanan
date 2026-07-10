@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Struktur Organisasi - FISHERIES')
+@section('title', 'Struktur Organisasi ' . $scope . ' ' . $regionName . ' - FISHERIES')
 
 @push('styles')
 <style>
@@ -222,20 +222,20 @@
 @endpush
 
 @section('content')
-<!-- Hero Section -->
-<div class="relative bg-gradient-to-r from-blue-600 to-blue-500 py-16">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Struktur Organisasi</h1>
-            <p class="text-xl opacity-90">{{ $dpp->name ?? 'DPP Pusat FISHERIES Indonesia' }}</p>
-        </div>
-    </div>
-</div>
+
 
 <div class="container mx-auto px-4 py-12">
-    <!-- SECTION 1: KETUA UMUM -->
-    <section class="mb-16 text-center">
-        <h2 class="text-3xl font-bold text-gray-800">KETUA UMUM</h2>
+    <!-- SECTION 1: KETUA UMUM / INTI -->
+    <section class="mb-16 text-center reveal">
+        <h2 class="text-3xl font-bold text-gray-800">
+            @if($scope === 'Pusat')
+                KETUA UMUM
+            @elseif($scope === 'Wilayah')
+                STRUKTUR INTI WILAYAH
+            @else
+                STRUKTUR INTI CABANG
+            @endif
+        </h2>
 
         <div class="max-w-[400px] mx-auto mt-8">
             <div class="card-container bg-white rounded-2xl shadow-lg overflow-hidden" onclick="toggleFlip(this)">
@@ -286,8 +286,9 @@
         </div>
     </section>
 
+    @if($scope === 'Pusat' && isset($ketuaDpcList) && count($ketuaDpcList) > 0)
     <!-- SECTION 2: KETUA DPC -->
-    <section class="mb-16 text-center">
+    <section class="mb-16 text-center reveal">
         <h2 class="text-3xl font-bold text-gray-800">KETUA DPC</h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8 max-w-6xl mx-auto">
@@ -344,32 +345,8 @@
         </div>
     </section>
 
-    <!-- DPC Navigation Section -->
-    <section>
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-            <div class="flex justify-center">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Dewan Pimpinan Cabang (DPC) Kalimantan Timur</h2>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
 
-                @forelse($dpcs as $dpc)
-                    @php
-                        $colors = ['blue', 'green', 'orange', 'red', 'cyan', 'purple', 'pink', 'indigo', 'teal', 'amber'];
-                        $color = $colors[$loop->index % count($colors)];
-                    @endphp
-                    <a href="{{ route('organization.dpc', strtolower(str_replace(' ', '-', $dpc->city))) }}" class="p-4 bg-{{ $color }}-50 rounded-xl text-center hover:bg-{{ $color }}-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-                        <i class="fas fa-building text-{{ $color }}-600 text-2xl mb-2"></i>
-                        <p class="font-medium text-gray-700 text-sm">{{ $dpc->city }}</p>
-                        <span class="text-xs text-gray-500">{{ $dpc->member_count ?? 0 }} anggota</span>
-                    </a>
-                @empty
-                    <div class="col-span-full text-center text-gray-500 py-8">
-                        Belum ada data DPC
-                    </div>
-                @endforelse
-            </div>
-        </div>
-    </section>
+    @endif
 </div>
 
 @push('scripts')

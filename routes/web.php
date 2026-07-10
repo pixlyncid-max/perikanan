@@ -37,18 +37,11 @@ Route::get('/partnership', function () {
 })->name('partnership');
 //Organization Routes
 Route::prefix('organization')->name('organization.')->group(function () {
-    Route::get('/structure', [OrganizationController::class, 'structure'])->name('structure');
-//    Route::get('/dpc/{code}', [OrganizationController::class, 'showDpc'])
-//        ->name('dpc')
-//        ->where('code', '[a-z0-9-]+');
-//});
-// Route::prefix('organization')->name('organization.')->group(function () {
-//     Route::get('/structure', function () {
-//         return view('errors.coming-soon');
-//     })->name('structure');
-    Route::get('/dpc/{code}', function ($code) {
-        return view('errors.coming-soon');
-    })->name('dpc')->where('code', '[a-z0-9-]+');
+    Route::get('/dpp', [\App\Http\Controllers\OrganizationController::class, 'dpp'])->name('dpp');
+    Route::get('/dpw', [\App\Http\Controllers\OrganizationController::class, 'dpwIndex'])->name('dpw.index');
+    Route::get('/dpw/{province}', [\App\Http\Controllers\OrganizationController::class, 'dpwShow'])->name('dpw.show');
+    Route::get('/dpc', [\App\Http\Controllers\OrganizationController::class, 'dpcIndex'])->name('dpc.index');
+    Route::get('/dpc/{province}/{city}', [\App\Http\Controllers\OrganizationController::class, 'dpcShow'])->name('dpc.show');
 });
 
 // Produk Routes
@@ -108,7 +101,7 @@ Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallbac
 Route::get('/auth/facebook', [AuthController::class, 'redirectToFacebook'])->name('auth.facebook');
 Route::get('/auth/facebook/callback', [AuthController::class, 'handleFacebookCallback'])->name('auth.facebook.callback');
 
-Route::middleware(['web'])->group(function () {
+Route::group([], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/member-card', [AuthController::class, 'memberCard'])->name('member.card');
 

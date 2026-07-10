@@ -1,117 +1,668 @@
-/* FISHERIES - Custom Styles */
+/* FISHERIES - Custom Styles (Enhanced Modern UI) */
 
-/* Smooth Scroll */
+/* =============================================
+   FONTS & CSS VARIABLES
+   ============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --color-primary-dark:      #002A49;
+    --color-primary-dark-80:   #0E3A5C;
+    --color-primary-dark-10:   #E6ECF1;
+    --color-accent:            #019ADA;
+    --color-accent-light:      #5FC2EE;
+    --color-accent-dark:       #017CB3;
+    --color-neutral-gray:      #6B7A88;
+    --color-neutral-line:      #DCE4EA;
+    --color-success:           #2FB673;
+    --color-white:             #FFFFFF;
+    --shadow-card:             0 8px 24px rgba(0,42,73,0.08);
+    --shadow-elevated:         0 20px 48px rgba(0,42,73,0.14);
+    --radius-card:             12px;
+    --radius-pill:             9999px;
+    --transition-base:         0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth:       0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =============================================
+   BASE
+   ============================================= */
 html {
     scroll-behavior: smooth;
 }
 
-/* Custom Scrollbar */
+body {
+    font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* =============================================
+   CUSTOM SCROLLBAR
+   ============================================= */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--color-primary-dark-10);
 }
-
 ::-webkit-scrollbar-thumb {
-    background: #3b82f6;
+    background: linear-gradient(180deg, var(--color-accent), var(--color-accent-dark));
     border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-    background: #2563eb;
+    background: var(--color-accent-dark);
 }
 
-/* Hero Slider Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* =============================================
+   SCROLL PROGRESS BAR
+   ============================================= */
+#scroll-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-accent-light), var(--color-accent), var(--color-primary-dark-80));
+    z-index: 9999;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(1, 154, 218, 0.6);
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.8s ease-out;
+/* =============================================
+   NAVBAR SCROLL TRANSFORM
+   ============================================= */
+nav {
+    transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Card Hover Effects */
+nav.scrolled {
+    background-color: rgba(0, 42, 73, 0.97) !important;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+}
+
+/* Only apply white to nav-level links, NOT to dropdown-menu children */
+nav.scrolled > div a,
+nav.scrolled > div .dropdown-toggle {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+nav.scrolled > div a:hover,
+nav.scrolled > div .dropdown-toggle:hover {
+    color: var(--color-accent-light) !important;
+}
+
+nav.scrolled .dropdown-toggle.active {
+    color: var(--color-accent-light) !important;
+}
+
+/* Navbar logo fade in */
+nav a.flex img {
+    transition: transform var(--transition-base), opacity var(--transition-base);
+}
+nav a.flex:hover img {
+    transform: scale(1.04);
+}
+
+/* Desktop nav link underline reveal */
+nav .hidden.md\:flex a[href] {
+    position: relative;
+    padding-bottom: 2px;
+}
+nav .hidden.md\:flex a[href]::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--color-accent);
+    border-radius: 2px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+nav .hidden.md\:flex a[href]:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+/* =============================================
+   DROPDOWN MENU — EXISTING BEHAVIOR KEPT
+   ============================================= */
+.dropdown-menu {
+    display: none;
+}
+.dropdown-menu.active {
+    display: block;
+    animation: dropdownReveal 0.22s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes dropdownReveal {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.dropdown-toggle.active {
+    color: #2563eb;
+}
+nav.scrolled .dropdown-toggle.active {
+    color: var(--color-accent-light) !important;
+}
+.dropdown-toggle.active i,
+.dropdown-toggle i {
+    transition: transform 0.2s ease;
+}
+
+/* =============================================
+   HERO SECTION ENHANCEMENTS
+   ============================================= */
+/* Parallax wrapper */
+.hero-parallax-bg {
+    will-change: transform;
+}
+
+/* Floating fish animation */
+@keyframes floatFish {
+    0%   { transform: translateY(0px) translateX(0px); }
+    33%  { transform: translateY(-12px) translateX(6px); }
+    66%  { transform: translateY(-6px) translateX(-4px); }
+    100% { transform: translateY(0px) translateX(0px); }
+}
+.hero-float-element {
+    animation: floatFish 6s ease-in-out infinite;
+}
+
+/* Wave overlay at hero bottom */
+.hero-wave {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    z-index: 5;
+}
+.hero-wave svg {
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 60px;
+}
+
+/* Scroll indicator bounce */
+@keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50%       { transform: translateY(8px); opacity: 0.5; }
+}
+.scroll-indicator {
+    animation: scrollBounce 1.8s ease-in-out infinite;
+}
+
+/* Hero text stagger animation */
+@keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.hero-text-1 { animation: heroFadeUp 0.7s ease-out 0.1s both; }
+.hero-text-2 { animation: heroFadeUp 0.7s ease-out 0.3s both; }
+.hero-text-3 { animation: heroFadeUp 0.7s ease-out 0.5s both; }
+
+/* =============================================
+   SECTION SCROLL-REVEAL ANIMATIONS
+   ============================================= */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+.reveal-left.revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+.reveal-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+.reveal-right.revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+.reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.reveal-scale.revealed {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Stagger delays */
+.stagger-1  { transition-delay: 0.05s; }
+.stagger-2  { transition-delay: 0.12s; }
+.stagger-3  { transition-delay: 0.19s; }
+.stagger-4  { transition-delay: 0.26s; }
+.stagger-5  { transition-delay: 0.33s; }
+.stagger-6  { transition-delay: 0.40s; }
+
+/* =============================================
+   CARD ENHANCEMENTS
+   ============================================= */
 .card-hover {
-    transition: all 0.3s ease;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    will-change: transform;
 }
-
 .card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-elevated);
 }
 
-/* Button Animations */
+/* Article / News card image zoom */
+.img-zoom {
+    overflow: hidden;
+    border-radius: inherit;
+}
+.img-zoom img {
+    transition: transform 0.55s ease;
+    will-change: transform;
+}
+.img-zoom:hover img {
+    transform: scale(1.07);
+}
+
+/* Product category cards glow pulse on hover */
+.product-cat-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-cat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 120%, rgba(1,154,218,0.12) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.product-cat-card:hover::before {
+    opacity: 1;
+}
+.product-cat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(1,154,218,0.15), var(--shadow-elevated);
+}
+
+/* Icon circle shine on hover */
+.product-cat-card .icon-circle {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-cat-card:hover .icon-circle {
+    transform: scale(1.12) rotate(-6deg);
+    box-shadow: 0 6px 18px rgba(1,154,218,0.3);
+}
+
+/* =============================================
+   BUTTON ANIMATIONS
+   ============================================= */
 .btn-animate {
-    transition: all 0.3s ease;
+    transition: transform var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+    position: relative;
+    overflow: hidden;
 }
-
+.btn-animate::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    border-radius: inherit;
+}
+.btn-animate:hover::after {
+    opacity: 1;
+}
 .btn-animate:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(1,154,218,0.35);
 }
-
 .btn-animate:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
-/* Gradient Text */
+/* Ripple click effect */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+.ripple-wave {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transform: scale(0);
+    animation: rippleAnim 0.55s linear;
+    pointer-events: none;
+}
+@keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+}
+
+/* =============================================
+   GRADIENT TEXT
+   ============================================= */
 .gradient-text {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary-dark-80) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-/* Glass Effect */
+/* =============================================
+   GLASS EFFECT
+   ============================================= */
 .glass {
     background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+/* =============================================
+   COUNT-UP NUMBERS (statistics)
+   ============================================= */
+.count-up-stat {
+    font-variant-numeric: tabular-nums;
+    transition: color 0.3s ease;
+}
 
-/* Loading Spinner */
+/* =============================================
+   CHART SECTION ENHANCEMENT
+   ============================================= */
+.chart-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.chart-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent-light), var(--color-accent));
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+}
+.chart-card.revealed::after {
+    transform: scaleX(1);
+}
+.chart-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+}
+
+/* =============================================
+   WAVE SVG DIVIDERS
+   ============================================= */
+.wave-divider {
+    display: block;
+    overflow: hidden;
+    line-height: 0;
+    margin-top: -1px;
+    margin-bottom: -1px;
+}
+.wave-divider svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* =============================================
+   CTA SECTION ANIMATION
+   ============================================= */
+@keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+.cta-section {
+    position: relative;
+    overflow: hidden;
+}
+.cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255,255,255,0.06) 50%,
+        transparent 80%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 4s linear infinite;
+    pointer-events: none;
+}
+
+/* Animated circles in CTA */
+.cta-bubble {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.08;
+    animation: bubbleFloat 8s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes bubbleFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-20px) scale(1.05); }
+}
+
+/* =============================================
+   FOOTER ENHANCEMENTS
+   ============================================= */
+footer {
+    position: relative;
+}
+footer .social-btn {
+    transition: transform var(--transition-base), background-color var(--transition-base), box-shadow var(--transition-base);
+}
+footer .social-btn:hover {
+    transform: translateY(-3px) scale(1.12);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+footer ul a {
+    position: relative;
+    transition: color var(--transition-base), padding-left var(--transition-base);
+    display: inline-block;
+}
+footer ul a::before {
+    content: '→';
+    position: absolute;
+    left: -16px;
+    opacity: 0;
+    transition: opacity 0.25s ease, left 0.25s ease;
+    font-size: 0.75em;
+}
+footer ul a:hover {
+    color: #fff !important;
+    padding-left: 6px;
+}
+footer ul a:hover::before {
+    opacity: 1;
+    left: -10px;
+}
+
+/* =============================================
+   LOADING SPINNER
+   ============================================= */
 .spinner {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #3b82f6;
+    border: 3px solid rgba(1,154,218,0.15);
+    border-top: 3px solid var(--color-accent);
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
-
 @keyframes spin {
-    0% { transform: rotate(0deg); }
+    0%   { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* Image Hover Zoom */
-.img-zoom {
+/* =============================================
+   TOAST NOTIFICATION
+   ============================================= */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,42,73,0.12);
+    z-index: 1000;
+    animation: slideInToast 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes slideInToast {
+    from { transform: translateX(120%) scale(0.9); opacity: 0; }
+    to   { transform: translateX(0) scale(1); opacity: 1; }
+}
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+/* =============================================
+   MODAL ENHANCEMENTS
+   ============================================= */
+#success-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    animation: modalFadeIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+#checkout-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(15, 23, 42, 0.65);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+#checkout-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 800px;
+    height: 85vh;
+    max-height: 800px;
+    min-height: 500px;
+    border-radius: 1.5rem;
+    box-shadow: 0 32px 64px -12px rgba(0,42,73,0.35), 0 0 0 1px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    animation: modalPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes modalPop {
+    from { opacity: 0; transform: scale(0.94) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+#alert-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0, 0, 0, 0.65);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+#alert-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 2rem;
     overflow: hidden;
+    box-shadow: 0 32px 64px -12px rgba(0,42,73,0.3);
+    animation: modalPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.img-zoom img {
-    transition: transform 0.5s ease;
+/* =============================================
+   MODAL SYSTEM (Generic)
+   ============================================= */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 42, 73, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    transform: scale(0.88) translateY(16px);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: 0 24px 56px rgba(0,42,73,0.18);
+}
+.modal.active .modal-content {
+    transform: scale(1) translateY(0);
 }
 
-.img-zoom:hover img {
-    transform: scale(1.1);
+/* =============================================
+   FLYING CART ANIMATION
+   ============================================= */
+.fly-item {
+    position: fixed;
+    z-index: 9999;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    pointer-events: none;
+    transition: all 0.8s cubic-bezier(0.42, 0, 0.58, 1);
+    box-shadow: 0 4px 16px rgba(1,154,218,0.4);
+    border: 2px solid white;
 }
 
-/* Navigation Active State */
+/* =============================================
+   NAVIGATION ACTIVE STATE
+   ============================================= */
 .nav-active {
     position: relative;
 }
-
 .nav-active::after {
     content: '';
     position: absolute;
@@ -119,80 +670,24 @@ html {
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: #3b82f6;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+    border-radius: 2px;
 }
 
-/* Dropdown Animation */
-.dropdown-menu {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
+/* =============================================
+   HERO SLIDER ANIMATION (existing)
+   ============================================= */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out both;
 }
 
-.dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-/* Toast Notification */
-.toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 16px 24px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Print Styles for Member Card */
-@media print {
-    .no-print {
-        display: none !important;
-    }
-    
-    .print-only {
-        display: block !important;
-    }
-    
-    body {
-        background: white;
-    }
-    
-    .member-card {
-        box-shadow: none;
-        border: 2px solid #000;
-    }
-}
-
-/* Responsive Typography */
-@media (max-width: 640px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-}
-
-/* Custom Form Styles */
-.form-input:focus {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Table Styles */
+/* =============================================
+   TABLE STYLES
+   ============================================= */
 .data-table th {
     background-color: #f8fafc;
     font-weight: 600;
@@ -200,12 +695,16 @@ html {
     font-size: 0.75rem;
     letter-spacing: 0.05em;
 }
-
+.data-table tr {
+    transition: background-color 0.2s ease;
+}
 .data-table tr:hover {
-    background-color: #f8fafc;
+    background-color: rgba(1,154,218,0.04);
 }
 
-/* Badge Styles */
+/* =============================================
+   BADGE STYLES
+   ============================================= */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -214,46 +713,47 @@ html {
     font-size: 0.75rem;
     font-weight: 600;
 }
+.badge-success { background-color: #dcfce7; color: #166534; }
+.badge-warning { background-color: #fef3c7; color: #92400e; }
+.badge-danger  { background-color: #fee2e2; color: #991b1b; }
 
-.badge-success {
-    background-color: #dcfce7;
-    color: #166534;
+/* =============================================
+   SKELETON LOADING
+   ============================================= */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.5s infinite;
+}
+@keyframes skeletonShimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
-.badge-warning {
-    background-color: #fef3c7;
-    color: #92400e;
+/* =============================================
+   FORM STYLES
+   ============================================= */
+.form-input {
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.form-input:focus {
+    box-shadow: 0 0 0 3px rgba(1, 154, 218, 0.15);
+    border-color: var(--color-accent) !important;
+    outline: none;
 }
 
-.badge-danger {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-
-/* Chart Container */
-.chart-container {
-    position: relative;
-    height: 300px;
-    width: 100%;
-}
-
-/* Map Container */
-.map-container {
-    position: relative;
-    height: 400px;
-    width: 100%;
-    background-color: #e5e7eb;
-    border-radius: 0.5rem;
-}
-
-/* Product Grid */
+/* =============================================
+   PRODUCT GRID
+   ============================================= */
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
 }
 
-/* Filter Sidebar */
+/* =============================================
+   FILTER SIDEBAR
+   ============================================= */
 .filter-sidebar {
     position: sticky;
     top: 6rem;
@@ -261,62 +761,52 @@ html {
     overflow-y: auto;
 }
 
-/* Pagination */
+/* =============================================
+   PAGINATION
+   ============================================= */
 .pagination {
     display: flex;
     justify-content: center;
     gap: 0.5rem;
 }
-
 .pagination button {
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     transition: all 0.2s;
 }
-
 .pagination button:hover:not(:disabled) {
-    background-color: #e5e7eb;
+    background-color: rgba(1,154,218,0.1);
+    color: var(--color-accent);
 }
-
 .pagination button.active {
-    background-color: #3b82f6;
+    background-color: var(--color-accent);
     color: white;
 }
 
-/* Modal */
-.modal {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
+/* =============================================
+   CHART CONTAINER
+   ============================================= */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
 }
 
-.modal.active {
-    opacity: 1;
-    visibility: visible;
+/* =============================================
+   MAP CONTAINER
+   ============================================= */
+.map-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    background-color: #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
 }
 
-.modal-content {
-    background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    max-width: 500px;
-    width: 90%;
-    transform: scale(0.9);
-    transition: transform 0.3s ease;
-}
-
-.modal.active .modal-content {
-    transform: scale(1);
-}
-
-/* Line Clamp */
+/* =============================================
+   LINE CLAMP
+   ============================================= */
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -324,7 +814,6 @@ html {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-
 .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -333,47 +822,160 @@ html {
     overflow: hidden;
 }
 
-
-/* Skeleton Loading */
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-/* Tooltip */
+/* =============================================
+   TOOLTIP
+   ============================================= */
 .tooltip {
     position: relative;
 }
-
 .tooltip::before {
     content: attr(data-tooltip);
     position: absolute;
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    padding: 0.5rem 1rem;
-    background-color: #1f2937;
+    padding: 0.4rem 0.85rem;
+    background: var(--color-primary-dark);
     color: white;
-    font-size: 0.75rem;
-    border-radius: 0.375rem;
+    font-size: 0.72rem;
+    border-radius: 6px;
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
+    pointer-events: none;
 }
-
 .tooltip:hover::before {
     opacity: 1;
     visibility: visible;
-    bottom: calc(100% + 0.5rem);
+    bottom: calc(100% + 6px);
+}
+
+/* =============================================
+   PRINT STYLES
+   ============================================= */
+@media print {
+    .no-print   { display: none !important; }
+    .print-only { display: block !important; }
+    body { background: white; }
+    .member-card { box-shadow: none; border: 2px solid #000; }
+}
+
+/* =============================================
+   FOOTER ANIMATED WATER WAVES
+   ============================================= */
+/* Wave container */
+.footer-wave-container {
+    height: 80px;
+    position: relative;
+}
+
+.footer-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+}
+
+/* Wave layer animations — each sways horizontally at different speed */
+.footer-wave-1 {
+    animation: footerWaveSway1 8s ease-in-out infinite alternate;
+}
+.footer-wave-2 {
+    animation: footerWaveSway2 6s ease-in-out infinite alternate;
+}
+.footer-wave-3 {
+    animation: footerWaveSway3 4s ease-in-out infinite alternate;
+}
+
+@keyframes footerWaveSway1 {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-25%); }
+}
+@keyframes footerWaveSway2 {
+    0%   { transform: translateX(-10%); }
+    100% { transform: translateX(-30%); }
+}
+@keyframes footerWaveSway3 {
+    0%   { transform: translateX(-5%); }
+    100% { transform: translateX(-20%); }
+}
+
+/* Underwater glow inside footer */
+.footer-underwater-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(1,154,218,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(1,154,218,0.06) 0%, transparent 50%);
+    animation: underwaterGlowDrift 12s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes underwaterGlowDrift {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-20%); }
+}
+
+/* Bottom water strip */
+.footer-water-bottom {
+    position: relative;
+    height: 30px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.footer-bottom-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+}
+
+.footer-bottom-wave-1 {
+    animation: bottomWaveScroll1 6s linear infinite;
+}
+.footer-bottom-wave-2 {
+    animation: bottomWaveScroll2 9s linear infinite;
+}
+
+@keyframes bottomWaveScroll1 {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+@keyframes bottomWaveScroll2 {
+    0%   { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+}
+
+/* =============================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================= */
+@media (max-width: 640px) {
+    .hero-title { font-size: 2rem; }
+    .footer-wave-container { height: 50px; }
+}
+
+/* =============================================
+   REDUCED MOTION ACCESSIBILITY
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .reveal,
+    .reveal-left,
+    .reveal-right,
+    .reveal-scale {
+        opacity: 1 !important;
+        transform: none !important;
+    }
 }

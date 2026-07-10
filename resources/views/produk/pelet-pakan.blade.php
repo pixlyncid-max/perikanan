@@ -3,14 +3,7 @@
 @section('title', 'Pelet Pakan Ikan - FISHERIES')
 
 @section('content')
-<div class="relative bg-gradient-to-r from-blue-600 to-blue-500 py-16">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Pelet Pakan Ikan</h1>
-            <p class="text-xl opacity-90">Pakan berkualitas untuk pertumbuhan optimal ikan</p>
-        </div>
-    </div>
-</div>
+
 
 <div class="container mx-auto px-4 py-12">
 

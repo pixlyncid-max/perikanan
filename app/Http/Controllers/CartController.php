@@ -14,6 +14,21 @@ class CartController extends Controller
     public function index()
     {
         $cart = Session::get('cart', []);
+        
+        // Safeguard: Jika keranjang di session kosong tetapi user sudah login,
+        // coba pulihkan data keranjang dari database.
+        if (empty($cart) && Session::has('user')) {
+            $user = Session::get('user');
+            $savedCartObj = \App\Models\ShoppingCart::where('user_id', $user['id'])
+                ->where('user_type', $user['type'])
+                ->first();
+            if ($savedCartObj && $savedCartObj->cart_data) {
+                $cart = json_decode($savedCartObj->cart_data, true) ?? [];
+                Session::put('cart', $cart);
+                Session::save();
+            }
+        }
+
         $total = 0;
         foreach ($cart as $item) {
             $total += $item['price'] * $item['quantity'];

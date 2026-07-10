@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-12">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-2xl mx-auto">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Kartu Anggota Digital</h1>
             <p class="text-gray-600">Tunjukkan kartu ini untuk mendapatkan diskon dan benefit khusus</p>
@@ -20,20 +20,17 @@
             <?php endif; ?>
         </div>
 
-        <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-2xl overflow-hidden mb-8">
-            <div class="p-8 text-white relative">
-                <div class="absolute top-4 right-4 opacity-20">
-                    <i class="fas fa-fish text-9xl"></i>
-                </div>
+        <div class="rounded-2xl shadow-2xl overflow-hidden mb-8 bg-cover bg-center" style="background-image: url('{{ asset('images/kartu%20anggota%20fisheries.png') }}');">
+            <div class="p-6 text-white relative">
                 <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
                             <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mr-4">
-                                <img src="{{ asset('images/Logo_Symbol.png') }}" alt="Logo Symbol" class="h-10 w-10 object-contain">
+                                <img src="{{ asset('images/Logo_Symbol.png') }}" alt="Logo Symbol" class="h-12 w-12 object-contain">
                             </div>
                             <div>
-                                <img src="{{ asset('images/Logo_font_Putih.png') }}" alt="Fisheries Logo" class="h-8 object-contain mb-1">
-                                <p class="text-blue-200 mt-1">Kartu Anggota</p>
+                                <h2 class="text-4xl font-bold mb-0" style="color: #002A49;">Kartu Anggota</h2>
+                                <p class="text-blue-100 font-medium text-sm mt-0">FISHERIES Indonesia</p>
                             </div>
                         </div>
                         <div class="text-right">
@@ -45,42 +42,49 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <p class="text-blue-200 text-sm mb-1">Nama Lengkap</p>
-                            <p class="text-xl font-bold"><?php echo isset($member->name) ? $member->name : ''; ?></p>
+                    <div class="flex flex-col md:flex-row gap-4 mb-4 items-start">
+                        <div class="flex-shrink-0">
+                            <img src="https://ui-avatars.com/api/?name=<?php echo urlencode(isset($member->name) ? $member->name : 'Member'); ?>&background=019ADA&color=fff&size=100" alt="Pas Foto" class="w-20 h-28 rounded-lg object-cover border-2 border-white shadow-sm">
                         </div>
-                        <div>
-                            <p class="text-blue-200 text-sm mb-1">Nomor Anggota</p>
-                            <p class="text-xl font-bold"><?php echo isset($member->member_number) ? $member->member_number : ''; ?></p>
-                        </div>
-                        <div>
-                            <p class="text-blue-200 text-sm mb-1">DPC</p>
-                            <p class="text-lg"><?php echo isset($member->dpc) ? ucfirst($member->dpc) : ''; ?></p>
-                        </div>
-                        <div>
-                            <p class="text-blue-200 text-sm mb-1">Berlaku Hingga</p>
-                            <p class="text-lg"><?php echo isset($member->expiry_date) ? date('d F Y', strtotime($member->expiry_date)) : ''; ?></p>
+                        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                            <div>
+                                <p class="text-blue-100 text-sm mb-1 font-medium">Nama Lengkap</p>
+                                <p class="text-xl font-bold"><?php echo isset($member->name) ? $member->name : ''; ?></p>
+                            </div>
+                            <div>
+                                <p class="text-blue-100 text-sm mb-1 font-medium">Nomor Anggota</p>
+                                <p class="text-xl font-bold"><?php echo isset($member->member_number) ? $member->member_number : ''; ?></p>
+                            </div>
+                            <div>
+                                <p class="text-blue-100 text-sm mb-1 font-medium">DPC</p>
+                                <p class="text-xl font-bold"><?php echo isset($member->dpc) ? ucfirst($member->dpc) : ''; ?></p>
+                            </div>
+                            <div>
+                                <p class="text-blue-100 text-sm mb-1 font-medium">Berlaku Hingga</p>
+                                <p class="text-xl font-bold"><?php echo isset($member->expiry_date) ? date('d F Y', strtotime($member->expiry_date)) : ''; ?></p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="border-t border-blue-400 pt-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-blue-200 text-sm mb-1">Scan untuk verifikasi</p>
-                                <div class="bg-white p-2 rounded-lg inline-block">
-                                    <?php 
-                                    $qrData = isset($member->member_number) ? urlencode('ID: ' . $member->member_number) : '';
-                                    ?>
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=<?php echo $qrData; ?>" alt="QR Code" class="w-24 h-24">
-                                </div>
-                                <p class="text-xs text-blue-200 mt-1">ID: <?php echo isset($member->member_number) ? $member->member_number : ''; ?></p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-blue-200 text-sm mb-1">Status</p>
-                                <span class="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold">
+                    <div class="border-t border-blue-400 pt-4">
+                        <div class="flex items-end justify-between relative">
+                            <div class="w-1/3 hidden sm:block"></div>
+                            <div class="absolute left-1/2 -translate-x-1/2 bottom-6 text-center w-max">
+                                <p class="text-blue-100 text-sm mb-2 font-medium">Status Keanggotaan</p>
+                                <span class="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm inline-block">
                                     <?php echo (isset($member->status) && $member->status === 'active') ? 'Aktif' : 'Tidak Aktif'; ?>
                                 </span>
+                            </div>
+                            <div class="text-right w-full sm:w-auto ml-auto">
+                                <div class="inline-flex flex-col items-end">
+                                    <div class="bg-white p-2 rounded-lg inline-block shadow-sm">
+                                        <?php 
+                                        $qrData = isset($member->member_number) ? urlencode('ID: ' . $member->member_number) : '';
+                                        ?>
+                                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=<?php echo $qrData; ?>" alt="QR Code" class="w-20 h-20">
+                                    </div>
+                                    <p class="text-blue-100 text-xs mt-1 font-medium">Scan untuk verifikasi</p>
+                                </div>
                             </div>
                         </div>
                     </div>

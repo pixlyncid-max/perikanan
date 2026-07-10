@@ -20,34 +20,14 @@
 @endpush
 
 @section('content')
-{{-- Hero Section --}}
-<div class="relative bg-gradient-to-r from-green-700 to-green-500 py-16">
-    <div class="absolute inset-0 opacity-10" style="background-image: url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"></div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                @if(isset($category))
-                    Artikel: {{ $category }}
-                @else
-                    Artikel & Berita
-                @endif
-            </h1>
-            <p class="text-xl opacity-90">Informasi terkini seputar dunia perikanan</p>
-            @if(isset($category))
-                <a href="{{ route('article.index') }}" class="mt-4 inline-block text-green-200 hover:text-white underline text-sm">
-                    <i class="fas fa-arrow-left mr-1"></i> Lihat semua artikel
-                </a>
-            @endif
-        </div>
-    </div>
-</div>
+
 
 <div class="container mx-auto px-4 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
         {{-- Sidebar --}}
         <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
+            <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24 reveal-left">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
                     <i class="fas fa-tags mr-2 text-green-600"></i> Kategori
                 </h3>
@@ -87,7 +67,7 @@
             @if($articles->count() > 0)
                 <div class="space-y-6">
                     @foreach($articles as $article)
-                    <article class="article-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+                    <article class="article-card bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 reveal stagger-{{ $loop->iteration > 6 ? 6 : $loop->iteration }} card-hover">
                         <div class="md:flex">
                             {{-- Image --}}
                             <div class="article-image md:w-1/3 h-52 md:h-auto bg-gray-100 flex-shrink-0">

@@ -565,6 +565,9 @@
                         <div class="p-8">
                             <!-- Category Selector -->
                             <div class="payment-category-container">
+                                <div class="payment-category-chip" onclick="selectPaymentCategory(this, 'whatsapp')">
+                                    <i class="fab fa-whatsapp mr-1 text-green-500"></i> <span>WhatsApp</span>
+                                </div>
                                 <div class="payment-category-chip active" onclick="selectPaymentCategory(this, 'va')">
                                     <span>Transfer Bank</span>
                                 </div>
@@ -585,8 +588,26 @@
                                 </div>
                             </div>
 
-                            <!-- Virtual Accounts (Initially Active) -->
-                            <div id="sub-payment-va" class="payment-sub-section active">
+
+                                <!-- WhatsApp -->
+                                <div id="sub-payment-whatsapp" class="payment-sub-section">
+                                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> Pembayaran via WhatsApp
+                                    </h4>
+                                    <div class="payment-grid">
+                                        <label class="payment-option-v2 selected" onclick="selectPayment(this)">
+                                            <input type="radio" name="payment_channel" value="WHATSAPP" checked>
+                                            <div class="flex flex-col gap-1 items-center justify-center py-2 text-center w-full">
+                                                <i class="fab fa-whatsapp text-3xl text-green-500 mb-1"></i>
+                                                <span class="text-xs font-bold text-slate-700">Hubungi Admin</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-4"><i class="fas fa-info-circle text-amber-500 mr-1"></i> Silakan selesaikan pembayaran melalui admin WhatsApp kami jika Anda memilih metode ini.</p>
+                                </div>
+
+                                <!-- Virtual Accounts (Initially Active) -->
+                                <div id="sub-payment-va" class="payment-sub-section active">
                                 <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Pilihan Bank (Virtual Account)
                                 </h4>
@@ -1335,7 +1356,16 @@
         
         document.querySelectorAll('.payment-sub-section').forEach(s => s.classList.remove('active'));
         const sub = document.getElementById('sub-payment-' + targetId);
-        if (sub) sub.classList.add('active');
+        if (sub) {
+            sub.classList.add('active');
+            // Auto-select the first option in this category
+            const firstOption = sub.querySelector('.payment-option-v2 input[type="radio"]');
+            if (firstOption) {
+                // Trigger the click on the label wrapper to update styling
+                const label = firstOption.closest('.payment-option-v2');
+                if (label) selectPayment(label);
+            }
+        }
         
         // Hide CC form when switching away from CC category
         if (targetId !== 'cc') {
@@ -1636,6 +1666,18 @@
             } else {
                 showAlert({type:'info', title:'Pending', message:'Transaksi sedang diproses oleh bank.'});
             }
+        } else if (d.type === 'whatsapp') {
+            // Create a temporary link to open in new tab reliably
+            const link = document.createElement('a');
+            link.href = d.url;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Redirect current page to orders page
+            window.location.href = '{{ route("orders.index") }}';
+            return;
         }
 
         // Start payment status polling

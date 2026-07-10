@@ -148,6 +148,49 @@ class CheckoutController extends Controller
                     }
                 }
 
+                // ── Bypass Xendit and use WhatsApp ──
+                if ($channelUpper === 'WHATSAPP') {
+                    $order->update([
+                        'payment_method' => 'whatsapp',
+                        'payment_channel' => 'WHATSAPP'
+                    ]);
+
+                    session()->forget('cart');
+
+                    $waNumber = get_setting('whatsapp_number', '6281234567890');
+                    $waNumber = preg_replace('/[^0-9]/', '', $waNumber);
+                    if (strpos($waNumber, '0') === 0) {
+                        $waNumber = '62' . substr($waNumber, 1);
+                    }
+
+                    $waMessage = "*Pesanan Baru - FISHERIES*\n";
+                    $waMessage .= "---------------------------------------\n";
+                    $waMessage .= "*No Pesanan:* {$order->order_number}\n";
+                    $waMessage .= "*Nama:* {$request->payer_name}\n";
+                    $waMessage .= "*Telepon:* {$request->payer_phone}\n";
+                    
+                    $waMessage .= "\n*Alamat Pengiriman:*\n{$request->address}\n\n";
+                    $waMessage .= "*Detail Pesanan:*\n";
+                    
+                    foreach ($order->items as $item) {
+                        $productName = $item->product ? $item->product->title : 'Produk';
+                        $waMessage .= "- {$productName} (x{$item->quantity}) : Rp " . number_format($item->subtotal, 0, ',', '.') . "\n";
+                    }
+                    
+                    $waMessage .= "---------------------------------------\n";
+                    $waMessage .= "*Total:* Rp " . number_format($order->total_amount, 0, ',', '.') . "\n\n";
+                    $waMessage .= "Halo admin, saya ingin melanjutkan proses pembayaran untuk pesanan ini.";
+                    
+                    $url = "https://wa.me/{$waNumber}?text=" . urlencode($waMessage);
+
+                    return response()->json([
+                        'type' => 'whatsapp',
+                        'order_number' => $order->order_number,
+                        'url' => $url,
+                        'amount' => $order->total_amount
+                    ]);
+                }
+
                 // ── Route to Xendit API ──
                 if ($channelUpper === self::QRIS) {
                     return $this->processQris($order);

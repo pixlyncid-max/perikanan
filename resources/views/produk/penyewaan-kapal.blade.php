@@ -3,14 +3,7 @@
 @section('title', 'Penyewaan Kapal - FISHERIES')
 
 @section('content')
-<div class="relative bg-gradient-to-r from-cyan-600 to-cyan-500 py-16">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Penyewaan Kapal</h1>
-            <p class="text-xl opacity-90">Kapal nelayan berkualitas untuk kebutuhan perikanan Anda</p>
-        </div>
-    </div>
-</div>
+
 
 <div class="container mx-auto px-4 py-12">
     <div class="mb-8">

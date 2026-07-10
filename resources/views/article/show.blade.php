@@ -33,7 +33,7 @@
             @endif
         </div>
 
-        <article class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <article class="bg-white rounded-xl shadow-lg overflow-hidden reveal-scale">
 
             {{-- Featured Image --}}
             @if($article->featured_image)
@@ -67,7 +67,7 @@
                 </div>
 
                 {{-- Title --}}
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight tracking-tight">
                     {{ $article->title }}
                 </h1>
 
@@ -90,7 +90,7 @@
                 @endif
 
                 {{-- Content --}}
-                <div class="prose max-w-none">
+                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
                     {!! nl2br(e($article->content)) !!}
                 </div>
 
@@ -136,14 +136,14 @@
 
         {{-- Related Articles --}}
         @if($relatedArticles->count() > 0)
-        <div class="mt-10">
+        <div class="mt-10 reveal">
             <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
                 <span class="w-1 h-6 bg-green-600 rounded mr-3"></span> Artikel Terkait
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($relatedArticles as $related)
                 <a href="{{ route('article.show', $related->slug) }}"
-                   class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 group block">
+                   class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 group block reveal stagger-{{ $loop->iteration > 6 ? 6 : $loop->iteration }} card-hover">
                     <div class="h-40 overflow-hidden">
                         @if($related->featured_image)
                             <img src="{{ asset('storage/' . $related->featured_image) }}"
@@ -176,7 +176,7 @@
 
         {{-- Recommended Products --}}
         @if(isset($recommendedProducts) && $recommendedProducts->count() > 0)
-        <div class="mt-12 bg-green-50 rounded-2xl p-8 border border-green-100">
+        <div class="mt-12 bg-green-50 rounded-2xl p-8 border border-green-100 reveal">
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h3 class="text-2xl font-bold text-gray-900 flex items-center">
@@ -204,7 +204,7 @@
                 @endphp
 
                 @foreach($recommendedProducts as $product)
-                <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col h-full border border-gray-100 border-b-4 border-b-transparent hover:border-b-green-500 transform hover:-translate-y-1">
+                <div class="bg-white rounded-xl shadow-sm transition-all duration-300 overflow-hidden group flex flex-col h-full border border-gray-100 border-b-4 border-b-transparent hover:border-b-green-500 reveal stagger-{{ $loop->iteration > 6 ? 6 : $loop->iteration }} card-hover">
                     {{-- Product Image --}}
                     @php
                         $imgs = $product->images;

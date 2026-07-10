@@ -3,11 +3,11 @@
 @section('title', 'Kemitraan - FISHERIES')
 
 @section('content')
-<div class="relative bg-gradient-to-r from-purple-600 to-purple-500 py-16">
+<div class="relative bg-gradient-to-r from-[#002A49] to-[#019ADA] py-24 overflow-hidden cta-section">
     <div class="container mx-auto px-4 relative z-10">
         <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ get_setting('partnership_title', 'Program Kemitraan') }}</h1>
-            <p class="text-xl opacity-90">{{ get_setting('partnership_description', 'Bergabunglah dengan jaringan mitra FISHERIES') }}</p>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 hero-text-1">{{ get_setting('partnership_title', 'Program Kemitraan') }}</h1>
+            <p class="text-xl opacity-90 hero-text-2">{{ get_setting('partnership_description', 'Bergabunglah dengan jaringan mitra FISHERIES') }}</p>
         </div>
     </div>
 </div>
@@ -15,22 +15,22 @@
 <div class="container mx-auto px-4 py-12">
     <div class="max-w-5xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center reveal stagger-1 card-hover">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 icon-circle">
                     <i class="fas fa-handshake text-purple-600 text-2xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Mitra Supplier</h3>
                 <p class="text-gray-600 text-sm">Jadilah supplier produk perikanan untuk jaringan FISHERIES</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center reveal stagger-2 card-hover">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 icon-circle">
                     <i class="fas fa-store text-blue-600 text-2xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Mitra Distributor</h3>
                 <p class="text-gray-600 text-sm">Distribusikan produk FISHERIES di wilayah Anda</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center reveal stagger-3 card-hover">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 icon-circle">
                     <i class="fas fa-graduation-cap text-green-600 text-2xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Mitra Pelatihan</h3>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8 reveal-scale">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Keuntungan Menjadi Mitra</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="flex items-start">
@@ -80,7 +80,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg p-8">
+        <div class="bg-white rounded-xl shadow-lg p-8 reveal-scale" style="transition-delay: 200ms;">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Formulir Pendaftaran Mitra</h2>
             <form class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -125,7 +125,7 @@
                     <input type="checkbox" id="terms" class="mr-2">
                     <label for="terms" class="text-sm text-gray-600">Saya menyetujui syarat dan ketentuan program kemitraan FISHERIES</label>
                 </div>
-                <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition font-semibold">
+                <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition font-semibold btn-animate ripple">
                     Kirim Pendaftaran
                 </button>
             </form>

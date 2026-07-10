@@ -3,14 +3,7 @@
 @section('title', 'Umpan Ikan Laut - FISHERIES')
 
 @section('content')
-<div class="relative bg-gradient-to-r from-indigo-600 to-indigo-500 py-16">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Umpan Ikan Laut</h1>
-            <p class="text-xl opacity-90">Umpan berkualitas untuk hasil tangkapan maksimal</p>
-        </div>
-    </div>
-</div>
+
 
 <div class="container mx-auto px-4 py-12">
 

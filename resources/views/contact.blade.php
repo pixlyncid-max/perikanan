@@ -3,23 +3,15 @@
 @section('title', 'Kontak - FISHERIES')
 
 @section('content')
-<!-- Hero Section -->
-<div class="relative bg-gradient-to-r from-blue-600 to-cyan-500 py-16">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Hubungi Kami</h1>
-            <p class="text-xl opacity-90">Kami siap membantu Anda</p>
-        </div>
-    </div>
-</div>
+
 
 <!-- Contact Content -->
 <div class="container mx-auto px-4 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Contact Info -->
-        <div class="lg:col-span-1 space-y-6">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+        <div class="lg:col-span-1 space-y-6 reveal-left">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 icon-circle">
                     <i class="fas fa-map-marker-alt text-blue-600 text-xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Alamat Kantor Pusat</h3>
@@ -31,8 +23,8 @@
                 </p>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 icon-circle">
                     <i class="fas fa-phone text-green-600 text-xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Telepon</h3>
@@ -47,8 +39,8 @@
                 </p>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4 icon-circle">
                     <i class="fas fa-envelope text-orange-600 text-xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Email</h3>
@@ -65,8 +57,8 @@
                 </p>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 icon-circle">
                     <i class="fas fa-clock text-purple-600 text-xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Jam Operasional</h3>
@@ -83,7 +75,7 @@
             </div>
 
             <!-- Social Media -->
-            <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Media Sosial</h3>
                 <div class="flex space-x-3">
                     @if(get_setting('instagram_url'))
@@ -116,7 +108,7 @@
         </div>
 
         <!-- Contact Form -->
-        <div class="lg:col-span-2">
+        <div class="lg:col-span-2 reveal-right">
             <div class="bg-white rounded-xl shadow-lg p-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Kirim Pesan</h2>
                 <form action="/contact" method="POST">
@@ -181,7 +173,7 @@
                     </div>
 
                     <button type="submit" 
-                        class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center">
+                        class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center btn-animate ripple">
                         <i class="fas fa-paper-plane mr-2"></i> Kirim Pesan
                     </button>
                 </form>
@@ -215,34 +207,34 @@
 
     <!-- DPC Contacts -->
     <div class="mt-16">
-        <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">Kontak DPC</h2>
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-8 reveal">Kontak DPC</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 reveal stagger-1 card-hover">
                 <h3 class="font-bold text-gray-800 mb-2">DPC Samarinda</h3>
                 <p class="text-gray-600 text-sm mb-3">Jl. Pahlawan No. 45, Samarinda</p>
                 <p class="text-gray-600 text-sm"><i class="fas fa-phone mr-2"></i>(0541) 765432</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 reveal stagger-2 card-hover">
                 <h3 class="font-bold text-gray-800 mb-2">DPC Bontang</h3>
                 <p class="text-gray-600 text-sm mb-3">Jl. MT. Haryono No. 12, Bontang</p>
                 <p class="text-gray-600 text-sm"><i class="fas fa-phone mr-2"></i>(0548) 234567</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 reveal stagger-3 card-hover">
                 <h3 class="font-bold text-gray-800 mb-2">DPC Balikpapan</h3>
                 <p class="text-gray-600 text-sm mb-3">Jl. Sudirman No. 78, Balikpapan</p>
                 <p class="text-gray-600 text-sm"><i class="fas fa-phone mr-2"></i>(0542) 876543</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 reveal stagger-1 card-hover">
                 <h3 class="font-bold text-gray-800 mb-2">DPC Kutai Kartanegara</h3>
                 <p class="text-gray-600 text-sm mb-3">Jl. Ahmad Yani No. 23, Tenggarong</p>
                 <p class="text-gray-600 text-sm"><i class="fas fa-phone mr-2"></i>(0541) 345678</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 reveal stagger-2 card-hover">
                 <h3 class="font-bold text-gray-800 mb-2">DPC Kutai Timur</h3>
                 <p class="text-gray-600 text-sm mb-3">Jl. Basuki Rahmat No. 56, Sangatta</p>
                 <p class="text-gray-600 text-sm"><i class="fas fa-phone mr-2"></i>(0553) 456789</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 reveal stagger-3 card-hover">
                 <h3 class="font-bold text-gray-800 mb-2">DPC Berau</h3>
                 <p class="text-gray-600 text-sm mb-3">Jl. Diponegoro No. 34, Tanjung Redeb</p>
                 <p class="text-gray-600 text-sm"><i class="fas fa-phone mr-2"></i>(0554) 567890</p>

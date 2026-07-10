@@ -21,7 +21,7 @@
             </a>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden reveal-scale">
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <!-- Image Gallery -->
                 <div class="p-4 md:p-8 bg-gray-50 flex flex-col items-center border-r border-gray-100">
@@ -182,11 +182,11 @@
                     @endif
 
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <button onclick="handleAddToCart({{ $product->id }}, {{ $product->variations->count() > 0 ? 'true' : 'false' }})" id="cart-btn-{{ $product->id }}" class="flex-grow bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-3 {{ $product->stock < 1 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                        <button onclick="handleAddToCart({{ $product->id }}, {{ $product->variations->count() > 0 ? 'true' : 'false' }})" id="cart-btn-{{ $product->id }}" class="flex-grow bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-3 btn-animate ripple {{ $product->stock < 1 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $product->stock < 1 ? 'disabled' : '' }}>
                             <i class="fas fa-shopping-cart"></i>
                             Tambah ke Keranjang
                         </button>
-                        <button onclick="toggleWishlist({{ $product->id }})" id="wishlist-btn-{{ $product->id }}" class="bg-gray-100 px-6 py-4 rounded-xl font-bold hover:bg-gray-200 transition flex items-center justify-center">
+                        <button onclick="toggleWishlist({{ $product->id }})" id="wishlist-btn-{{ $product->id }}" class="bg-gray-100 px-6 py-4 rounded-xl font-bold hover:bg-gray-200 transition flex items-center justify-center btn-animate ripple">
                             <i id="wishlist-icon-{{ $product->id }}" class="far fa-heart text-gray-800 text-xl transition-colors duration-300"></i>
                         </button>
                     </div>
@@ -196,11 +196,13 @@
 
         <!-- Related Products -->
         @if($relatedProducts->count() > 0)
-        <div class="mt-16">
+        <div class="mt-16 reveal">
             <h2 class="text-2xl font-bold text-gray-900 mb-8 border-l-4 border-blue-600 pl-4">Produk Terkait</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($relatedProducts as $related)
-                    @include('produk.partials.product-card', ['product' => $related])
+                    <div class="reveal stagger-{{ $loop->iteration > 6 ? 6 : $loop->iteration }}">
+                        @include('produk.partials.product-card', ['product' => $related])
+                    </div>
                 @endforeach
             </div>
         </div>
