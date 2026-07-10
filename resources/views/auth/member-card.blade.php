@@ -20,7 +20,7 @@
             <?php endif; ?>
         </div>
 
-        <div class="rounded-2xl shadow-2xl overflow-hidden mb-8 bg-cover bg-center" style="background-image: url('{{ asset('images/kartu%20anggota%20fisheries.png') }}');">
+        <div class="rounded-2xl shadow-2xl overflow-hidden mb-8 bg-cover bg-center" style="background-image: url('{{ asset('images/Kartu Anggota Fisheries.png') }}');">
             <div class="p-6 text-white relative">
                 <div class="relative z-10">
                     <div class="flex items-center justify-between mb-4">
