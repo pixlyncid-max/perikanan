@@ -155,7 +155,7 @@ class CheckoutController extends Controller
                         'payment_channel' => 'WHATSAPP'
                     ]);
 
-                    session()->forget('cart');
+                    $this->clearPurchasedItemsFromCart($request);
 
                     $waNumber = get_setting('whatsapp_number', '6281234567890');
                     $waNumber = preg_replace('/[^0-9]/', '', $waNumber);
@@ -223,7 +223,7 @@ class CheckoutController extends Controller
             'payment_code' => $va['account_number'],
             'payment_expires_at' => isset($va['expiration_date']) ? \Carbon\Carbon::parse($va['expiration_date']) : now()->addHours(24)
         ]);
-        session()->forget('cart');
+        $this->clearPurchasedItemsFromCart(request());
         return response()->json(['type' => 'va', 'order_number' => $order->order_number, 'code' => $va['account_number'], 'bank' => $bankCode, 'amount' => $order->total_amount]);
     }
 
@@ -234,7 +234,7 @@ class CheckoutController extends Controller
             'payment_code' => $qris['qr_string'],
             'payment_expires_at' => isset($qris['expires_at']) ? \Carbon\Carbon::parse($qris['expires_at']) : now()->addHour()
         ]);
-        session()->forget('cart');
+        $this->clearPurchasedItemsFromCart(request());
         return response()->json(['type' => 'qris', 'order_number' => $order->order_number, 'qr_string' => $qris['qr_string'], 'amount' => $order->total_amount]);
     }
 
@@ -254,7 +254,7 @@ class CheckoutController extends Controller
         }
 
         $order->update(['payment_url' => $paymentUrl]);
-        session()->forget('cart');
+        $this->clearPurchasedItemsFromCart(request());
 
         return response()->json([
             'type' => 'ewallet', 
@@ -271,7 +271,7 @@ class CheckoutController extends Controller
             'payment_code' => $retail['payment_code'],
             'payment_expires_at' => isset($retail['expires_at']) ? \Carbon\Carbon::parse($retail['expires_at']) : now()->addHours(48)
         ]);
-        session()->forget('cart');
+        $this->clearPurchasedItemsFromCart(request());
         return response()->json(['type' => 'retail', 'order_number' => $order->order_number, 'code' => $retail['payment_code'], 'channel' => $channel, 'amount' => $order->total_amount]);
     }
 
@@ -280,7 +280,7 @@ class CheckoutController extends Controller
         $charge = $this->xenditService->createDirectDebitCharge($order, $channel);
         $paymentUrl = $charge['actions'][0]['url'] ?? null;
         $order->update(['payment_url' => $paymentUrl]);
-        session()->forget('cart');
+        $this->clearPurchasedItemsFromCart(request());
         return response()->json(['type' => 'direct_debit', 'order_number' => $order->order_number, 'payment_url' => $paymentUrl]);
     }
 
@@ -297,7 +297,7 @@ class CheckoutController extends Controller
             }
         }
         $order->update(['payment_url' => $paymentUrl]);
-        session()->forget('cart');
+        $this->clearPurchasedItemsFromCart(request());
         return response()->json(['type' => 'paylater', 'order_number' => $order->order_number, 'payment_url' => $paymentUrl]);
     }
 
@@ -308,10 +308,33 @@ class CheckoutController extends Controller
         
         if ($charge['status'] === 'CAPTURED') {
             $order->update(['payment_status' => 'paid', 'status' => 'processing']);
-            session()->forget('cart');
+            $this->clearPurchasedItemsFromCart(request());
             return response()->json(['type' => 'credit_card', 'status' => 'success', 'order_number' => $order->order_number]);
         } else {
             return response()->json(['type' => 'credit_card', 'status' => 'pending', 'order_number' => $order->order_number, 'response' => $charge]);
+        }
+    }
+
+    private function clearPurchasedItemsFromCart(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $items = $request->input('items', []);
+        
+        foreach ($items as $item) {
+            $cartKey = !empty($item['variation_id']) ? $item['product_id'] . '-' . $item['variation_id'] : $item['product_id'];
+            if (isset($cart[$cartKey])) {
+                unset($cart[$cartKey]);
+            }
+        }
+        
+        session()->put('cart', $cart);
+        
+        $userSession = session('user');
+        if ($userSession) {
+            \App\Models\ShoppingCart::updateOrCreate(
+                ['user_id' => $userSession['id'], 'user_type' => $userSession['type']],
+                ['cart_data' => json_encode($cart)]
+            );
         }
     }
 }

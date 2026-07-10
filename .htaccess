@@ -5,6 +5,8 @@
 
     RewriteEngine On
 
+    # Prevent infinite loop for storage files
+    RewriteRule ^storage/app/public/ - [L]
     # Route requests for /storage/... directly to the storage/app/public folder
     RewriteRule ^storage/(.*)$ storage/app/public/$1 [L]
 
