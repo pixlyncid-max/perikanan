@@ -346,6 +346,53 @@ class AuthController extends Controller
         return redirect('/');
     }
 
+    public function verifyMember($member_number)
+    {
+        $member = Member::where('membership_number', $member_number)
+            ->orWhere('email', $member_number) // in case email is passed somehow
+            ->first();
+        
+        $is_admin = false;
+
+        if (!$member) {
+            // Check if it's an admin
+            if (str_starts_with($member_number, 'ADMIN-')) {
+                $adminId = (int) str_replace('ADMIN-', '', $member_number);
+                $admin = Admin::find($adminId);
+                
+                if ($admin) {
+                    $member = new \stdClass();
+                    $member->id = $admin->id;
+                    $member->name = $admin->name;
+                    $member->email = $admin->email;
+                    $member->phone = $admin->phone ?? '-';
+                    $member->address = $admin->address ?? '-';
+                    $member->avatar = $admin->avatar ?? null;
+                    $member->member_number = $member_number;
+                    $member->dpc = 'samarinda';
+                    $member->occupation = 'Administrator';
+                    $member->join_date = $admin->created_at ?? date('Y-m-d');
+                    $member->status = 'active';
+                    $member->expiry_date = date('Y-m-d', strtotime('+10 years'));
+                    $member->benefits = json_encode(['Akses Penuh', 'Manajemen Sistem', 'Laporan Admin']);
+                    $is_admin = true;
+                }
+            }
+        }
+
+        if (!$member) {
+            Session::flash('error', 'Kartu anggota tidak valid atau tidak ditemukan.');
+            return redirect('/');
+        }
+
+        return view('auth.member-card', [
+            'member' => $member,
+            'is_admin' => $is_admin,
+            'orders' => [], // Hide orders in public view
+            'is_public_view' => true
+        ]);
+    }
+
 
     /**
      * Check if current user can order a product

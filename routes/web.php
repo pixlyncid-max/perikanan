@@ -104,6 +104,7 @@ Route::get('/auth/facebook/callback', [AuthController::class, 'handleFacebookCal
 Route::group([], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/member-card', [AuthController::class, 'memberCard'])->name('member.card');
+    Route::get('/verify-member/{member_number}', [AuthController::class, 'verifyMember'])->name('member.verify');
 
     // Order History Routes
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');

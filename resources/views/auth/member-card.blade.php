@@ -10,6 +10,7 @@
             <p class="text-gray-600">Tunjukkan kartu ini untuk mendapatkan diskon dan benefit khusus</p>
             <?php 
             $is_admin = isset($is_admin) ? $is_admin : false;
+            $is_public = isset($is_public_view) ? $is_public_view : false;
             if($is_admin): 
             ?>
             <div class="mt-4">
@@ -78,7 +79,7 @@
                             <div class="text-right w-full sm:w-auto ml-auto">
                                 <div class="inline-flex flex-col items-end">
                                         <div class="bg-white p-1 rounded-lg inline-block shadow-sm">
-                                            {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(76)->margin(0)->generate(route('member.card')) !!}
+                                            {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(76)->margin(0)->generate(route('member.verify', ['member_number' => isset($member->member_number) ? $member->member_number : (isset($member->membership_number) ? $member->membership_number : '')])) !!}
                                         </div>
                                     <p class="text-blue-100 text-xs mt-1 font-medium">Scan untuk verifikasi</p>
                                 </div>
@@ -89,6 +90,7 @@
             </div>
         </div>
 
+        <?php if(!$is_public): ?>
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Benefit Anggota</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -205,6 +207,7 @@
                 <i class="fas fa-download mr-2"></i>Download PDF
             </button>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 
