@@ -77,12 +77,9 @@
                             </div>
                             <div class="text-right w-full sm:w-auto ml-auto">
                                 <div class="inline-flex flex-col items-end">
-                                    <div class="bg-white p-2 rounded-lg inline-block shadow-sm">
-                                        <?php 
-                                        $qrData = isset($member->member_number) ? urlencode('ID: ' . $member->member_number) : '';
-                                        ?>
-                                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=<?php echo $qrData; ?>" alt="QR Code" class="w-20 h-20">
-                                    </div>
+                                        <div class="bg-white p-1 rounded-lg inline-block shadow-sm">
+                                            {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(76)->margin(0)->generate(route('member.card')) !!}
+                                        </div>
                                     <p class="text-blue-100 text-xs mt-1 font-medium">Scan untuk verifikasi</p>
                                 </div>
                             </div>
