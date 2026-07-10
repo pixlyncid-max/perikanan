@@ -555,73 +555,75 @@
 
     <!-- Scripts -->
     <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuIcon = document.getElementById('menu-icon');
-        
-        mobileMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            mobileMenu.classList.toggle('hidden');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
             
-            // Toggle icon between bars and X with animation
-            if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.classList.remove('fa-times');
-                menuIcon.classList.add('fa-bars');
-                mobileMenuBtn.classList.remove('bg-blue-100', 'text-blue-700', 'shadow-md');
-                mobileMenuBtn.classList.add('bg-blue-50', 'text-blue-600', 'shadow-sm');
-            } else {
-                menuIcon.classList.remove('fa-bars');
-                menuIcon.classList.add('fa-times');
-                mobileMenuBtn.classList.remove('bg-blue-50', 'text-blue-600', 'shadow-sm');
-                mobileMenuBtn.classList.add('bg-blue-100', 'text-blue-700', 'shadow-md');
+            if (mobileMenuBtn && mobileMenu && menuIcon) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    mobileMenu.classList.toggle('hidden');
+                    
+                    // Toggle icon between bars and X
+                    if (mobileMenu.classList.contains('hidden')) {
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                        mobileMenuBtn.classList.remove('bg-white/20');
+                        mobileMenuBtn.classList.add('bg-white/10');
+                    } else {
+                        menuIcon.classList.remove('fa-bars');
+                        menuIcon.classList.add('fa-times');
+                        mobileMenuBtn.classList.remove('bg-white/10');
+                        mobileMenuBtn.classList.add('bg-white/20');
+                    }
+                });
+
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target) && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                        mobileMenuBtn.classList.remove('bg-white/20');
+                        mobileMenuBtn.classList.add('bg-white/10');
+                    }
+                });
             }
-        });
 
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target) && !mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                menuIcon.classList.remove('fa-times');
-                menuIcon.classList.add('fa-bars');
-                mobileMenuBtn.classList.remove('bg-blue-100', 'text-blue-700', 'shadow-md');
-                mobileMenuBtn.classList.add('bg-blue-50', 'text-blue-600', 'shadow-sm');
-            }
-        });
-
-
-
-        // Dropdown Toggle Function
-        function toggleDropdown(button) {
-            const dropdown = button.parentElement;
-            const menu = dropdown.querySelector('.dropdown-menu');
-            const isActive = menu.classList.contains('active');
-            
-            // Close all other dropdowns
-            document.querySelectorAll('.dropdown-menu').forEach(m => {
-                m.classList.remove('active');
-            });
-            document.querySelectorAll('.dropdown-toggle').forEach(b => {
-                b.classList.remove('active');
-            });
-            
-            // Toggle current dropdown
-            if (!isActive) {
-                menu.classList.add('active');
-                button.classList.add('active');
-            }
-        }
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.dropdown')) {
+            // Dropdown Toggle Function (Global)
+            window.toggleDropdown = function(button) {
+                const dropdown = button.parentElement;
+                const menu = dropdown.querySelector('.dropdown-menu');
+                const isActive = menu.classList.contains('active');
+                
+                // Close all other dropdowns
                 document.querySelectorAll('.dropdown-menu').forEach(m => {
                     m.classList.remove('active');
                 });
                 document.querySelectorAll('.dropdown-toggle').forEach(b => {
                     b.classList.remove('active');
                 });
-            }
+                
+                // Toggle current dropdown
+                if (!isActive) {
+                    menu.classList.add('active');
+                    button.classList.add('active');
+                }
+            };
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown-menu').forEach(m => {
+                        m.classList.remove('active');
+                    });
+                    document.querySelectorAll('.dropdown-toggle').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                }
+            });
         });
 
         // Add to Cart global function
