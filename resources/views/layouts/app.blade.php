@@ -223,7 +223,7 @@
                     </a>
 
                     <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" onclick="toggleMobileMenu(event)" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 focus:outline-none transition-all duration-200">
+                    <button id="mobile-menu-btn" onclick="var m = document.getElementById('mobile-menu'); var i = document.getElementById('menu-icon'); if(m.style.display === 'block') { m.style.display = 'none'; i.classList.remove('fa-times'); i.classList.add('fa-bars'); } else { m.style.display = 'block'; i.classList.remove('fa-bars'); i.classList.add('fa-times'); }" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 focus:outline-none transition-all duration-200">
                         <i id="menu-icon" class="fas fa-bars text-xl transition-transform duration-200"></i>
                     </button>
                 </div>
@@ -233,7 +233,7 @@
     </nav>
  
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden fixed left-0 right-0 top-16 bg-white border-b shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto z-[9999]">
+    <div id="mobile-menu" style="display: none;" class="md:hidden fixed left-0 right-0 top-16 bg-white border-b shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto z-[9999]">
         <div class="px-4 py-3 space-y-1">
             <a href="/" class="block px-3 py-2 text-gray-700 hover:text-blue-600 font-semibold border-b border-gray-100">Beranda</a>
             

@@ -44,7 +44,7 @@
 <div class="container mx-auto px-4 py-12">
     <div class="flex items-center justify-between mb-8">
         <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Berita Terkini</h2>
-        <a href="/articles" class="text-blue-600 font-medium hover:text-blue-700 flex items-center">
+        <a href="/article" class="text-blue-600 font-medium hover:text-blue-700 flex items-center">
             Lihat Semua <i class="fas fa-arrow-right ml-2"></i>
         </a>
     </div>
