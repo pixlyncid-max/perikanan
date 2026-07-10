@@ -223,7 +223,7 @@
                     </a>
 
                     <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 focus:outline-none transition-all duration-200">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu(event)" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 focus:outline-none transition-all duration-200">
                         <i id="menu-icon" class="fas fa-bars text-xl transition-transform duration-200"></i>
                     </button>
                 </div>
@@ -555,42 +555,57 @@
 
     <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile Menu Toggle
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        // Global Mobile Menu Toggle
+        window.toggleMobileMenu = function(e) {
+            if (e) e.stopPropagation();
             const mobileMenu = document.getElementById('mobile-menu');
             const menuIcon = document.getElementById('menu-icon');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             
-            if (mobileMenuBtn && mobileMenu && menuIcon) {
-                mobileMenuBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    mobileMenu.classList.toggle('hidden');
-                    
-                    // Toggle icon between bars and X
-                    if (mobileMenu.classList.contains('hidden')) {
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('hidden');
+                
+                if (mobileMenu.classList.contains('hidden')) {
+                    if (menuIcon) {
                         menuIcon.classList.remove('fa-times');
                         menuIcon.classList.add('fa-bars');
+                    }
+                    if (mobileMenuBtn) {
                         mobileMenuBtn.classList.remove('bg-white/20');
                         mobileMenuBtn.classList.add('bg-white/10');
-                    } else {
+                    }
+                } else {
+                    if (menuIcon) {
                         menuIcon.classList.remove('fa-bars');
                         menuIcon.classList.add('fa-times');
+                    }
+                    if (mobileMenuBtn) {
                         mobileMenuBtn.classList.remove('bg-white/10');
                         mobileMenuBtn.classList.add('bg-white/20');
                     }
-                });
+                }
+            }
+        };
 
-                // Close mobile menu when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target) && !mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                const mobileMenu = document.getElementById('mobile-menu');
+                const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+                const menuIcon = document.getElementById('menu-icon');
+                
+                if (mobileMenu && mobileMenuBtn && !mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target) && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    if (menuIcon) {
                         menuIcon.classList.remove('fa-times');
                         menuIcon.classList.add('fa-bars');
+                    }
+                    if (mobileMenuBtn) {
                         mobileMenuBtn.classList.remove('bg-white/20');
                         mobileMenuBtn.classList.add('bg-white/10');
                     }
-                });
-            }
+                }
+            });
 
             // Dropdown Toggle Function (Global)
             window.toggleDropdown = function(button) {
