@@ -7,12 +7,21 @@
 
 # Storage
 /storage/*.key
-/storage/cache/*
 /storage/logs/*
-/storage/framework/*
-!/storage/framework/.gitkeep
 !/storage/logs/.gitkeep
-!/storage/cache/.gitkeep
+!/storage/logs/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+!/storage/framework/views/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+!/storage/framework/testing/.gitignore
 
 # Vendor (if using composer)
 /vendor/*
