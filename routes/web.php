@@ -191,3 +191,57 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
+
+// Dynamic XML Sitemap for Google SEO
+Route::get('/sitemap.xml', function () {
+    $urls = [
+        ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
+        ['loc' => url('/about'), 'priority' => '0.8', 'changefreq' => 'monthly'],
+        ['loc' => url('/contact'), 'priority' => '0.8', 'changefreq' => 'monthly'],
+        ['loc' => url('/produk'), 'priority' => '0.9', 'changefreq' => 'daily'],
+        ['loc' => route('produk.sewa-pancing'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+        ['loc' => route('produk.umpan-laut'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+        ['loc' => route('produk.pelet-pakan'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+        ['loc' => route('produk.vitamin-air'), 'priority' => '0.8', 'changefreq' => 'weekly'],
+        ['loc' => route('produk.sewa-pancing-laut'), 'priority' => '0.8', 'changefreq' => 'weekly'],
+        ['loc' => route('article.index'), 'priority' => '0.8', 'changefreq' => 'daily'],
+    ];
+
+    // Dynamic products
+    if (class_exists('\App\Models\Product')) {
+        $products = \App\Models\Product::where('is_active', true)->get();
+        foreach ($products as $product) {
+            $urls[] = [
+                'loc' => route('produk.show', $product->slug),
+                'priority' => '0.7',
+                'changefreq' => 'weekly'
+            ];
+        }
+    }
+
+    // Dynamic articles
+    if (class_exists('\App\Models\Article')) {
+        $articles = \App\Models\Article::where('is_published', true)->get();
+        foreach ($articles as $article) {
+            $urls[] = [
+                'loc' => route('article.show', $article->slug),
+                'priority' => '0.7',
+                'changefreq' => 'weekly'
+            ];
+        }
+    }
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    foreach ($urls as $url) {
+        $xml .= '<url>';
+        $xml .= '<loc>' . htmlspecialchars($url['loc']) . '</loc>';
+        $xml .= '<changefreq>' . $url['changefreq'] . '</changefreq>';
+        $xml .= '<priority>' . $url['priority'] . '</priority>';
+        $xml .= '</url>';
+    }
+    $xml .= '</urlset>';
+
+    return response($xml, 200)->header('Content-Type', 'text/xml');
+})->name('sitemap');
+

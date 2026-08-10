@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Vitamin Air - FISHERIES')
+@section('title', 'Vitamin Air & Probiotik Ikan Terlengkap | Fisheries.id')
+@section('meta_description', 'Beli vitamin air kolam dan probiotik tambak ikan di Fisheries.id. Menjaga kualitas air kolam dan meningkatkan imun ikan pembudidaya.')
+@section('meta_keywords', 'vitamin air kolam, probiotik ikan, suplemen ikan, obat kolam ikan, perikanan indonesia')
 
 @section('content')
 

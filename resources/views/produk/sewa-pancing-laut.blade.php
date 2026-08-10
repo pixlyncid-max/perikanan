@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Sewa Pancing Laut - FISHERIES')
+@section('title', 'Sewa Alat Pancing Laut & Offshore Heavy Duty | Fisheries.id')
+@section('meta_description', 'Penyewaan set alat pancing laut dalam (trolling, jigging, popper) kualitas premium dengan harga sewa terjangkau hanya di Fisheries.id.')
+@section('meta_keywords', 'sewa pancing laut, sewa alat trolling, sewa joran laut, rental pancing offshore, fisheries.id')
 
 @section('content')
 

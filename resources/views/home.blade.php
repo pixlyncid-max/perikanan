@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Beranda - ' . get_setting('site_name', 'FISHERIES'))
+@section('title', 'Fisheries.id - Platform Perikanan & Sewa Alat Pancing Terlengkap')
+@section('meta_description', 'Fisheries.id adalah platform perikanan dan komunitas nelayan terbesar. Layanan penyewaan alat pancing, jual pelet pakan ikan, umpan laut, dan bibit unggul.')
+@section('meta_keywords', 'fisheries.id, perikanan indonesia, sewa pancing, pelet pakan ikan, umpan laut, penyewaan kapal pancing, bibit ikan')
 
 @section('content')
 <!-- Hero Section with Auto-sliding Background -->

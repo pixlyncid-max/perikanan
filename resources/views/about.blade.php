@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang Kami - FISHERIES')
+@section('title', 'Tentang Fisheries Indonesia - Komunitas & Komoditas Perikanan')
+@section('meta_description', 'Fisheries Indonesia adalah platform dan komunitas perikanan terbesar yang menghubungkan nelayan, pembudidaya ikan, dan pengusaha perikanan.')
+@section('meta_keywords', 'tentang fisheries, komunitas perikanan indonesia, nelayan indonesia, pembudidaya ikan, fisheries.id')
 
 @section('content')
 

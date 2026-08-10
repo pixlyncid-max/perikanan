@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Kontak - FISHERIES')
+@section('title', 'Hubungi Kami - Fisheries Indonesia | Layanan Pelanggan & Kemitraan')
+@section('meta_description', 'Hubungi tim Fisheries Indonesia untuk informasi layanan sewa alat pancing, pakan pelet ikan, kemitraan, dan konsultasi perikanan.')
+@section('meta_keywords', 'kontak fisheries, hubungi perikanan, customer service fisheries, alamat fisheries indonesia')
 
 @section('content')
 

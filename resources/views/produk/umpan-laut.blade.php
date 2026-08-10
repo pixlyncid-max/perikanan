@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Umpan Ikan Laut - FISHERIES')
+@section('title', 'Jual Umpan Laut Segar & Tiruan Terlengkap | Fisheries.id')
+@section('meta_description', 'Beli umpan pancing laut berkualitas di Fisheries.id. Menyediakan umpan hidup, umpan segar, cumi, udang, serta essens pancing laut terbaik.')
+@section('meta_keywords', 'umpan laut, umpan pancing laut, umpan cumi, umpan udang, essens mancing laut, fisheries.id')
 
 @section('content')
 

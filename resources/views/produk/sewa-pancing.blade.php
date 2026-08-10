@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Sewa Pancing - FISHERIES')
+@section('title', 'Sewa Alat Pancing Murah & Terlengkap | Fisheries.id')
+@section('meta_description', 'Sewa alat pancing kualitas terbaik harga terjangkau di Fisheries.id. Joran, reel, dan perlengkapan mancing siap pakai.')
+@section('meta_keywords', 'sewa alat pancing, rental pancing, sewa joran, sewa reel, pancing murah, fisheries.id')
 
 @section('content')
 

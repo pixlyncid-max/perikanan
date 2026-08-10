@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Pelet Pakan Ikan - FISHERIES')
+@section('title', 'Pelet Pakan Ikan Berkualitas Tinggi | Fisheries.id')
+@section('meta_description', 'Distributor pelet pakan ikan lele, nila, gurame, dan ikan hias bernutrisi tinggi. Dapatkan pakan ikan harga terbaik di Fisheries.id.')
+@section('meta_keywords', 'pelet ikan, pakan ikan, pelet lele, pakan gurame, pakan nila, pelet ikan hias, fisheries.id')
 
 @section('content')
 

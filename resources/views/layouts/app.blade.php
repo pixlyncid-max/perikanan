@@ -15,10 +15,46 @@
         <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('android-chrome-192x192.png') }}?v={{ @filemtime(public_path('android-chrome-192x192.png')) ?: time() }}">
         <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('android-chrome-512x512.png') }}?v={{ @filemtime(public_path('android-chrome-512x512.png')) ?: time() }}">
     @endif
-    @if(get_setting('site_description'))
-        <meta name="description" content="{{ get_setting('site_description') }}">
-    @endif
-    <title>@yield('title', get_setting('site_name', 'FISHERIES') . ' - ' . get_setting('site_tagline', 'Indonesian Fisheries Community'))</title>
+    <title>@yield('title', get_setting('site_name', 'FISHERIES') . ' - ' . get_setting('site_tagline', 'Komunitas & Platform Perikanan Terlengkap Indonesia'))</title>
+    <meta name="description" content="@yield('meta_description', get_setting('site_description', 'Fisheries.id adalah platform komunitas perikanan terbesar di Indonesia. Menyediakan sewa alat pancing, pakan pelet ikan, umpan laut, bibit ikan, dan kemitraan perikanan.'))">
+    <meta name="keywords" content="@yield('meta_keywords', 'fisheries, fisheries.id, perikanan indonesia, sewa alat pancing, pelet pakan ikan, umpan laut, bibit ikan, komunitas mancing')">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="@yield('canonical_url', url()->current())" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:title" content="@yield('title', get_setting('site_name', 'FISHERIES') . ' - Platform Perikanan & Alat Pancing Indonesia')" />
+    <meta property="og:description" content="@yield('meta_description', get_setting('site_description', 'Fisheries.id - Platform perikanan terlengkap. Sewa pancing, pakan pelet, umpan laut & komunitas perikanan.'))" />
+    <meta property="og:image" content="@yield('og_image', asset('images/Logo_Symbol_White.png'))" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="{{ url()->current() }}" />
+    <meta name="twitter:title" content="@yield('title', get_setting('site_name', 'FISHERIES'))" />
+    <meta name="twitter:description" content="@yield('meta_description', get_setting('site_description', 'Fisheries.id - Platform perikanan terlengkap Indonesia.'))" />
+    <meta name="twitter:image" content="@yield('og_image', asset('images/Logo_Symbol_White.png'))" />
+
+    <!-- Structured Data / JSON-LD Schema for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Fisheries Indonesia",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('images/Logo_Symbol_White.png') }}",
+      "sameAs": [
+        "https://facebook.com",
+        "https://instagram.com"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "{{ get_setting('site_phone', '') }}",
+        "contactType": "customer service"
+      }
+    }
+    </script>
+    @stack('schema')
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>

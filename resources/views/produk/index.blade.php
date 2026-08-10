@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Produk - FISHERIES')
-
+@section('title', 'Katalog Produk Perikanan & Pancing Lengkap | Fisheries.id')
+@section('meta_description', 'Jelajahi seluruh koleksi produk perikanan di Fisheries.id: sewa pancing, pelet pakan ikan, umpan laut, bibit ikan unggul, dan penyewaan kapal.')
+@section('meta_keywords', 'produk perikanan, katalog perikanan, sewa alat pancing, pakan ikan, bibit ikan, fisheries.id')
 
 @section('content')
 <!-- Hero Section -->
